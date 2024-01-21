@@ -22,6 +22,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT COUNT(m) > 0 FROM Member m WHERE m.phone.phoneNumber = :phoneNumber AND m.phone.verified = TRUE")
     boolean existsByVerifiedPhone(String phoneNumber);
 
-    @Query("SELECT m FROM Member m WHERE m.phone.phoneNumber IN (:phoneNumbers)")
-    List<Member> findByPhoneNumberIn(List<String> phoneNumbers);
+    @Query("SELECT m FROM Member m WHERE m.phone.phoneNumber IN (:phoneNumbers) AND m.status = 'SIGNED_UP'")
+    List<Member> findBySignedUpAndPhoneNumberIn(List<String> phoneNumbers);
 }

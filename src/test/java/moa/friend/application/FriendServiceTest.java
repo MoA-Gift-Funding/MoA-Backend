@@ -1,5 +1,7 @@
 package moa.friend.application;
 
+import static moa.member.domain.MemberStatus.PRESIGNED_UP;
+import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.member.domain.OauthId.OauthProvider.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,6 +21,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @DisplayName("친구 서비스 (FriendService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
@@ -43,7 +46,7 @@ class FriendServiceTest {
     class 연락처로부터_친구_추가_시 {
 
         @Test
-        void 존재하는_연락처_중_친구가_아니었던_사람들과만_친구가_된다() {
+        void 연락처_중_최종_가입을_완료했으며_기존에_친구가_아니었던_사람들과만_친구가_된다() {
             // given
             Member member1 = Member.builder()
                     .oauthId(new OauthId("1", KAKAO))
@@ -65,10 +68,14 @@ class FriendServiceTest {
                     .oauthId(new OauthId("5", KAKAO))
                     .phoneNumber("010-5555-5555")
                     .build();
+            ReflectionTestUtils.setField(member1, "status", SIGNED_UP);
+            ReflectionTestUtils.setField(member2, "status", SIGNED_UP);
+            ReflectionTestUtils.setField(member3, "status", PRESIGNED_UP);
+            ReflectionTestUtils.setField(member4, "status", SIGNED_UP);
+            ReflectionTestUtils.setField(member5, "status", SIGNED_UP);
             memberRepository.saveAll(List.of(member1, member2, member3, member4, member5));
             friendRepository.saveAll(List.of(
-                    new Friend(member1, member2, "기존 친구 2"),
-                    new Friend(member1, member3, "기존 친구 3")
+                    new Friend(member1, member2, "기존 친구 2")
             ));
             entityManager.clear();
 
@@ -89,7 +96,6 @@ class FriendServiceTest {
                     .extracting(Friend::getNickname)
                     .containsExactly(
                             "기존 친구 2",
-                            "기존 친구 3",
                             "친구 4",
                             "친구 5"
                     );

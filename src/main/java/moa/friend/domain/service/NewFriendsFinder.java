@@ -16,7 +16,7 @@ public class NewFriendsFinder {
     private final FriendRepository friendRepository;
 
     public List<Member> findNewFriendTargets(Member member, List<String> phoneNumbers) {
-        List<Member> candidates = memberRepository.findByPhoneNumberIn(phoneNumbers);
+        List<Member> candidates = memberRepository.findBySignedUpAndPhoneNumberIn(phoneNumbers);
         List<Member> alreadyFriends = friendRepository.findByMemberAndTargetIn(member, candidates)
                 .stream()
                 .map(Friend::getTarget)
