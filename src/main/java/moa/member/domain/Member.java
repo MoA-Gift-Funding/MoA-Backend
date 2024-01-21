@@ -2,7 +2,11 @@ package moa.member.domain;
 
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
+import static moa.member.domain.MemberStatus.PRESIGNED_UP;
+import static moa.member.domain.MemberStatus.SIGNED_UP;
+import static moa.member.exception.MemberExceptionType.ALREADY_SIGNED_UP;
 import static moa.member.exception.MemberExceptionType.NOT_VERIFIED_PHONE;
+import static moa.member.exception.MemberExceptionType.NO_AUTHORITY_FOR_NOT_SIGNED_UP;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -74,7 +78,7 @@ public class Member extends RootEntity<Long> {
 
     public void preSignup(MemberValidator validator) {
         validator.validateDuplicatedEmailExceptMe(email, id);
-        this.status = MemberStatus.PRESIGNED_UP;
+        this.status = PRESIGNED_UP;
     }
 
     public void changeVerifiedPhone(
@@ -96,11 +100,14 @@ public class Member extends RootEntity<Long> {
             String birthyear,
             String profileImageUrl
     ) {
+        if (status == SIGNED_UP) {
+            throw new MemberException(ALREADY_SIGNED_UP);
+        }
         if (!phone.isVerified()) {
             throw new MemberException(NOT_VERIFIED_PHONE);
         }
         memberValidator.validateDuplicatedEmailExceptMe(email, id);
-        this.status = MemberStatus.SIGNED_UP;
+        this.status = SIGNED_UP;
         this.email = email;
         this.nickname = nickname;
         this.birthday = birthday;
@@ -114,10 +121,17 @@ public class Member extends RootEntity<Long> {
             String birthday,
             String profileImageUrl
     ) {
+        validateSignedUp();
         this.nickname = nickname;
         this.birthyear = birthyear;
         this.birthday = birthday;
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public void validateSignedUp() {
+        if (status != SIGNED_UP) {
+            throw new MemberException(NO_AUTHORITY_FOR_NOT_SIGNED_UP);
+        }
     }
 
     public String getPhoneNumber() {
