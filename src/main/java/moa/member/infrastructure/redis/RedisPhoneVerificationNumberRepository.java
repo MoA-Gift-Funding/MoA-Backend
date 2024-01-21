@@ -1,11 +1,13 @@
 package moa.member.infrastructure.redis;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
+import static moa.member.exception.MemberExceptionType.PHONE_VERIFICATION_NOT_SENT;
 
 import lombok.RequiredArgsConstructor;
 import moa.member.domain.Member;
 import moa.member.domain.phone.PhoneVerificationNumber;
 import moa.member.domain.phone.PhoneVerificationNumberRepository;
+import moa.member.exception.MemberException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +27,9 @@ public class RedisPhoneVerificationNumberRepository implements PhoneVerification
     @Override
     public PhoneVerificationNumber getByMember(Member member) {
         String verificationNumber = redisTemplate.opsForValue().get(key(member));
+        if (verificationNumber == null) {
+            throw new MemberException(PHONE_VERIFICATION_NOT_SENT);
+        }
         return new PhoneVerificationNumber(verificationNumber);
     }
 
