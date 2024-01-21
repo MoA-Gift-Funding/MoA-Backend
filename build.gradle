@@ -53,3 +53,13 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+processResources.dependsOn('importConfigFromSubmodule')
+
+tasks.register('importConfigFromSubmodule', Copy) {
+	from './MoA-Backend-Submodule'
+	include "application*.yml"
+	include "*.p8"
+	exclude "application-local.yml"
+	into './src/main/resources'
+}

@@ -1,0 +1,3 @@
+[submodule "MoA-Backend-Submodule"]
+	path = MoA-Backend-Submodule
+	url = https://github.com/MoA-Gift-Funding/MoA-Backend-Submodule.git
