@@ -1,0 +1,55 @@
+spring:
+  redis:
+    host: localhost
+    port: 6379
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        highlight_sql: true
+
+jwt:
+  secretKey: c2VjcmV0LWtleXNlY3JldC1rZXlzZWNyZXQta2V5c2VjcmV0LWtleXNlY3JldC1rZXlzZWNyZXQta2V5
+  accessTokenExpirationPeriodDay: 1000000
+
+sms:
+  nhn:
+    appKey: ""
+    secretKey: ""
+    sendNo: ""
+
+oauth:
+  apple:
+    keyId: ""
+    teamId: ""
+    clientId: "애플 번들 ID"
+    privateKeyFileName: "애플 private 등록 시 다운받은 p8 파일 이름 (p8) 포함"
+
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE
+
+swagger:
+  server-url: http://localhost:8080
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    path: /api-ui.html
+  api-docs:
+    path: /api-docs
+  show-actuator: true
+  default-produces-media-type: application/json
