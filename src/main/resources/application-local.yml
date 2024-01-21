@@ -38,9 +38,7 @@ oauth:
 
 logging:
   level:
-    org:
-      springframework:
-        security: TRACE
+    org.hibernate.orm.jdbc.bind: TRACE
 
 swagger:
   server-url: http://localhost:8080
