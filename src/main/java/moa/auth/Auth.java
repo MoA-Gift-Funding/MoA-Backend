@@ -1,4 +1,4 @@
-package moa.global.auth;
+package moa.auth;
 
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

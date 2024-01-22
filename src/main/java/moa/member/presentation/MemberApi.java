@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import moa.global.auth.Auth;
+import moa.auth.Auth;
 import moa.member.presentation.request.MemberUpdateRequest;
 import moa.member.presentation.request.SendPhoneVerificationNumberRequest;
 import moa.member.presentation.request.SignupRequest;

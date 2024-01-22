@@ -4,7 +4,7 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKN
 import static java.lang.System.currentTimeMillis;
 import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static moa.global.auth.AuthExceptionType.INVALID_TOKEN;
+import static moa.auth.AuthExceptionType.INVALID_TOKEN;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -12,7 +12,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Base64;
 import java.util.Date;
-import moa.global.auth.AuthException;
+import moa.auth.AuthException;
 import org.springframework.stereotype.Service;
 
 @Service

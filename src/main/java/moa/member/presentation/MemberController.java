@@ -1,7 +1,7 @@
 package moa.member.presentation;
 
 import lombok.RequiredArgsConstructor;
-import moa.global.auth.Auth;
+import moa.auth.Auth;
 import moa.member.application.MemberService;
 import moa.member.presentation.request.MemberUpdateRequest;
 import moa.member.presentation.request.SendPhoneVerificationNumberRequest;

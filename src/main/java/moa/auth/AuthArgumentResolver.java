@@ -1,7 +1,6 @@
-package moa.global.auth;
+package moa.auth;
 
 import static java.util.Objects.requireNonNull;
-import static moa.global.auth.AuthExceptionType.FORBIDDEN;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -48,6 +47,6 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
         }
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         log.info("{} 상태의 회원의 [{} {}] 접근 차단.", member.getStatus(), request.getMethod(), request.getRequestURI());
-        throw new AuthException(FORBIDDEN);
+        throw new AuthException(AuthExceptionType.FORBIDDEN);
     }
 }

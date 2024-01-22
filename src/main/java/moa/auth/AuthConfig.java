@@ -1,4 +1,4 @@
-package moa.global.auth;
+package moa.auth;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;

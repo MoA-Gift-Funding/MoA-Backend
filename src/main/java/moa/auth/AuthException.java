@@ -1,4 +1,4 @@
-package moa.global.auth;
+package moa.auth;
 
 import moa.global.exception.MoaException;
 import moa.global.exception.MoaExceptionType;
