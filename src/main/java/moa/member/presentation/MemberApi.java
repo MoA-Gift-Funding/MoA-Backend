@@ -1,5 +1,8 @@
 package moa.member.presentation;
 
+import static moa.member.domain.MemberStatus.PRESIGNED_UP;
+import static moa.member.domain.MemberStatus.SIGNED_UP;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -43,7 +46,7 @@ public interface MemberApi {
     @Operation(summary = "회원 프로필 조회")
     @GetMapping("/my")
     ResponseEntity<MemberResponse> findMyProfile(
-            @Parameter(hidden = true) @Auth Long memberId
+            @Parameter(hidden = true) @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId
     );
 
     @ApiResponses(
@@ -58,7 +61,7 @@ public interface MemberApi {
     @Operation(summary = "핸드폰 인증번호 전송")
     @PostMapping("/verification/phone/send-number")
     ResponseEntity<Void> sendPhoneVerificationNumber(
-            @Parameter(hidden = true) @Auth Long memberId,
+            @Parameter(hidden = true) @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId,
             @Schema SendPhoneVerificationNumberRequest request
     );
 
@@ -75,7 +78,7 @@ public interface MemberApi {
     @Operation(summary = "핸드폰 인증번호 확인")
     @PostMapping("/verification/phone/verify")
     ResponseEntity<Void> verifyPhone(
-            @Parameter(hidden = true) @Auth Long memberId,
+            @Parameter(hidden = true) @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId,
             @Schema VerifyPhoneRequest request
     );
 
@@ -90,7 +93,7 @@ public interface MemberApi {
     @Operation(summary = "회원가입")
     @PostMapping
     ResponseEntity<Void> signup(
-            @Parameter(hidden = true) @Auth Long memberId,
+            @Parameter(hidden = true) @Auth(permit = {PRESIGNED_UP}) Long memberId,
             @Schema SignupRequest request
     );
 
@@ -106,7 +109,7 @@ public interface MemberApi {
     @Operation(summary = "회원정보 수정")
     @PutMapping
     ResponseEntity<Void> update(
-            @Parameter(hidden = true) @Auth Long memberId,
+            @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId,
             @Schema MemberUpdateRequest request
     );
 }
