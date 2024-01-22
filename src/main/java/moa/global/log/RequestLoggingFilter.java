@@ -33,7 +33,7 @@ public class RequestLoggingFilter implements Filter {
 
     public static final String REQUEST_ID = "requestId";
 
-    private final ObjectProvider<PathMatcher> pathMatcher;
+    private final ObjectProvider<PathMatcher> pathMatcherProvider;
     private final Set<String> setIgnoredUrlPatterns = new HashSet<>();
 
     public void setIgnoredUrlPatterns(String... ignoredUrlPatterns) {
@@ -62,14 +62,14 @@ public class RequestLoggingFilter implements Filter {
             chain.doFilter(cachedRequest, cachedResponse);
         } finally {
             stopWatch.stop();
-            log.info("[{}] request end [time: {}ms]", MDC.get(REQUEST_ID), stopWatch.getTotalTimeMillis());
             log.info("[{}] response body: {}", MDC.get(REQUEST_ID), getResponseBody(cachedResponse));
+            log.info("[{}] request end [time: {}ms]", MDC.get(REQUEST_ID), stopWatch.getTotalTimeMillis());
             MDC.clear();
         }
     }
 
     private boolean isIgnoredUrl(HttpServletRequest request) {
-        PathMatcher pathMatcher = this.pathMatcher.getIfAvailable();
+        PathMatcher pathMatcher = this.pathMatcherProvider.getIfAvailable();
         Objects.requireNonNull(pathMatcher);
         return setIgnoredUrlPatterns.stream()
                 .anyMatch(pattern -> pathMatcher.match(pattern, request.getRequestURI()));
@@ -78,7 +78,7 @@ public class RequestLoggingFilter implements Filter {
     private String getRequestId(HttpServletRequest httpRequest) {
         String requestId = httpRequest.getHeader("X-Request-ID");
         if (ObjectUtils.isEmpty(requestId)) {
-            return UUID.randomUUID().toString().replaceAll("-", "");
+            return UUID.randomUUID().toString().replace("-", "");
         }
         return requestId;
     }
