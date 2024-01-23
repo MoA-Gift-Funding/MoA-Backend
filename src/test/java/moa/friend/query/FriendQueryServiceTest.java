@@ -12,19 +12,17 @@ import moa.friend.query.response.FriendResponse;
 import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import moa.member.domain.OauthId;
+import moa.support.ApplicationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @DisplayName("친구 조회 서비스 (FriendQueryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@Transactional
-@SpringBootTest
+@ApplicationTest
 class FriendQueryServiceTest {
 
     @Autowired
@@ -52,7 +50,9 @@ class FriendQueryServiceTest {
         memberRepository.saveAll(List.of(member1, member2, member3));
 
         Long friendId = friendRepository.save(new Friend(member1, member2, "바보 2")).getId();
-        friendRepository.save(new Friend(member1, member3, "바보 3")).block();
+        Friend block = new Friend(member1, member3, "바보 3");
+        block.block();
+        friendRepository.save(block);
 
         // when
         List<FriendResponse> result = friendQueryService.findUnblockedFriendsByMemberId(member1.getId());
@@ -90,8 +90,9 @@ class FriendQueryServiceTest {
         memberRepository.saveAll(List.of(member1, member2, member3));
 
         friendRepository.save(new Friend(member1, member2, "바보 2"));
-        Friend blocked = friendRepository.save(new Friend(member1, member3, "바보 3"));
-        blocked.block();
+        Friend block = new Friend(member1, member3, "바보 3");
+        block.block();
+        friendRepository.save(block);
 
         // when
         List<FriendResponse> result = friendQueryService.findBlockedFriendsByMemberId(member1.getId());
@@ -101,7 +102,7 @@ class FriendQueryServiceTest {
                 .usingRecursiveComparison()
                 .isEqualTo(List.of(
                         new FriendResponse(
-                                blocked.getId(),
+                                block.getId(),
                                 member3.getId(),
                                 "profile 3",
                                 "바보 3",

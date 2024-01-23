@@ -13,18 +13,18 @@ import moa.friend.domain.Friend;
 import moa.friend.domain.FriendRepository;
 import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
+import moa.support.ApplicationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 @DisplayName("친구 서비스 (FriendService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@SpringBootTest
+@ApplicationTest
 class FriendServiceTest {
 
     @Autowired
@@ -38,7 +38,6 @@ class FriendServiceTest {
 
     @Autowired
     private EntityManager entityManager;
-
 
     @Nested
     class 연락처로부터_친구_추가_시 {
