@@ -51,3 +51,7 @@ springdoc:
     path: /api-docs
   show-actuator: true
   default-produces-media-type: application/json
+
+funding:
+  price:
+    min: 5000
