@@ -17,9 +17,6 @@ spring:
     open-in-view: false
 
   data:
-    jpa:
-      repositories:
-        bootstrap-mode: deferred
     redis:
       port: 6379
       host: localhost
