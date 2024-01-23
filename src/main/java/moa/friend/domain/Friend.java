@@ -2,6 +2,7 @@ package moa.friend.domain;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
+import static moa.friend.exception.FriendExceptionType.NO_AUTHORITY;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,6 +16,7 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import moa.friend.exception.FriendException;
 import moa.global.domain.RootEntity;
 import moa.member.domain.Member;
 
@@ -41,10 +43,30 @@ public class Friend extends RootEntity<Long> {
     @Column
     private String nickname;
 
+    private boolean isBlocked = false;
+
     @Builder
     public Friend(Member member, Member target, String nickname) {
         this.member = member;
         this.target = target;
         this.nickname = nickname;
+    }
+
+    public void validateAuthority(Member member) {
+        if (!this.member.equals(member)) {
+            throw new FriendException(NO_AUTHORITY);
+        }
+    }
+
+    public void update(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void block() {
+        this.isBlocked = true;
+    }
+
+    public void unBlock() {
+        this.isBlocked = false;
     }
 }

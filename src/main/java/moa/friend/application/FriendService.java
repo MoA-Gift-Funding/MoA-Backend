@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import moa.friend.application.command.MakeFromContactCommand;
+import moa.friend.application.command.UpdateFriendCommand;
 import moa.friend.domain.Friend;
 import moa.friend.domain.FriendRepository;
 import moa.friend.domain.service.NewFriendsFinder;
@@ -32,5 +33,26 @@ public class FriendService {
                         new Friend(it, member, member.getNickname())
                 )).toList();
         friendRepository.saveAll(newFriends);
+    }
+
+    public void update(UpdateFriendCommand command) {
+        Member member = memberRepository.getById(command.memberId());
+        Friend friend = friendRepository.getById(command.friendId());
+        friend.validateAuthority(member);
+        friend.update(command.nickname());
+    }
+
+    public void block(Long memberId, Long friendId) {
+        Member member = memberRepository.getById(memberId);
+        Friend friend = friendRepository.getById(friendId);
+        friend.validateAuthority(member);
+        friend.block();
+    }
+
+    public void unBlock(Long memberId, Long friendId) {
+        Member member = memberRepository.getById(memberId);
+        Friend friend = friendRepository.getById(friendId);
+        friend.validateAuthority(member);
+        friend.unBlock();
     }
 }
