@@ -1,12 +1,14 @@
 package moa.friend.presentation;
 
+import static moa.member.domain.MemberStatus.SIGNED_UP;
+
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import moa.auth.Auth;
 import moa.friend.application.FriendService;
 import moa.friend.presentation.request.SyncContactRequest;
 import moa.friend.query.FriendQueryService;
 import moa.friend.query.response.FriendResponse;
-import moa.global.auth.Auth;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +26,7 @@ public class FriendController implements FriendApi {
 
     @PostMapping("/sync-contact")
     public ResponseEntity<Void> syncContact(
-            @Auth Long memberId,
+            @Auth(permit = {SIGNED_UP}) Long memberId,
             @RequestBody SyncContactRequest request
     ) {
         friendService.makeFromContact(request.toCommand(memberId));
@@ -32,7 +34,9 @@ public class FriendController implements FriendApi {
     }
 
     @GetMapping("/my")
-    public ResponseEntity<List<FriendResponse>> findMyFriends(@Auth Long memberId) {
+    public ResponseEntity<List<FriendResponse>> findMyFriends(
+            @Auth(permit = {SIGNED_UP}) Long memberId
+    ) {
         List<FriendResponse> result = friendQueryService.findFriendsByMemberId(memberId);
         return ResponseEntity.ok(result);
     }

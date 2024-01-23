@@ -43,8 +43,6 @@ public class Friend extends RootEntity<Long> {
 
     @Builder
     public Friend(Member member, Member target, String nickname) {
-        member.validateSignedUp();
-        target.validateSignedUp();
         this.member = member;
         this.target = target;
         this.nickname = nickname;

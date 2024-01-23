@@ -1,5 +1,7 @@
 package moa.friend.presentation;
 
+import static moa.member.domain.MemberStatus.SIGNED_UP;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -9,9 +11,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import moa.auth.Auth;
 import moa.friend.presentation.request.SyncContactRequest;
 import moa.friend.query.response.FriendResponse;
-import moa.global.auth.Auth;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +33,7 @@ public interface FriendApi {
     @Operation(summary = "연락처 동기화")
     @PostMapping("/sync-contact")
     ResponseEntity<Void> syncContact(
-            @Parameter(hidden = true) @Auth Long memberId,
+            @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId,
             @Schema SyncContactRequest request
     );
 
@@ -46,6 +48,6 @@ public interface FriendApi {
     @Operation(summary = "내 친구 목록 조회")
     @GetMapping("/my")
     ResponseEntity<List<FriendResponse>> findMyFriends(
-            @Parameter(hidden = true) @Auth Long memberId
+            @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId
     );
 }
