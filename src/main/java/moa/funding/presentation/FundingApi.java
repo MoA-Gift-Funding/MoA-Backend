@@ -25,6 +25,7 @@ public interface FundingApi {
                     @ApiResponse(responseCode = "400"),
                     @ApiResponse(responseCode = "401"),
                     @ApiResponse(responseCode = "403", description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)"),
+                    @ApiResponse(responseCode = "404"),
             }
     )
     @Operation(summary = "펀딩 생성")
