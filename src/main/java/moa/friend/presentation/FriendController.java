@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -35,9 +36,12 @@ public class FriendController implements FriendApi {
 
     @GetMapping("/my")
     public ResponseEntity<List<FriendResponse>> findMyFriends(
-            @Auth(permit = {SIGNED_UP}) Long memberId
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            @RequestParam(name = "isBlocked") boolean isBlocked
     ) {
-        List<FriendResponse> result = friendQueryService.findFriendsByMemberId(memberId);
-        return ResponseEntity.ok(result);
+        if (isBlocked) {
+            return ResponseEntity.ok(friendQueryService.findBlockedFriendsByMemberId(memberId));
+        }
+        return ResponseEntity.ok(friendQueryService.findUnblockedFriendsByMemberId(memberId));
     }
 }
