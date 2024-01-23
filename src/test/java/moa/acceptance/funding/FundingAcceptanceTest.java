@@ -85,14 +85,14 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
-        void 최대_금액이_없으면_무제한() {
+        void 최대_금액이_상품_가격보다_높으면_400() {
             // given
             var request = new FundingCreateRequest(
                     상품.getId(),
                     "주노의 에어팟 장만",
                     "저에게 에어팟 맥스를 선물할 기회!!",
                     LocalDate.now().plusDays(5L).toString(),
-                    "0",
+                    "800000",
                     "주노", "010-1234-5678",
                     "13529", "경기 성남시 분당구 판교역로 166 (카카오 판교 아지트)",
                     "경기 성남시 분당구 백현동 532", "판교 아지트 3층 택배함",
@@ -103,7 +103,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_생성_요청(준호_token, request);
 
             // then
-            assertStatus(response, CREATED);
+            assertStatus(response, BAD_REQUEST);
         }
     }
 }
