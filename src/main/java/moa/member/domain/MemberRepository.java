@@ -23,5 +23,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     boolean existsByVerifiedPhone(String phoneNumber);
 
     @Query("SELECT m FROM Member m WHERE m.phone.phoneNumber IN (:phoneNumbers) AND m.status = 'SIGNED_UP'")
-    List<Member> findBySignedUpAndPhoneNumberIn(List<String> phoneNumbers);
+    List<Member> findSignedUpByPhoneNumberIn(List<String> phoneNumbers);
 }
