@@ -49,10 +49,10 @@ public class FriendService {
         friend.block();
     }
 
-    public void unBlock(Long memberId, Long friendId) {
+    public void unblock(Long memberId, Long friendId) {
         Member member = memberRepository.getById(memberId);
         Friend friend = friendRepository.getById(friendId);
         friend.validateAuthority(member);
-        friend.unBlock();
+        friend.unblock();
     }
 }

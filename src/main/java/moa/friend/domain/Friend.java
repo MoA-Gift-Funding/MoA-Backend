@@ -66,7 +66,7 @@ public class Friend extends RootEntity<Long> {
         this.isBlocked = true;
     }
 
-    public void unBlock() {
+    public void unblock() {
         this.isBlocked = false;
     }
 }
