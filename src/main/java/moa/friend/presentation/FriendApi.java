@@ -33,6 +33,7 @@ public interface FriendApi {
                     @ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "400"),
                     @ApiResponse(responseCode = "401"),
+                    @ApiResponse(responseCode = "403"),
                     @ApiResponse(responseCode = "404"),
             }
     )
@@ -66,6 +67,15 @@ public interface FriendApi {
             @Schema UpdateFriendRequest request
     );
 
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "400"),
+                    @ApiResponse(responseCode = "401"),
+                    @ApiResponse(responseCode = "403", description = "주어진 친구 id가 내 친구 id가 아닌 경우"),
+                    @ApiResponse(responseCode = "404"),
+            }
+    )
     @Operation(summary = "친구 차단")
     @PostMapping("/block/{id}")
     ResponseEntity<Void> block(
@@ -76,6 +86,15 @@ public interface FriendApi {
             @PathVariable("id") Long friendId
     );
 
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "400"),
+                    @ApiResponse(responseCode = "401"),
+                    @ApiResponse(responseCode = "403", description = "주어진 친구 id가 내 친구 id가 아닌 경우"),
+                    @ApiResponse(responseCode = "404"),
+            }
+    )
     @Operation(summary = "친구 차단 해제")
     @PostMapping("/unblock/{id}")
     ResponseEntity<Void> unblock(
@@ -91,6 +110,7 @@ public interface FriendApi {
                     @ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
             }
     )
