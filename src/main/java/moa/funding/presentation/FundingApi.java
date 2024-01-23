@@ -1,8 +1,6 @@
 package moa.funding.presentation;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import static moa.member.domain.MemberStatus.SIGNED_UP;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,24 +11,26 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import moa.auth.Auth;
 import moa.funding.presentation.request.FundingCreateRequest;
-import static moa.member.domain.MemberStatus.SIGNED_UP;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "펀딩 API", description = "펀딩 관련 API")
 @SecurityRequirement(name = "JWT")
 public interface FundingApi {
 
     @ApiResponses(
-        value = {
-            @ApiResponse(responseCode = "201"),
-            @ApiResponse(responseCode = "400"),
-            @ApiResponse(responseCode = "401"),
-            @ApiResponse(responseCode = "404"),
-        }
+            value = {
+                    @ApiResponse(responseCode = "201"),
+                    @ApiResponse(responseCode = "400"),
+                    @ApiResponse(responseCode = "401"),
+                    @ApiResponse(responseCode = "404"),
+            }
     )
     @Operation(summary = "펀딩 생성")
     @PostMapping
     ResponseEntity<Void> createFunding(
-        @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId,
-        @Valid @RequestBody FundingCreateRequest request
+            @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId,
+            @Valid @RequestBody FundingCreateRequest request
     );
 }

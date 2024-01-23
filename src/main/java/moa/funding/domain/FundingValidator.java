@@ -1,19 +1,16 @@
 package moa.funding.domain;
 
-import java.math.BigDecimal;
-
-import org.springframework.stereotype.Component;
-
-import moa.funding.exception.FundingException;
 import static moa.funding.exception.FundingExceptionType.INVALID_MINIMUM_PRICE;
+
+import java.math.BigDecimal;
+import moa.funding.exception.FundingException;
+import org.springframework.stereotype.Component;
 
 @Component
 public class FundingValidator {
 
     /**
-     * minimumPrice가 price보다 크면 1
-     * minimumPrice가 price보다 작으면 -1
-     * minimumPrice가 price와 같으면 0
+     * minimumPrice가 price보다 크면 1 minimumPrice가 price보다 작으면 -1 minimumPrice가 price와 같으면 0
      */
     public void validateFundingPrice(Funding funding, BigDecimal minimumPrice) {
         // 최소 펀딩 금액이 기준과 다르면 예외

@@ -1,10 +1,10 @@
 package moa.funding.exception;
 
-import org.springframework.http.HttpStatus;
-
-import moa.global.exception.MoaExceptionType;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+import moa.global.exception.MoaExceptionType;
+import org.springframework.http.HttpStatus;
 
 public enum FundingExceptionType implements MoaExceptionType {
 
