@@ -19,6 +19,10 @@ public class Price {
         this.value = new BigDecimal(value);
     }
 
+    public Price(Long value) {
+        this.value = BigDecimal.valueOf(value);
+    }
+
     public boolean isGreaterThan(Price price) {
         return this.value.compareTo(price.value) > 0;
     }

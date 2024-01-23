@@ -4,7 +4,8 @@ import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static moa.funding.exception.FundingExceptionType.INVALID_END_DATE;
 import static moa.funding.exception.FundingExceptionType.INVALID_FUNDING_STATUS;
-import static moa.funding.exception.FundingExceptionType.INVALID_MINIMUM_PRICE;
+import static moa.funding.exception.FundingExceptionType.MAXIMUM_PRICE_GREATER_THAN_PRODUCT;
+import static moa.funding.exception.FundingExceptionType.MAXIMUM_PRICE_LESS_THAN_MINIMUM;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -85,8 +86,12 @@ public class Funding extends RootEntity<Long> {
     }
 
     public void create() {
-        if (!maximumPrice.isZero() && (maximumPrice.isLessThan(MINIMUM_PRICE))) {
-            throw new FundingException(INVALID_MINIMUM_PRICE);
+        if (maximumPrice.isLessThan(MINIMUM_PRICE)) {
+            throw new FundingException(MAXIMUM_PRICE_LESS_THAN_MINIMUM);
+        }
+
+        if (maximumPrice.isGreaterThan(product.getPrice())) {
+            throw new FundingException(MAXIMUM_PRICE_GREATER_THAN_PRODUCT);
         }
 
         if (endDate.isBefore(LocalDate.now())) {
