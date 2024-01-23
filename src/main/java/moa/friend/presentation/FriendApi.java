@@ -41,7 +41,7 @@ public interface FriendApi {
     ResponseEntity<Void> syncContact(
             @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            
+
             @Schema SyncContactRequest request
     );
 

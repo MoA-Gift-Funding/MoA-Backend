@@ -9,7 +9,7 @@ import moa.friend.application.command.MakeFromContactCommand.ContactInfo;
 public record SyncContactRequest(
         List<ContactRequest> contactList
 ) {
-    
+
     public SyncContactRequest(ContactRequest... contactList) {
         this(Arrays.asList(contactList));
     }
