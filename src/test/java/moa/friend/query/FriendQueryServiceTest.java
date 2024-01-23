@@ -1,5 +1,6 @@
 package moa.friend.query;
 
+import static moa.member.MemberFixture.member;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.member.domain.OauthId.OauthProvider.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,27 +40,18 @@ class FriendQueryServiceTest {
     @Test
     void 특정_회원의_친구_목록을_조회한다() {
         // given
-        Member member1 = Member.builder()
-                .oauthId(new OauthId("1", KAKAO))
-                .phoneNumber("010-1111-1111")
-                .nickname("1번")
-                .profileImageUrl("1번사진")
-                .birthyear("2000")
-                .birthday("1004")
-                .build();
+        Member member1 = member(null, "회원 1", "010-1111-1111", SIGNED_UP);
         Member member2 = Member.builder()
                 .oauthId(new OauthId("2", KAKAO))
                 .phoneNumber("010-2222-2222")
                 .nickname("2번")
                 .birthyear("2002")
                 .birthday("1204")
+                .profileImageUrl("profile 2")
                 .build();
         ReflectionTestUtils.setField(member1, "status", SIGNED_UP);
-        ReflectionTestUtils.setField(member2, "status", SIGNED_UP);
         memberRepository.saveAll(List.of(member1, member2));
-        friendRepository.saveAll(List.of(
-                new Friend(member1, member2, "바보 2번")
-        ));
+        Long friendId = friendRepository.save(new Friend(member1, member2, "바보 2")).getId();
 
         // when
         List<FriendResponse> result = friendQueryService.findFriendsByMemberId(member1.getId());
@@ -67,13 +59,12 @@ class FriendQueryServiceTest {
         // then
         assertThat(result)
                 .usingRecursiveComparison()
-                .ignoringFields("id")
                 .isEqualTo(List.of(
                         new FriendResponse(
-                                null,
+                                friendId,
                                 member2.getId(),
-                                null,
-                                "바보 2번",
+                                "profile 2",
+                                "바보 2",
                                 "2번",
                                 "010-2222-2222",
                                 "1204",

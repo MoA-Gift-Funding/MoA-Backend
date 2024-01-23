@@ -3,6 +3,7 @@ package moa.friend.application;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import moa.friend.application.command.MakeFromContactCommand;
 import moa.friend.domain.Friend;
@@ -26,8 +27,10 @@ public class FriendService {
         Map<String, String> phoneAndNameMap = command.phoneAndNameMap();
         List<Member> targets = newFriendsFinder.findNewFriendTargets(member, command.phones());
         List<Friend> newFriends = targets.stream()
-                .map(it -> new Friend(member, it, phoneAndNameMap.get(it.getPhoneNumber())))
-                .toList();
+                .flatMap(it -> Stream.of(
+                        new Friend(member, it, phoneAndNameMap.get(it.getPhoneNumber())),
+                        new Friend(it, member, member.getNickname())
+                )).toList();
         friendRepository.saveAll(newFriends);
     }
 }
