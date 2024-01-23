@@ -1,6 +1,6 @@
 package moa.friend.application;
 
-import static moa.member.MemberFixture.member;
+import static moa.fixture.MemberFixture.member;
 import static moa.member.domain.MemberStatus.PRESIGNED_UP;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static org.assertj.core.api.Assertions.assertThat;

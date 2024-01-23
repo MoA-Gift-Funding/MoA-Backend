@@ -1,4 +1,4 @@
-package moa.member;
+package moa.fixture;
 
 import static moa.member.domain.OauthId.OauthProvider.KAKAO;
 
