@@ -71,7 +71,7 @@ public class Funding extends RootEntity<Long> {
     private Product product;
 
     public Funding(String title, String description, LocalDate endDate, Price maximumPrice,
-                    Address deliveryAddress, Visibility visible, FundingStatus status,
+                   Address deliveryAddress, Visibility visible, FundingStatus status,
                    Member member, Product product) {
         this.title = title;
         this.description = description;

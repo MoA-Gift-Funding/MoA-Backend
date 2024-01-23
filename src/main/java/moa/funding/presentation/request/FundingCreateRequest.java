@@ -20,8 +20,8 @@ public record FundingCreateRequest(
 
         // 배송 정보
         // 이름, 핸드폰 번호
-        @Schema(description = "", example = "주노") @NotBlank String userName,
-        @Schema(description = "", example = "010-1234-5678") @NotBlank String phoneNumber,
+        @Schema(description = "받는 사람 이름", example = "주노") @NotBlank String memberName,
+        @Schema(description = "받는 사람 전화번호", example = "010-1234-5678") @NotBlank String phoneNumber,
 
         // 상세 주소정보
         @Schema(description = "우편번호", example = "13529") String zonecode,
