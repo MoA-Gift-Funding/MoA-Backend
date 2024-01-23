@@ -27,19 +27,7 @@ public class FundingService {
     public Funding create(FundingCreateCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Product product = productRepository.getById(command.productId());
-
-        Funding funding = new Funding(
-                command.title(),
-                command.description(),
-                command.endDate(),
-                command.maximumPrice(),
-                Funding.MINIMUM_PRICE,
-                command.deliveryAddress(),
-                command.visible(),
-                command.status(),
-                member,
-                product
-        );
+        Funding funding = command.toFunding(member, product);
         fundingValidator.validateFundingPrice(funding, Funding.MINIMUM_PRICE);
         return fundingRepository.save(funding);
     }
