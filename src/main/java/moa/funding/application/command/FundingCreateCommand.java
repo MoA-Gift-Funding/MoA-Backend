@@ -8,7 +8,7 @@ import moa.funding.domain.Visibility;
 
 public record FundingCreateCommand(
         Long memberId,
-        String productId,
+        Long productId,
         String title,
         String description,
         LocalDate endDate,

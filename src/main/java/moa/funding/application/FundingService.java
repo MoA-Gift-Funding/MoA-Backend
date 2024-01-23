@@ -9,6 +9,8 @@ import moa.funding.domain.FundingRepository;
 import moa.funding.domain.FundingValidator;
 import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
+import moa.product.domain.Product;
+import moa.product.domain.ProductRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,28 +19,28 @@ import org.springframework.stereotype.Service;
 @Service
 public class FundingService {
 
-    @Value("${funding.price.min}")
-    private String minimumPriceValue;
-
     private final MemberRepository memberRepository;
+    private final ProductRepository productRepository;
     private final FundingRepository fundingRepository;
     private final FundingValidator fundingValidator;
 
     public Funding create(FundingCreateCommand command) {
         Member member = memberRepository.getById(command.memberId());
-        BigDecimal minimumPrice = new BigDecimal(minimumPriceValue);
+        Product product = productRepository.getById(command.productId());
+
         Funding funding = new Funding(
                 command.title(),
                 command.description(),
                 command.endDate(),
                 command.maximumPrice(),
-                minimumPrice,
+                Funding.MINIMUM_PRICE,
                 command.deliveryAddress(),
                 command.visible(),
                 command.status(),
-                member
+                member,
+                product
         );
-        fundingValidator.validateFundingPrice(funding, minimumPrice);
+        fundingValidator.validateFundingPrice(funding, Funding.MINIMUM_PRICE);
         return fundingRepository.save(funding);
     }
 }

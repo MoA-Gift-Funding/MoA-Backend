@@ -2,6 +2,7 @@ package moa.funding.presentation.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import moa.funding.application.command.FundingCreateCommand;
@@ -11,7 +12,7 @@ import moa.funding.domain.Visibility;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public record FundingCreateRequest(
-        @Schema(example = "PRODUCT_ID_148EX3y") @NotBlank String productId,
+        @Schema(example = "1") @NotNull Long productId,
         @Schema(example = "주노에게 주는 소박한 선물") @NotBlank String title,
         @Schema(example = "에어팟 맥스를 원합니다!!!") @NotBlank String description,
         @Schema(example = "2023-12-25") @NotBlank @DateTimeFormat(pattern = "yyyy-MM-dd") String endDate,

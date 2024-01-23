@@ -20,11 +20,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import moa.global.domain.RootEntity;
 import moa.member.domain.Member;
+import moa.product.domain.Product;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Funding extends RootEntity<Long> {
+
+    public static final BigDecimal MINIMUM_PRICE = new BigDecimal("5000");
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -61,14 +64,13 @@ public class Funding extends RootEntity<Long> {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    // TODO: Product와 연관관계
-    //  @ManyToOne(fetch = FetchType.LAZY)
-    //  @JoinColumn(name = "product_id")
-    //  private Product product;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     public Funding(String title, String description, LocalDate endDate, BigDecimal maximumPrice,
                    BigDecimal minimumPrice, Address deliveryAddress, Visibility visible, FundingStatus status,
-                   Member member) {
+                   Member member, Product product) {
         this.title = title;
         this.description = description;
         this.endDate = endDate;
@@ -78,5 +80,6 @@ public class Funding extends RootEntity<Long> {
         this.visible = visible;
         this.status = status;
         this.member = member;
+        this.product = product;
     }
 }
