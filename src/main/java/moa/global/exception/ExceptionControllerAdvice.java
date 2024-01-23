@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.logging.MDC;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -21,7 +22,7 @@ import org.springframework.web.util.WebUtils;
 @RestControllerAdvice
 public class ExceptionControllerAdvice {
 
-    @ExceptionHandler(MoaException.class)
+    @ExceptionHandler({MoaException.class, MethodArgumentNotValidException.class})
     ResponseEntity<ExceptionResponse> handleException(HttpServletRequest request, MoaException e) {
         MoaExceptionType type = e.getExceptionType();
         log.info("[{}] 잘못된 요청이 들어왔습니다. uri: {} {},  내용:  {}",
