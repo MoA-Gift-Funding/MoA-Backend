@@ -7,7 +7,6 @@ import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import moa.auth.Auth;
 import moa.funding.application.FundingService;
-import moa.funding.domain.Funding;
 import moa.funding.presentation.request.FundingCreateRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +26,7 @@ public class FundingController implements FundingApi {
             @Auth(permit = {SIGNED_UP}) Long memberId,
             @Valid @RequestBody FundingCreateRequest request
     ) {
-        Funding funding = fundingService.create(request.toCommand(memberId));
-        return ResponseEntity.created(URI.create("/fundings/" + funding.getId())).build();
+        Long fundingId = fundingService.create(request.toCommand(memberId));
+        return ResponseEntity.created(URI.create("/fundings/" + fundingId)).build();
     }
 }

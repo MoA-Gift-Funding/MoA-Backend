@@ -2,6 +2,7 @@ package moa.funding.domain;
 
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
+import static moa.funding.exception.FundingExceptionType.INVALID_MINIMUM_PRICE;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import moa.funding.exception.FundingException;
 import moa.global.domain.RootEntity;
 import moa.member.domain.Member;
 import moa.product.domain.Product;
@@ -82,4 +84,32 @@ public class Funding extends RootEntity<Long> {
         this.member = member;
         this.product = product;
     }
+
+    public void create() {
+        // 최소 펀딩 금액이 기준과 다르면 예외
+        if (minimumPrice.compareTo(MINIMUM_PRICE) != 0) {
+            throw new FundingException(INVALID_MINIMUM_PRICE);
+        }
+
+        // 최대 펀딩 금액이 0이면 무제한이므로 검증하지 않음
+        if (maximumPrice.compareTo(BigDecimal.ZERO) == 0) {
+            return;
+        }
+
+        // 최대 펀딩 금액이 최소 펀딩 금액보다 작으면 예외
+        if (minimumPrice.compareTo(maximumPrice) > 0) {
+            throw new FundingException(INVALID_MINIMUM_PRICE);
+        }
+
+        // 펀딩 종료일이 현재 날짜보다 이전이면 예외
+        if (endDate.isBefore(LocalDate.now())) {
+            throw new FundingException(INVALID_MINIMUM_PRICE);
+        }
+
+        // 펀딩 상태가 기준과 다르면 예외
+        if (status != FundingStatus.PREPARING) {
+            throw new FundingException(INVALID_MINIMUM_PRICE);
+        }
+    }
+
 }

@@ -42,7 +42,7 @@ public record FundingCreateRequest(
                 new Address(
                         zonecode, roadAddress, jibunAddress, detailAddress
                 ),
-                Visibility.ALL,
+                Visibility.PUBLIC,
                 FundingStatus.PROCESSING
         );
     }
