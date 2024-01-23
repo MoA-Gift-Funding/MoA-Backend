@@ -11,7 +11,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import moa.auth.Auth;
 import moa.funding.presentation.request.FundingCreateRequest;
+import static moa.member.domain.MemberStatus.SIGNED_UP;
 
 @Tag(name = "펀딩 API", description = "펀딩 관련 API")
 @SecurityRequirement(name = "JWT")
@@ -28,7 +30,7 @@ public interface FundingApi {
     @Operation(summary = "펀딩 생성")
     @PostMapping
     ResponseEntity<Void> createFunding(
-        @Parameter(hidden = true) Long memberId,
+        @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId,
         @Valid @RequestBody FundingCreateRequest request
     );
 }
