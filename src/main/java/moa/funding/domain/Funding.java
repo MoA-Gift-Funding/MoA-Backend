@@ -2,8 +2,11 @@ package moa.funding.domain;
 
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
+import static moa.funding.exception.FundingExceptionType.INVALID_END_DATE;
+import static moa.funding.exception.FundingExceptionType.INVALID_FUNDING_STATUS;
 import static moa.funding.exception.FundingExceptionType.INVALID_MINIMUM_PRICE;
 
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -14,7 +17,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Size;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -29,7 +31,7 @@ import moa.product.domain.Product;
 @Entity
 public class Funding extends RootEntity<Long> {
 
-    public static final BigDecimal MINIMUM_PRICE = new BigDecimal("5000");
+    public static final Price MINIMUM_PRICE = new Price("5000");
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -45,11 +47,9 @@ public class Funding extends RootEntity<Long> {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Column(name = "maximum_price")
-    private BigDecimal maximumPrice;
-
-    @Column(name = "minimum_price")
-    private BigDecimal minimumPrice;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "maximum_price"))
+    private Price maximumPrice;
 
     @Embedded
     private Address deliveryAddress;
@@ -70,14 +70,13 @@ public class Funding extends RootEntity<Long> {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    public Funding(String title, String description, LocalDate endDate, BigDecimal maximumPrice,
-                   BigDecimal minimumPrice, Address deliveryAddress, Visibility visible, FundingStatus status,
+    public Funding(String title, String description, LocalDate endDate, Price maximumPrice,
+                    Address deliveryAddress, Visibility visible, FundingStatus status,
                    Member member, Product product) {
         this.title = title;
         this.description = description;
         this.endDate = endDate;
         this.maximumPrice = maximumPrice;
-        this.minimumPrice = minimumPrice;
         this.deliveryAddress = deliveryAddress;
         this.visible = visible;
         this.status = status;
@@ -86,29 +85,16 @@ public class Funding extends RootEntity<Long> {
     }
 
     public void create() {
-        // 최소 펀딩 금액이 기준과 다르면 예외
-        if (minimumPrice.compareTo(MINIMUM_PRICE) != 0) {
+        if (!maximumPrice.isZero() && (maximumPrice.isLessThan(MINIMUM_PRICE))) {
             throw new FundingException(INVALID_MINIMUM_PRICE);
         }
 
-        // 최대 펀딩 금액이 0이면 무제한이므로 검증하지 않음
-        if (maximumPrice.compareTo(BigDecimal.ZERO) == 0) {
-            return;
-        }
-
-        // 최대 펀딩 금액이 최소 펀딩 금액보다 작으면 예외
-        if (minimumPrice.compareTo(maximumPrice) > 0) {
-            throw new FundingException(INVALID_MINIMUM_PRICE);
-        }
-
-        // 펀딩 종료일이 현재 날짜보다 이전이면 예외
         if (endDate.isBefore(LocalDate.now())) {
-            throw new FundingException(INVALID_MINIMUM_PRICE);
+            throw new FundingException(INVALID_END_DATE);
         }
 
-        // 펀딩 상태가 기준과 다르면 예외
         if (status != FundingStatus.PREPARING) {
-            throw new FundingException(INVALID_MINIMUM_PRICE);
+            throw new FundingException(INVALID_FUNDING_STATUS);
         }
     }
 

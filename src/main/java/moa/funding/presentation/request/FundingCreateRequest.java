@@ -3,11 +3,11 @@ package moa.funding.presentation.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import moa.funding.application.command.FundingCreateCommand;
 import moa.funding.domain.Address;
 import moa.funding.domain.FundingStatus;
+import moa.funding.domain.Price;
 import moa.funding.domain.Visibility;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -38,12 +38,12 @@ public record FundingCreateRequest(
                 title,
                 description,
                 LocalDate.parse(endDate),
-                new BigDecimal(maximumPrice),
+                new Price(maximumPrice),
                 new Address(
                         zonecode, roadAddress, jibunAddress, detailAddress
                 ),
                 Visibility.PUBLIC,
-                FundingStatus.PROCESSING
+                FundingStatus.PREPARING
         );
     }
 }
