@@ -13,7 +13,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import moa.friend.exception.FriendException;
@@ -40,12 +39,12 @@ public class Friend extends RootEntity<Long> {
     @JoinColumn(name = "target_id")
     private Member target;
 
-    @Column
+    @Column(nullable = false)
     private String nickname;
 
+    @Column
     private boolean isBlocked = false;
 
-    @Builder
     public Friend(Member member, Member target, String nickname) {
         this.member = member;
         this.target = target;
