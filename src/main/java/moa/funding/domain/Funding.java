@@ -32,7 +32,7 @@ import moa.product.domain.Product;
 @Entity
 public class Funding extends RootEntity<Long> {
 
-    public static final Price MINIMUM_PRICE = Price.from("5000");
+    private static final Price MINIMUM_PRICE = Price.from("5000");
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
