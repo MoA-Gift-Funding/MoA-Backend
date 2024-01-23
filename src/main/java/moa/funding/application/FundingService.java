@@ -1,5 +1,8 @@
 package moa.funding.application;
 
+import java.math.BigDecimal;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -16,24 +19,28 @@ import moa.member.domain.MemberRepository;
 @Service
 public class FundingService {
 
+    @Value("${funding.price.min}")
+    private String minimumPriceValue;
+
     private final MemberRepository memberRepository;
     private final FundingRepository fundingRepository;
     private final FundingValidator fundingValidator;
 
     public Funding create(FundingCreateCommand command) {
         Member member = memberRepository.getById(command.memberId());
+        BigDecimal minimumPrice = new BigDecimal(minimumPriceValue);
         Funding funding = new Funding(
             command.title(),
             command.description(),
             command.endDate(),
             command.maximumPrice(),
-            command.minimumPrice(),
+            minimumPrice,
             command.deliveryAddress(),
             command.visible(),
             command.status(),
             member
         );
-        fundingValidator.validateFundingPrice(funding);
+        fundingValidator.validateFundingPrice(funding, minimumPrice);
         return fundingRepository.save(funding);
     }
 }

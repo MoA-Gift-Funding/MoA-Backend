@@ -17,8 +17,7 @@ public record FundingCreateRequest(
     @Schema(example = "주노에게 주는 소박한 선물") @NotBlank String title,
     @Schema(example = "에어팟 맥스를 원합니다!!!") @NotBlank String description,
     @Schema(example = "2023-12-25") @NotBlank @DateTimeFormat(pattern = "yyyy-MM-dd") String endDate,
-    @Schema(example = "5500") @NotBlank String maximumPrice,
-    @Schema(example = "5000") @NotBlank String minimumPrice,
+    @Schema(description = "최대 펀딩 가능 금액. 0이면 무제한", example = "5500") @NotBlank String maximumPrice,
 
     // 배송 정보
     // 이름, 핸드폰 번호
@@ -41,7 +40,6 @@ public record FundingCreateRequest(
             description,
             LocalDate.parse(endDate),
             new BigDecimal(maximumPrice),
-            new BigDecimal(minimumPrice),
             new Address(
                 zonecode, roadAddress, jibunAddress, detailAddress
             ),

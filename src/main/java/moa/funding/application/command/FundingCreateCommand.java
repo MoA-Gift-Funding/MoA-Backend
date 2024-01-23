@@ -14,7 +14,6 @@ public record FundingCreateCommand(
     String description,
     LocalDate endDate,
     BigDecimal maximumPrice,
-    BigDecimal minimumPrice,
     Address deliveryAddress,
     Visibility visible,
     FundingStatus status
