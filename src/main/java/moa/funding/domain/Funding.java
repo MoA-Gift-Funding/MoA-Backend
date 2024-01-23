@@ -32,7 +32,7 @@ import moa.product.domain.Product;
 @Entity
 public class Funding extends RootEntity<Long> {
 
-    public static final Price MINIMUM_PRICE = new Price("5000");
+    public static final Price MINIMUM_PRICE = Price.from("5000");
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -71,9 +71,17 @@ public class Funding extends RootEntity<Long> {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    public Funding(String title, String description, LocalDate endDate, Price maximumPrice,
-                   Address deliveryAddress, Visibility visible, FundingStatus status,
-                   Member member, Product product) {
+    public Funding(
+            String title,
+            String description,
+            LocalDate endDate,
+            Price maximumPrice,
+            Address deliveryAddress,
+            Visibility visible,
+            FundingStatus status,
+            Member member,
+            Product product
+    ) {
         this.title = title;
         this.description = description;
         this.endDate = endDate;

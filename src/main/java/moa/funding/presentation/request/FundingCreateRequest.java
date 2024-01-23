@@ -38,7 +38,7 @@ public record FundingCreateRequest(
                 title,
                 description,
                 LocalDate.parse(endDate),
-                new Price(maximumPrice),
+                Price.from(maximumPrice),
                 new Address(
                         zonecode, roadAddress, jibunAddress, detailAddress
                 ),

@@ -34,7 +34,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         super.setUp();
         준호 = signup("준호", "010-2222-2222");
         준호_token = login(준호);
-        상품 = productRepository.save(new Product("에어팟 맥스", new Price(700000L)));
+        상품 = productRepository.save(new Product("에어팟 맥스", Price.from(700000L)));
     }
 
     @Nested

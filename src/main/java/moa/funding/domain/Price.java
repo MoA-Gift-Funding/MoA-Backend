@@ -3,24 +3,18 @@ package moa.funding.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.math.BigDecimal;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Getter
 @Embeddable
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Price {
+public record Price(
+        @Column(name = "price") BigDecimal value
+) {
 
-    @Column(name = "price")
-    private BigDecimal value;
-
-    public Price(String value) {
-        this.value = new BigDecimal(value);
+    public static Price from(String value) {
+        return new Price(new BigDecimal(value));
     }
 
-    public Price(Long value) {
-        this.value = BigDecimal.valueOf(value);
+    public static Price from(Long value) {
+        return new Price(BigDecimal.valueOf(value));
     }
 
     public boolean isGreaterThan(Price price) {
