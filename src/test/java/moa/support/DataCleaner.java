@@ -1,4 +1,4 @@
-package support;
+package moa.support;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;

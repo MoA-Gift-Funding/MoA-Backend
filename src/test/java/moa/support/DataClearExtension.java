@@ -1,4 +1,4 @@
-package support;
+package moa.support;
 
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -7,7 +7,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class DataClearExtension implements BeforeEachCallback {
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
+    public void beforeEach(ExtensionContext context) {
         DataCleaner dataCleaner = getDataCleaner(context);
         dataCleaner.clear();
     }
