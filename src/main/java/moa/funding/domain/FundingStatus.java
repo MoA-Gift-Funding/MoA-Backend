@@ -5,6 +5,6 @@ public enum FundingStatus {
     PREPARING,
     PROCESSING,
     DONE,
-    EXIT,
+    CANCELLED,
     ;
 }
