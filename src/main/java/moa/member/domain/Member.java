@@ -6,7 +6,6 @@ import static moa.member.domain.MemberStatus.PRESIGNED_UP;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.member.exception.MemberExceptionType.ALREADY_SIGNED_UP;
 import static moa.member.exception.MemberExceptionType.NOT_VERIFIED_PHONE;
-import static moa.member.exception.MemberExceptionType.NO_AUTHORITY_FOR_NOT_SIGNED_UP;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -121,17 +120,10 @@ public class Member extends RootEntity<Long> {
             String birthday,
             String profileImageUrl
     ) {
-        validateSignedUp();
         this.nickname = nickname;
         this.birthyear = birthyear;
         this.birthday = birthday;
         this.profileImageUrl = profileImageUrl;
-    }
-
-    public void validateSignedUp() {
-        if (status != SIGNED_UP) {
-            throw new MemberException(NO_AUTHORITY_FOR_NOT_SIGNED_UP);
-        }
     }
 
     public String getPhoneNumber() {

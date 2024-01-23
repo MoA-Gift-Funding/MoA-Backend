@@ -1,4 +1,4 @@
-package moa.global.auth;
+package moa.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,7 +1,10 @@
 package moa.member.presentation;
 
+import static moa.member.domain.MemberStatus.PRESIGNED_UP;
+import static moa.member.domain.MemberStatus.SIGNED_UP;
+
 import lombok.RequiredArgsConstructor;
-import moa.global.auth.Auth;
+import moa.auth.Auth;
 import moa.member.application.MemberService;
 import moa.member.presentation.request.MemberUpdateRequest;
 import moa.member.presentation.request.SendPhoneVerificationNumberRequest;
@@ -27,7 +30,7 @@ public class MemberController implements MemberApi {
 
     @GetMapping("/my")
     public ResponseEntity<MemberResponse> findMyProfile(
-            @Auth Long memberId
+            @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId
     ) {
         MemberResponse response = memberQueryService.findMyProfile(memberId);
         return ResponseEntity.ok(response);
@@ -35,7 +38,7 @@ public class MemberController implements MemberApi {
 
     @PostMapping("/verification/phone/send-number")
     public ResponseEntity<Void> sendPhoneVerificationNumber(
-            @Auth Long memberId,
+            @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId,
             @RequestBody SendPhoneVerificationNumberRequest request
     ) {
         memberService.sendPhoneVerificationNumber(memberId, request.phoneNumber());
@@ -44,7 +47,7 @@ public class MemberController implements MemberApi {
 
     @PostMapping("/verification/phone/verify")
     public ResponseEntity<Void> verifyPhone(
-            @Auth Long memberId,
+            @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId,
             @RequestBody VerifyPhoneRequest request
     ) {
         memberService.verifyPhone(request.toCommand(memberId));
@@ -53,7 +56,7 @@ public class MemberController implements MemberApi {
 
     @PostMapping
     public ResponseEntity<Void> signup(
-            @Auth Long memberId,
+            @Auth(permit = {PRESIGNED_UP}) Long memberId,
             @RequestBody SignupRequest request
     ) {
         memberService.signup(request.toCommand(memberId));
@@ -62,7 +65,7 @@ public class MemberController implements MemberApi {
 
     @PutMapping
     public ResponseEntity<Void> update(
-            @Auth Long memberId,
+            @Auth(permit = {SIGNED_UP}) Long memberId,
             @RequestBody MemberUpdateRequest request
     ) {
         memberService.update(request.toCommand(memberId));
