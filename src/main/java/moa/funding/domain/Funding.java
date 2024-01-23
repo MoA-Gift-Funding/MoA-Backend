@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import static jakarta.persistence.EnumType.STRING;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -14,7 +16,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import moa.global.domain.RootEntity;
@@ -49,9 +50,11 @@ public class Funding extends RootEntity<Long> {
     private Address deliveryAddress;
 
     @Column(name = "visible")
+    @Enumerated(STRING)
     private Visibility visible;
 
     @Column(name = "status")
+    @Enumerated(STRING)
     private FundingStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -63,7 +66,6 @@ public class Funding extends RootEntity<Long> {
     //  @JoinColumn(name = "product_id")
     //  private Product product;
 
-    @Builder
     public Funding(String title, String description, LocalDate endDate, BigDecimal maximumPrice,
                    BigDecimal minimumPrice, Address deliveryAddress, Visibility visible, FundingStatus status,
                    Member member) {
