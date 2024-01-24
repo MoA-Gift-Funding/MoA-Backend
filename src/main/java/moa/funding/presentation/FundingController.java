@@ -2,6 +2,7 @@ package moa.funding.presentation;
 
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
@@ -48,12 +49,12 @@ public class FundingController implements FundingApi {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/{fundingId}")
+    @GetMapping("/{id}")
     public ResponseEntity<FundingResponse> findFunding(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @PathVariable Long fundingId
+            @Parameter(description = "펀딩 ID") @PathVariable Long id
     ) {
-        var result = fundingQueryService.findFundingById(memberId, fundingId);
+        var result = fundingQueryService.findFundingById(memberId, id);
         return ResponseEntity.ok(result);
     }
 }
