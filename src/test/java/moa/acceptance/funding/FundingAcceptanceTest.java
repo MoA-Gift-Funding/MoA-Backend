@@ -1,14 +1,20 @@
 package moa.acceptance.funding;
 
 import static moa.acceptance.AcceptanceSupport.assertStatus;
+import static moa.acceptance.funding.FundingAcceptanceSteps.나의_펀딩목록_조회_요청;
 import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_생성_요청;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 import java.time.LocalDate;
 import moa.acceptance.AcceptanceTest;
+import moa.delivery.domain.Delivery;
+import moa.delivery.domain.DeliveryRepository;
 import moa.funding.domain.Price;
 import moa.funding.presentation.request.FundingCreateRequest;
+import moa.global.presentation.PageResponse;
 import moa.member.domain.Member;
 import moa.product.domain.Product;
 import moa.product.domain.ProductRepository;
@@ -25,8 +31,12 @@ public class FundingAcceptanceTest extends AcceptanceTest {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private DeliveryRepository deliveryRepository;
+
     private Member 준호;
     private Product 상품;
+    private Delivery 배송_정보;
     private String 준호_token;
 
     @BeforeEach
@@ -35,6 +45,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         준호 = signup("준호", "010-2222-2222");
         준호_token = login(준호);
         상품 = productRepository.save(new Product("에어팟 맥스", Price.from(700000L)));
+        배송_정보 = deliveryRepository.save(new Delivery("한진 택배"));
     }
 
     @Nested
@@ -52,7 +63,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     "주노", "010-1234-5678",
                     "13529", "경기 성남시 분당구 판교역로 166 (카카오 판교 아지트)",
                     "경기 성남시 분당구 백현동 532", "판교 아지트 3층 택배함",
-                    "택배함 옆에 놔주세요"
+                    "택배함 옆에 놔주세요",
+                    배송_정보.getId()
             );
 
             // when
@@ -74,7 +86,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     "주노", "010-1234-5678",
                     "13529", "경기 성남시 분당구 판교역로 166 (카카오 판교 아지트)",
                     "경기 성남시 분당구 백현동 532", "판교 아지트 3층 택배함",
-                    "택배함 옆에 놔주세요"
+                    "택배함 옆에 놔주세요",
+                    배송_정보.getId()
             );
 
             // when
@@ -96,7 +109,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     "주노", "010-1234-5678",
                     "13529", "경기 성남시 분당구 판교역로 166 (카카오 판교 아지트)",
                     "경기 성남시 분당구 백현동 532", "판교 아지트 3층 택배함",
-                    "택배함 옆에 놔주세요"
+                    "택배함 옆에 놔주세요",
+                    배송_정보.getId()
             );
 
             // when
@@ -104,6 +118,37 @@ public class FundingAcceptanceTest extends AcceptanceTest {
 
             // then
             assertStatus(response, BAD_REQUEST);
+        }
+    }
+
+    @Nested
+    class 펀딩_조회_API {
+
+        @Test
+        void 사용자의_펀딩을_조회한다() {
+            // given
+            var request = new FundingCreateRequest(
+                    상품.getId(),
+                    "주노의 에어팟 장만",
+                    "저에게 에어팟 맥스를 선물할 기회!!",
+                    LocalDate.now().plusDays(5L).toString(),
+                    "10000",
+                    "주노", "010-1234-5678",
+                    "13529", "경기 성남시 분당구 판교역로 166 (카카오 판교 아지트)",
+                    "경기 성남시 분당구 백현동 532", "판교 아지트 3층 택배함",
+                    "택배함 옆에 놔주세요",
+                    배송_정보.getId()
+            );
+            펀딩_생성_요청(준호_token, request);
+            펀딩_생성_요청(준호_token, request);
+
+            // when
+            var response = 나의_펀딩목록_조회_요청(준호_token, request);
+
+            // then
+            assertStatus(response, OK);
+            var result = response.as(PageResponse.class);
+            assertThat(result.content()).hasSize(2);
         }
     }
 }

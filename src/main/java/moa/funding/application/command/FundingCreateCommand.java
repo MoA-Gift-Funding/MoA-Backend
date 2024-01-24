@@ -1,6 +1,7 @@
 package moa.funding.application.command;
 
 import java.time.LocalDate;
+import moa.delivery.domain.Delivery;
 import moa.funding.domain.Address;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingStatus;
@@ -12,6 +13,7 @@ import moa.product.domain.Product;
 public record FundingCreateCommand(
         Long memberId,
         Long productId,
+        Long deliveryId,
         String title,
         String description,
         LocalDate endDate,
@@ -21,7 +23,7 @@ public record FundingCreateCommand(
         FundingStatus status
 ) {
 
-    public Funding toFunding(Member member, Product product) {
+    public Funding toFunding(Member member, Product product, Delivery delivery) {
         return new Funding(
                 title,
                 description,
@@ -31,7 +33,8 @@ public record FundingCreateCommand(
                 visible,
                 status,
                 member,
-                product
+                product,
+                delivery
         );
     }
 }

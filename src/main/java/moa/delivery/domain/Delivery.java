@@ -1,38 +1,28 @@
-package moa.product.domain;
-
-import static jakarta.persistence.GenerationType.IDENTITY;
+package moa.delivery.domain;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import moa.funding.domain.Price;
 import moa.global.domain.RootEntity;
 
+@Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity
-public class Product extends RootEntity<Long> {
+public class Delivery extends RootEntity<Long> {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
     private String name;
 
-    @Embedded
-    private Price price;
-
-    @Column
-    private String imageUrl;
-
-    public Product(String name, Price price) {
+    public Delivery(String name) {
         this.name = name;
-        this.price = price;
     }
 }

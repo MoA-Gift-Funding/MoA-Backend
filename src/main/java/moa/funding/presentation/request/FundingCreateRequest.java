@@ -28,13 +28,15 @@ public record FundingCreateRequest(
         @Schema(description = "도로명 주소", example = "경기 성남시 분당구 판교역로 166 (카카오 판교 아지트)") String roadAddress,
         @Schema(description = "지번 주소", example = "경기 성남시 분당구 백현동 532") String jibunAddress,
         @Schema(description = "상세주소", example = "판교 아지트 3층 택배함") String detailAddress,
-        @Schema(description = "배송 문의", example = "택배함 옆에 놔주세요") String message
+        @Schema(description = "배송 문의", example = "택배함 옆에 놔주세요") String message,
+        @Schema(description = "배송지 ID", example = "1") Long deliveryId
 ) {
 
     public FundingCreateCommand toCommand(Long memberId) {
         return new FundingCreateCommand(
                 memberId,
                 productId,
+                deliveryId,
                 title,
                 description,
                 LocalDate.parse(endDate),

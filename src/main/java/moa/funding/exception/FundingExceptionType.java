@@ -13,6 +13,7 @@ public enum FundingExceptionType implements MoaExceptionType {
     INVALID_FUNDING_STATUS(BAD_REQUEST, "펀딩 상태가 유효하지 않습니다."),
     MAXIMUM_PRICE_LESS_THAN_MINIMUM(BAD_REQUEST, "최대 펀딩 금액이 기준 금액보다 작습니다."),
     MAXIMUM_PRICE_GREATER_THAN_PRODUCT(BAD_REQUEST, "최대 펀딩 금액이 상품 금액보다 큽니다."),
+    MAXIMUM_PRICE_ZERO(BAD_REQUEST, "최대 펀딩 금액은 0이 될 수 없습니다."),
     ;
 
     private final HttpStatus httpStatus;

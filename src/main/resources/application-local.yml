@@ -56,6 +56,6 @@ springdoc:
 
 aws:
   s3:
-    bucket:
-    image-path:
-    presigned-url-expires-minutes:
+    bucket: my-bucket
+    image-path: images/
+    presigned-url-expires-minutes: 10
