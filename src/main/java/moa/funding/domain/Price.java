@@ -18,23 +18,23 @@ public record Price(
         return new Price(BigDecimal.valueOf(value));
     }
 
-    public boolean isGreaterThan(Price price) {
-        return this.value.compareTo(price.value) > 0;
+    public boolean isGreaterThan(Price other) {
+        return this.value.compareTo(other.value) > 0;
     }
 
-    public boolean isLessThan(Price price) {
-        return this.value.compareTo(price.value) < 0;
-    }
-
-    public BigDecimal getValue() {
-        return value;
+    public boolean isLessThan(Price other) {
+        return this.value.compareTo(other.value) < 0;
     }
 
     public Price add(Price price) {
         return new Price(this.value.add(price.value));
     }
 
-    public Price divide(Price price) {
-        return new Price(this.value.divide(price.value));
+    public Price minus(Price other) {
+        return new Price(this.value.min(other.value));
+    }
+
+    public Price divide(Price other) {
+        return new Price(this.value.divide(other.value));
     }
 }
