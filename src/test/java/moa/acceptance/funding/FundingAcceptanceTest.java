@@ -1,7 +1,9 @@
 package moa.acceptance.funding;
 
+import static moa.acceptance.AcceptanceSupport.ID를_추출한다;
 import static moa.acceptance.AcceptanceSupport.assertStatus;
 import static moa.acceptance.funding.FundingAcceptanceSteps.나의_펀딩목록_조회_요청;
+import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_상세_조회_요청;
 import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_생성_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -125,7 +127,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
     class 펀딩_조회_API {
 
         @Test
-        void 사용자의_펀딩을_조회한다() {
+        void 사용자의_펀딩_목록을_조회한다() {
             // given
             var request = new FundingCreateRequest(
                     상품.getId(),
@@ -143,12 +145,36 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             펀딩_생성_요청(준호_token, request);
 
             // when
-            var response = 나의_펀딩목록_조회_요청(준호_token, request);
+            var response = 나의_펀딩목록_조회_요청(준호_token);
 
             // then
             assertStatus(response, OK);
             var result = response.as(PageResponse.class);
             assertThat(result.content()).hasSize(2);
+        }
+
+        @Test
+        void 펀딩_상세_정보를_조회한다() {
+            // given
+            var request = new FundingCreateRequest(
+                    상품.getId(),
+                    "주노의 에어팟 장만",
+                    "저에게 에어팟 맥스를 선물할 기회!!",
+                    LocalDate.now().plusDays(5L).toString(),
+                    "10000",
+                    "주노", "010-1234-5678",
+                    "13529", "경기 성남시 분당구 판교역로 166 (카카오 판교 아지트)",
+                    "경기 성남시 분당구 백현동 532", "판교 아지트 3층 택배함",
+                    "택배함 옆에 놔주세요",
+                    배송_정보.getId()
+            );
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
+
+            // when
+            var response = 펀딩_상세_조회_요청(준호_token, fundingId);
+
+            // then
+            assertStatus(response, OK);
         }
     }
 }

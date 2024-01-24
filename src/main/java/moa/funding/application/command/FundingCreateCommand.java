@@ -17,7 +17,7 @@ public record FundingCreateCommand(
         String title,
         String description,
         LocalDate endDate,
-        Price maximumPrice,
+        Price maximumAmount,
         Address deliveryAddress,
         Visibility visible,
         FundingStatus status
@@ -28,10 +28,10 @@ public record FundingCreateCommand(
                 title,
                 description,
                 endDate,
-                maximumPrice,
-                deliveryAddress,
                 visible,
                 status,
+                maximumAmount,
+                deliveryAddress,
                 member,
                 product,
                 delivery

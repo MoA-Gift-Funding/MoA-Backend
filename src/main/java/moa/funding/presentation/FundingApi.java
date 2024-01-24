@@ -13,12 +13,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import moa.auth.Auth;
 import moa.funding.presentation.request.FundingCreateRequest;
+import moa.funding.query.response.FundingResponse;
 import moa.funding.query.response.MyFundingsResponse.MyFundingDetail;
 import moa.global.presentation.PageResponse;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -52,9 +55,25 @@ public interface FundingApi {
             }
     )
     @Operation(summary = "내가 개설한 펀딩 조회")
-    @PostMapping
-    ResponseEntity<PageResponse<MyFundingDetail>> findFunding(
+    @GetMapping
+    ResponseEntity<PageResponse<MyFundingDetail>> findMyFundings(
             @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId,
             @ParameterObject @PageableDefault(size = 10) Pageable pageable
+    );
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "403", description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+            }
+    )
+    @Operation(summary = "펀딩 상세 조회")
+    @GetMapping("/{fundingId}")
+    ResponseEntity<FundingResponse> findFunding(
+            @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId,
+            @PathVariable Long fundingId
     );
 }

@@ -9,8 +9,8 @@ import static moa.funding.domain.Price.ZERO;
 import static moa.funding.domain.Price.from;
 import static moa.funding.exception.FundingExceptionType.INVALID_END_DATE;
 import static moa.funding.exception.FundingExceptionType.INVALID_FUNDING_STATUS;
-import static moa.funding.exception.FundingExceptionType.MAXIMUM_PRICE_GREATER_THAN_PRODUCT;
-import static moa.funding.exception.FundingExceptionType.MAXIMUM_PRICE_LESS_THAN_MINIMUM;
+import static moa.funding.exception.FundingExceptionType.MAXIMUM_AMOUNT_GREATER_THAN_PRODUCT;
+import static moa.funding.exception.FundingExceptionType.MAXIMUM_AMOUNT_LESS_THAN_MINIMUM;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -39,7 +39,7 @@ import moa.product.domain.Product;
 @NoArgsConstructor(access = PROTECTED)
 public class Funding extends RootEntity<Long> {
 
-    private static final Price MINIMUM_PRICE = from("5000");
+    private static final Price MINIMUM_AMOUNT = from("5000");
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -55,13 +55,6 @@ public class Funding extends RootEntity<Long> {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "maximum_price"))
-    private Price maximumPrice;
-
-    @Embedded
-    private Address deliveryAddress;
-
     @Column(name = "visible")
     @Enumerated(STRING)
     private Visibility visible;
@@ -69,6 +62,17 @@ public class Funding extends RootEntity<Long> {
     @Column(name = "status")
     @Enumerated(STRING)
     private FundingStatus status;
+
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "maximum_amount"))
+    private Price maximumAmount;
+
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "minimum_amount"))
+    private Price minimumAmount;
+
+    @Embedded
+    private Address deliveryAddress;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
@@ -90,10 +94,10 @@ public class Funding extends RootEntity<Long> {
             String title,
             String description,
             LocalDate endDate,
-            Price maximumPrice,
-            Address deliveryAddress,
             Visibility visible,
             FundingStatus status,
+            Price maximumAmount,
+            Address deliveryAddress,
             Member member,
             Product product,
             Delivery delivery
@@ -101,22 +105,23 @@ public class Funding extends RootEntity<Long> {
         this.title = title;
         this.description = description;
         this.endDate = endDate;
-        this.maximumPrice = maximumPrice;
-        this.deliveryAddress = deliveryAddress;
         this.visible = visible;
         this.status = status;
+        this.maximumAmount = maximumAmount;
+        this.minimumAmount = MINIMUM_AMOUNT;
+        this.deliveryAddress = deliveryAddress;
         this.member = member;
         this.product = product;
         this.delivery = delivery;
     }
 
     public void create() {
-        if (maximumPrice.isLessThan(MINIMUM_PRICE)) {
-            throw new FundingException(MAXIMUM_PRICE_LESS_THAN_MINIMUM);
+        if (maximumAmount.isLessThan(MINIMUM_AMOUNT)) {
+            throw new FundingException(MAXIMUM_AMOUNT_LESS_THAN_MINIMUM);
         }
 
-        if (maximumPrice.isGreaterThan(product.getPrice())) {
-            throw new FundingException(MAXIMUM_PRICE_GREATER_THAN_PRODUCT);
+        if (maximumAmount.isGreaterThan(product.getPrice())) {
+            throw new FundingException(MAXIMUM_AMOUNT_GREATER_THAN_PRODUCT);
         }
 
         if (endDate.isBefore(LocalDate.now())) {
@@ -138,6 +143,6 @@ public class Funding extends RootEntity<Long> {
         Price fundedAmount = participants.stream()
                 .map(FundingParticipant::getAmount)
                 .reduce(ZERO, Price::add);
-        return fundedAmount.divide(maximumPrice).getValue().doubleValue() * 100;
+        return fundedAmount.divide(maximumAmount).value().doubleValue() * 100;
     }
 }

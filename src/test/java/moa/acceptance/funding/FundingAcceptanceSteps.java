@@ -16,10 +16,16 @@ public class FundingAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 나의_펀딩목록_조회_요청(String 준호_Token, Object request) {
+    public static ExtractableResponse<Response> 나의_펀딩목록_조회_요청(String 준호_Token) {
         return given(준호_Token)
-                .body(request)
                 .get("/fundings/my")
+                .then()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 펀딩_상세_조회_요청(String 준호_Token, Long fundingId) {
+        return given(준호_Token)
+                .get("/fundings/{fundingId}", fundingId)
                 .then()
                 .extract();
     }
