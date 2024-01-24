@@ -9,12 +9,14 @@ import moa.auth.Auth;
 import moa.funding.application.FundingService;
 import moa.funding.presentation.request.FundingCreateRequest;
 import moa.funding.query.FundingQueryService;
+import moa.funding.query.response.FundingResponse;
 import moa.funding.query.response.MyFundingsResponse.MyFundingDetail;
 import moa.global.presentation.PageResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,11 +40,20 @@ public class FundingController implements FundingApi {
     }
 
     @GetMapping("/my")
-    public ResponseEntity<PageResponse<MyFundingDetail>> findFunding(
+    public ResponseEntity<PageResponse<MyFundingDetail>> findMyFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
             @PageableDefault(size = 10) Pageable pageable
     ) {
         var result = PageResponse.from(fundingQueryService.findMyFundings(memberId, pageable));
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{fundingId}")
+    public ResponseEntity<FundingResponse> findFunding(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            @PathVariable Long fundingId
+    ) {
+        var result = fundingQueryService.findFundingById(memberId, fundingId);
         return ResponseEntity.ok(result);
     }
 }
