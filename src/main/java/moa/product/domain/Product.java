@@ -28,6 +28,9 @@ public class Product extends RootEntity<Long> {
     @Embedded
     private Price price;
 
+    @Column
+    private String imageUrl;
+
     public Product(String name, Price price) {
         this.name = name;
         this.price = price;

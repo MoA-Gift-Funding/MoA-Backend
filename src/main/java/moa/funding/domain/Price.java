@@ -9,6 +9,8 @@ public record Price(
         @Column(name = "price") BigDecimal value
 ) {
 
+    public static Price ZERO = new Price(BigDecimal.ZERO);
+
     public static Price from(String value) {
         return new Price(new BigDecimal(value));
     }
@@ -25,11 +27,15 @@ public record Price(
         return this.value.compareTo(price.value) < 0;
     }
 
-    public Long getValue() {
-        return value.longValue();
+    public BigDecimal getValue() {
+        return value;
+    }
+    
+    public Price add(Price price) {
+        return new Price(this.value.add(price.value));
     }
 
-    public boolean isZero() {
-        return this.value.compareTo(BigDecimal.ZERO) == 0;
+    public Price divide(Price price) {
+        return new Price(this.value.divide(price.value));
     }
 }

@@ -17,19 +17,23 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import moa.delivery.domain.Delivery;
 import moa.funding.exception.FundingException;
 import moa.global.domain.RootEntity;
 import moa.member.domain.Member;
 import moa.product.domain.Product;
 
+@Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity
 public class Funding extends RootEntity<Long> {
 
     private static final Price MINIMUM_PRICE = Price.from("5000");
@@ -71,6 +75,14 @@ public class Funding extends RootEntity<Long> {
     @JoinColumn(name = "product_id")
     private Product product;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "delivery_id")
+    private Delivery delivery;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "funding_id")
+    private List<FundingParticipant> participants = new ArrayList<>();
+
     public Funding(
             String title,
             String description,
@@ -80,7 +92,8 @@ public class Funding extends RootEntity<Long> {
             Visibility visible,
             FundingStatus status,
             Member member,
-            Product product
+            Product product,
+            Delivery delivery
     ) {
         this.title = title;
         this.description = description;
@@ -91,6 +104,7 @@ public class Funding extends RootEntity<Long> {
         this.status = status;
         this.member = member;
         this.product = product;
+        this.delivery = delivery;
     }
 
     public void create() {
@@ -111,4 +125,17 @@ public class Funding extends RootEntity<Long> {
         }
     }
 
+    public Price getFundedAmount() {
+        return participants.stream()
+                .map(FundingParticipant::getAmount)
+                .reduce(Price.ZERO, Price::add);
+    }
+
+    public Double getFundingRate() {
+        Price fundedAmount = participants.stream()
+                .map(FundingParticipant::getAmount)
+                .reduce(Price.ZERO, Price::add);
+
+        return fundedAmount.divide(maximumPrice).getValue().doubleValue() * 100;
+    }
 }

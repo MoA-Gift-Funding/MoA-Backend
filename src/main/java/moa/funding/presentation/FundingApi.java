@@ -11,6 +11,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import moa.auth.Auth;
 import moa.funding.presentation.request.FundingCreateRequest;
+import moa.funding.query.response.MyFundingsResponse.MyFundingDetail;
+import moa.global.presentation.PageResponse;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,5 +37,21 @@ public interface FundingApi {
     ResponseEntity<Void> createFunding(
             @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId,
             @Valid @RequestBody FundingCreateRequest request
+    );
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "400"),
+                    @ApiResponse(responseCode = "401"),
+                    @ApiResponse(responseCode = "403", description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)"),
+                    @ApiResponse(responseCode = "404"),
+            }
+    )
+    @Operation(summary = "내가 개설한 펀딩 조회")
+    @PostMapping
+    ResponseEntity<PageResponse<MyFundingDetail>> findFunding(
+            @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId,
+            @PageableDefault(size = 10) Pageable pageable
     );
 }
