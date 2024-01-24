@@ -55,13 +55,6 @@ public class Funding extends RootEntity<Long> {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "maximum_price"))
-    private Price maximumPrice;
-
-    @Embedded
-    private Address deliveryAddress;
-
     @Column(name = "visible")
     @Enumerated(STRING)
     private Visibility visible;
@@ -69,6 +62,13 @@ public class Funding extends RootEntity<Long> {
     @Column(name = "status")
     @Enumerated(STRING)
     private FundingStatus status;
+
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "maximum_price"))
+    private Price maximumPrice;
+
+    @Embedded
+    private Address deliveryAddress;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
