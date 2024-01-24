@@ -38,4 +38,8 @@ public record Price(
     public Price divide(Price price) {
         return new Price(this.value.divide(price.value));
     }
+
+    public boolean isEqual(Price other) {
+        return this.value.compareTo(other.getValue()) == 0;
+    }
 }
