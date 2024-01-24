@@ -3,6 +3,7 @@ package moa.acceptance.funding;
 import static moa.acceptance.AcceptanceSupport.assertStatus;
 import static moa.acceptance.funding.FundingAcceptanceSteps.나의_펀딩목록_조회_요청;
 import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_생성_요청;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -13,10 +14,10 @@ import moa.delivery.domain.Delivery;
 import moa.delivery.domain.DeliveryRepository;
 import moa.funding.domain.Price;
 import moa.funding.presentation.request.FundingCreateRequest;
+import moa.global.presentation.PageResponse;
 import moa.member.domain.Member;
 import moa.product.domain.Product;
 import moa.product.domain.ProductRepository;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -146,12 +147,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
 
             // then
             assertStatus(response, OK);
-            SoftAssertions.assertSoftly(
-                softly -> {
-                    softly.assertThat(response.jsonPath().getList("content").size())
-                            .isEqualTo(2);
-                }
-            );
+            var result = response.as(PageResponse.class);
+            assertThat(result.content()).hasSize(2);
         }
     }
 }
