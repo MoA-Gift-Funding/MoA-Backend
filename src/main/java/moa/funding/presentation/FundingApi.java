@@ -53,7 +53,7 @@ public interface FundingApi {
     )
     @Operation(summary = "내가 개설한 펀딩 조회")
     @PostMapping
-    ResponseEntity<PageResponse<MyFundingDetail>> findFunding(
+    ResponseEntity<PageResponse<MyFundingDetail>> findMyFundings(
             @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId,
             @ParameterObject @PageableDefault(size = 10) Pageable pageable
     );
