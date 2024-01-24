@@ -16,7 +16,6 @@ public record FriendResponse(
         @Schema(example = "0104") @Nullable String birthday,
         @Schema(example = "2000") @Nullable String birthyear
 ) {
-
     public static List<FriendResponse> from(List<Friend> friends) {
         return friends.stream()
                 .map(FriendResponse::from)

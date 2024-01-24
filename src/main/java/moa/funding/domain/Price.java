@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 public record Price(
         @Column(name = "price") BigDecimal value
 ) {
-
     public static Price ZERO = new Price(BigDecimal.ZERO);
 
     public static Price from(String value) {
@@ -30,16 +29,12 @@ public record Price(
     public BigDecimal getValue() {
         return value;
     }
-    
+
     public Price add(Price price) {
         return new Price(this.value.add(price.value));
     }
 
     public Price divide(Price price) {
         return new Price(this.value.divide(price.value));
-    }
-
-    public boolean isEqual(Price other) {
-        return this.value.compareTo(other.getValue()) == 0;
     }
 }

@@ -30,10 +30,8 @@ public class SwaggerConfig {
                 .description("토큰값을 입력하여 인증을 활성화할 수 있습니다.")
                 .bearerFormat("JWT")
         );
-
         Server server = new Server();
         server.setUrl(serverUrl);
-
         return new OpenAPI()
                 .components(new Components())
                 .info(apiInfo())

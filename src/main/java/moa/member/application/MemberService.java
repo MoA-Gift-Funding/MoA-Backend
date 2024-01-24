@@ -3,8 +3,8 @@ package moa.member.application;
 
 import lombok.RequiredArgsConstructor;
 import moa.member.application.command.MemberUpdateCommand;
+import moa.member.application.command.PhoneVerifyCommand;
 import moa.member.application.command.SignupCommand;
-import moa.member.application.command.VerifyPhoneCommand;
 import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import moa.member.domain.MemberValidator;
@@ -16,9 +16,9 @@ import moa.member.domain.phone.PhoneVerificationNumberSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
-@Transactional
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -36,7 +36,7 @@ public class MemberService {
         sender.sendVerificationNumber(phone, verificationNumber);
     }
 
-    public void verifyPhone(VerifyPhoneCommand command) {
+    public void verifyPhone(PhoneVerifyCommand command) {
         Member member = memberRepository.getById(command.memberId());
         PhoneVerificationNumber verificationNumber = phoneVerificationNumberRepository.getByMember(member);
         verificationNumber.verify(command.verificationNumber());

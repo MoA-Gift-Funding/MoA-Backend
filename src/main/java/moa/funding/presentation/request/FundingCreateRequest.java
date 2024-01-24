@@ -31,7 +31,6 @@ public record FundingCreateRequest(
         @Schema(description = "배송 문의", example = "택배함 옆에 놔주세요") String message,
         @Schema(description = "배송지 ID", example = "1") Long deliveryId
 ) {
-
     public FundingCreateCommand toCommand(Long memberId) {
         return new FundingCreateCommand(
                 memberId,

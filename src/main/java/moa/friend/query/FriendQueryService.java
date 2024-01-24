@@ -7,9 +7,9 @@ import moa.friend.query.response.FriendResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Service
 public class FriendQueryService {
 
     private final FriendQueryRepository friendQueryRepository;

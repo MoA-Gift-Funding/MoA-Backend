@@ -14,7 +14,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import moa.global.domain.RootEntity;
@@ -22,10 +21,10 @@ import moa.member.domain.phone.Phone;
 import moa.member.exception.MemberException;
 import org.hibernate.annotations.SQLDelete;
 
+@Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE member SET status = 'WITHDRAW' WHERE id = ?")
-@Entity
 public class Member extends RootEntity<Long> {
 
     @Id
@@ -56,7 +55,6 @@ public class Member extends RootEntity<Long> {
     @Enumerated(STRING)
     private MemberStatus status;
 
-    @Builder
     public Member(
             OauthId oauthId,
             String email,

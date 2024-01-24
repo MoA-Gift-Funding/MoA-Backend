@@ -14,19 +14,6 @@ public record NaverMemberResponse(
         String message,
         Response response
 ) {
-
-    public Member toMember() {
-        return Member.builder()
-                .oauthId(new OauthId(String.valueOf(response.id), NAVER))
-                .email(response.email)
-                .nickname(response.nickname)
-                .birthyear(response.birthyear)
-                .birthday(response.birthday.replace("-", ""))
-                .profileImageUrl(response.profileImage)
-                .phoneNumber(response.mobile)
-                .build();
-    }
-
     @JsonNaming(value = SnakeCaseStrategy.class)
     public record Response(
             String id,
@@ -40,5 +27,17 @@ public record NaverMemberResponse(
             String birthyear,
             String mobile
     ) {
+    }
+
+    public Member toMember() {
+        return new Member(
+                new OauthId(String.valueOf(response.id), NAVER),
+                response.email,
+                response.nickname,
+                response.birthyear,
+                response.birthday.replace("-", ""),
+                response.profileImage,
+                response.mobile
+        );
     }
 }

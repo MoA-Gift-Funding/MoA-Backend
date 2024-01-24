@@ -5,8 +5,8 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@RequiredArgsConstructor
 @Configuration
+@RequiredArgsConstructor
 public class WebLogConfig {
 
     private final RequestLoggingFilter requestLoggingFilter;

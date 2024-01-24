@@ -13,9 +13,9 @@ import moa.product.domain.Product;
 import moa.product.domain.ProductRepository;
 import org.springframework.stereotype.Service;
 
-@RequiredArgsConstructor
-@Transactional
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class FundingService {
 
     private final MemberRepository memberRepository;

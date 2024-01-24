@@ -21,10 +21,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DisplayName("친구 서비스 (FriendService) 은(는)")
-@SuppressWarnings("NonAsciiCharacters")
-@DisplayNameGeneration(ReplaceUnderscores.class)
 @ApplicationTest
+@SuppressWarnings("NonAsciiCharacters")
+@DisplayName("친구 서비스 (FriendService) 은(는)")
+@DisplayNameGeneration(ReplaceUnderscores.class)
 class FriendServiceTest {
 
     @Autowired

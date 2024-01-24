@@ -1,9 +1,10 @@
 package moa.global.s3;
 
+import static software.amazon.awssdk.regions.Region.AP_NORTHEAST_2;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.InstanceProfileCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 @Configuration
@@ -16,6 +17,6 @@ public class AwsS3Config {
     public S3Presigner.Builder s3PresignerBuilder() {
         return S3Presigner.builder()
                 .credentialsProvider(InstanceProfileCredentialsProvider.create())
-                .region(Region.AP_NORTHEAST_2);
+                .region(AP_NORTHEAST_2);
     }
 }

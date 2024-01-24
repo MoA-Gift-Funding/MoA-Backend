@@ -8,8 +8,8 @@ import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class NewFriendsFinder {
 
     private final MemberRepository memberRepository;

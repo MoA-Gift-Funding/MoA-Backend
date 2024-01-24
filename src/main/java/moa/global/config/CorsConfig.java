@@ -1,7 +1,12 @@
 package moa.global.config;
 
+import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.HEAD;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
+
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -19,11 +24,11 @@ public class CorsConfig implements WebMvcConfigurer {
                         "https://server.giftmoa.co.kr/"
                 )
                 .allowedMethods(
-                        HttpMethod.GET.name(),
-                        HttpMethod.HEAD.name(),
-                        HttpMethod.POST.name(),
-                        HttpMethod.PUT.name(),
-                        HttpMethod.DELETE.name()
+                        GET.name(),
+                        HEAD.name(),
+                        POST.name(),
+                        PUT.name(),
+                        DELETE.name()
                 );
     }
 }

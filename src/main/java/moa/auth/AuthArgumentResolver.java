@@ -1,6 +1,7 @@
 package moa.auth;
 
 import static java.util.Objects.requireNonNull;
+import static moa.auth.AuthExceptionType.FORBIDDEN;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -18,8 +19,8 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final MemberRepository memberRepository;
@@ -47,6 +48,6 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
         }
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         log.info("{} 상태의 회원의 [{} {}] 접근 차단.", member.getStatus(), request.getMethod(), request.getRequestURI());
-        throw new AuthException(AuthExceptionType.FORBIDDEN);
+        throw new AuthException(FORBIDDEN);
     }
 }

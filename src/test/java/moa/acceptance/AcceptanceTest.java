@@ -22,9 +22,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@DisplayNameGeneration(ReplaceUnderscores.class)
 @ExtendWith(DataClearExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@DisplayNameGeneration(ReplaceUnderscores.class)
 public abstract class AcceptanceTest {
 
     @LocalServerPort
@@ -45,11 +45,15 @@ public abstract class AcceptanceTest {
     }
 
     protected Member signup(String name, String phone) {
-        Member member = Member.builder()
-                .oauthId(new OauthId(UUID.randomUUID().toString(), KAKAO))
-                .nickname(name)
-                .phoneNumber(phone)
-                .build();
+        Member member = new Member(
+                new OauthId(UUID.randomUUID().toString(), KAKAO),
+                null,
+                name,
+                null,
+                null,
+                null,
+                phone
+        );
         ReflectionTestUtils.setField(member, "status", SIGNED_UP);
         return memberRepository.save(member);
     }

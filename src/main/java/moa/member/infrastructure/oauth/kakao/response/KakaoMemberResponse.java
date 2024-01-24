@@ -16,26 +16,6 @@ public record KakaoMemberResponse(
         LocalDateTime connectedAt,
         KakaoAccount kakaoAccount
 ) {
-
-    public Member toMember() {
-        return Member.builder()
-                .oauthId(new OauthId(String.valueOf(id), KAKAO))
-                .email(kakaoAccount.email)
-                .nickname(kakaoAccount.profile.nickname)
-                .birthyear(kakaoAccount.birthyear)
-                .birthday(kakaoAccount.birthday)
-                .profileImageUrl(kakaoAccount.profile.profileImageUrl)
-                .phoneNumber(formattedPhone(kakaoAccount.phoneNumber))
-                .build();
-    }
-
-    private String formattedPhone(String phoneNumber) {
-        if (phoneNumber == null || !phoneNumber.contains(" ")) {
-            return phoneNumber;
-        }
-        return phoneNumber.split(" ")[1];
-    }
-
     @JsonNaming(value = SnakeCaseStrategy.class)
     public record KakaoAccount(
             boolean profileNeedsAgreement,
@@ -72,5 +52,24 @@ public record KakaoMemberResponse(
             String profileImageUrl,
             boolean isDefaultImage
     ) {
+    }
+
+    public Member toMember() {
+        return new Member(
+                new OauthId(String.valueOf(id), KAKAO),
+                kakaoAccount.email,
+                kakaoAccount.profile.nickname,
+                kakaoAccount.birthyear,
+                kakaoAccount.birthday,
+                kakaoAccount.profile.profileImageUrl,
+                formattedPhone(kakaoAccount.phoneNumber)
+        );
+    }
+
+    private String formattedPhone(String phoneNumber) {
+        if (phoneNumber == null || !phoneNumber.contains(" ")) {
+            return phoneNumber;
+        }
+        return phoneNumber.split(" ")[1];
     }
 }

@@ -9,8 +9,8 @@ import moa.member.domain.phone.PhoneRepository;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class RedisPhoneRepository implements PhoneRepository {
 
     private static final String PREFIX = "phone:";

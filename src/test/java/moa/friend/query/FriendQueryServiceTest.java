@@ -19,10 +19,10 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DisplayName("친구 조회 서비스 (FriendQueryService) 은(는)")
+@ApplicationTest
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ApplicationTest
+@DisplayName("친구 조회 서비스 (FriendQueryService) 은(는)")
 class FriendQueryServiceTest {
 
     @Autowired
@@ -38,14 +38,15 @@ class FriendQueryServiceTest {
     void 특정_회원의_친구들_중_차단되지_않은_친구들을_조회한다() {
         // given
         Member member1 = member(null, "회원 1", "010-1111-1111", SIGNED_UP);
-        Member member2 = Member.builder()
-                .oauthId(new OauthId("2", KAKAO))
-                .phoneNumber("010-2222-2222")
-                .nickname("회원 2")
-                .birthyear("2002")
-                .birthday("1204")
-                .profileImageUrl("profile 2")
-                .build();
+        Member member2 = new Member(
+                new OauthId("2", KAKAO),
+                null,
+                "회원 2",
+                "2002",
+                "1204",
+                "profile 2",
+                "010-2222-2222"
+        );
         Member member3 = member(null, "회원 3", "010-3333-3333", SIGNED_UP);
         memberRepository.saveAll(List.of(member1, member2, member3));
 
@@ -79,14 +80,15 @@ class FriendQueryServiceTest {
         // given
         Member member1 = member(null, "회원 1", "010-1111-1111", SIGNED_UP);
         Member member2 = member(null, "회원 2", "010-2222-2222", SIGNED_UP);
-        Member member3 = Member.builder()
-                .oauthId(new OauthId("3", KAKAO))
-                .phoneNumber("010-3333-3333")
-                .nickname("회원 3")
-                .birthyear("2002")
-                .birthday("1204")
-                .profileImageUrl("profile 3")
-                .build();
+        Member member3 = new Member(
+                new OauthId("3", KAKAO),
+                null,
+                "회원 3",
+                "2002",
+                "1204",
+                "profile 3",
+                "010-3333-3333"
+        );
         memberRepository.saveAll(List.of(member1, member2, member3));
 
         friendRepository.save(new Friend(member1, member2, "바보 2"));
