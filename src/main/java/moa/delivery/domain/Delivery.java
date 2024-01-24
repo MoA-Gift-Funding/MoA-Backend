@@ -8,11 +8,12 @@ import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import moa.global.domain.RootEntity;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Delivery {
+public class Delivery extends RootEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
