@@ -1,65 +1,75 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.2.2'
-	id 'io.spring.dependency-management' version '1.1.4'
+    id 'java'
+    id 'org.springframework.boot' version '3.2.2'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 
 group = 'moa'
 
 java {
-	sourceCompatibility = '21'
+    sourceCompatibility = '21'
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.session:spring-session-data-redis'
-	implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.session:spring-session-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter'
 
-	// swagger
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+    // presigned url
+    implementation platform('software.amazon.awssdk:bom:2.20.56')
+    implementation 'software.amazon.awssdk:s3'
 
-	// Apple Login 에 사용
-	implementation 'org.bouncycastle:bcpkix-jdk18on:1.77'
+    // swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 
-	// JWT
-	implementation 'com.auth0:java-jwt:4.4.0'
-	implementation "io.jsonwebtoken:jjwt-api:0.11.2"
-	implementation "io.jsonwebtoken:jjwt-impl:0.11.2"
-	implementation "io.jsonwebtoken:jjwt-jackson:0.11.2"
+    // Apple Login 에 사용
+    implementation 'org.bouncycastle:bcpkix-jdk18on:1.77'
 
-	compileOnly 'org.projectlombok:lombok'
+    // JWT
+    implementation 'com.auth0:java-jwt:4.4.0'
+    implementation "io.jsonwebtoken:jjwt-api:0.11.2"
+    implementation "io.jsonwebtoken:jjwt-impl:0.11.2"
+    implementation "io.jsonwebtoken:jjwt-jackson:0.11.2"
 
-	runtimeOnly 'com.h2database:h2'
+    compileOnly 'org.projectlombok:lombok'
 
-	annotationProcessor 'org.projectlombok:lombok'
+    runtimeOnly 'com.h2database:h2'
 
-	testImplementation 'io.rest-assured:rest-assured'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'io.rest-assured:rest-assured'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // TestContainer
+    testImplementation 'org.testcontainers:junit-jupiter'
+
+    // LocalStack
+    testImplementation 'org.testcontainers:localstack'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 processResources.dependsOn('importConfigFromSubmodule')
 
 tasks.register('importConfigFromSubmodule', Copy) {
-	from './MoA-Backend-Submodule'
-	include "application*.yml"
-	include "*.p8"
-	exclude "application-local.yml"
-	into './src/main/resources'
+    from './MoA-Backend-Submodule'
+    include "application*.yml"
+    include "*.p8"
+    exclude "application-local.yml"
+    into './src/main/resources'
 }
