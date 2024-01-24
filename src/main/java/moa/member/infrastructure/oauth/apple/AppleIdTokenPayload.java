@@ -9,11 +9,15 @@ public record AppleIdTokenPayload(
         String sub,
         String email
 ) {
-
     public Member toMember() {
-        return Member.builder()
-                .oauthId(new OauthId(sub, APPLE))
-                .email(email)
-                .build();
+        return new Member(
+                new OauthId(sub, APPLE),
+                email,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
     }
 }

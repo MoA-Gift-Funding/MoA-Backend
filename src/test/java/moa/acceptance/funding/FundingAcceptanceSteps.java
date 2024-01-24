@@ -10,10 +10,10 @@ public class FundingAcceptanceSteps {
 
     public static ExtractableResponse<Response> 펀딩_생성_요청(String 준호_Token, Object request) {
         return given(준호_Token)
-            .body(request)
-            .post("/fundings")
-            .then()
-            .extract();
+                .body(request)
+                .post("/fundings")
+                .then()
+                .extract();
     }
 
     public static ExtractableResponse<Response> 나의_펀딩목록_조회_요청(String 준호_Token, Object request) {

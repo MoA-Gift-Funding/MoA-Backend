@@ -5,18 +5,16 @@ import static lombok.AccessLevel.PROTECTED;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Transient;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import moa.member.domain.Member;
 import moa.member.domain.MemberValidator;
 
-@NoArgsConstructor(access = PROTECTED)
 @Getter
 @Embeddable
+@NoArgsConstructor(access = PROTECTED)
 public class Phone {
-
-    private static final Random RANDOM = new Random();
 
     @Transient
     private Member member;
@@ -46,7 +44,8 @@ public class Phone {
         int rightLimit = 57;  // numeral '9'
         int targetStringLength = 6;
         return new PhoneVerificationNumber(
-                RANDOM.ints(leftLimit, rightLimit + 1)
+                ThreadLocalRandom.current()
+                        .ints(leftLimit, rightLimit + 1)
                         .limit(targetStringLength)
                         .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                         .toString()

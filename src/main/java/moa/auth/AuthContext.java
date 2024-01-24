@@ -1,11 +1,13 @@
 package moa.auth;
 
 
+import static moa.auth.AuthExceptionType.UNAUTHORIZED;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
-@RequestScope
 @Component
+@RequestScope
 public class AuthContext {
 
     private Long memberId;
@@ -16,7 +18,7 @@ public class AuthContext {
 
     public Long getMemberId() {
         if (unAuthenticated()) {
-            throw new AuthException(AuthExceptionType.UNAUTHORIZED);
+            throw new AuthException(UNAUTHORIZED);
         }
         return memberId;
     }

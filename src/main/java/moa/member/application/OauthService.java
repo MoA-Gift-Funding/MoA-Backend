@@ -9,8 +9,8 @@ import moa.member.domain.oauth.OauthMemberClientComposite;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class OauthService {
 
     private final TransactionTemplate transactionTemplate;

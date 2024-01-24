@@ -1,6 +1,6 @@
 package moa.member.application.command;
 
-public record VerifyPhoneCommand(
+public record PhoneVerifyCommand(
         Long memberId,
         String verificationNumber
 ) {

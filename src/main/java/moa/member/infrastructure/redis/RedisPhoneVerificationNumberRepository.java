@@ -11,8 +11,8 @@ import moa.member.exception.MemberException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class RedisPhoneVerificationNumberRepository implements PhoneVerificationNumberRepository {
 
     private static final String PREFIX = "phoneVerification:";

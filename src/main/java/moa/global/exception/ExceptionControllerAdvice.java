@@ -18,8 +18,8 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.WebUtils;
 
 @Slf4j
-@RequiredArgsConstructor
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class ExceptionControllerAdvice {
 
     @ExceptionHandler({MoaException.class, MethodArgumentNotValidException.class})

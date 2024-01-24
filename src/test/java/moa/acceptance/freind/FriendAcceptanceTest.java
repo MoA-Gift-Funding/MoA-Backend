@@ -24,8 +24,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("친구 인수테스트 (FriendAcceptance) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
+@DisplayName("친구 인수테스트 (FriendAcceptance) 은(는)")
 public class FriendAcceptanceTest extends AcceptanceTest {
 
     private Member 말랑;

@@ -1,6 +1,7 @@
 package moa.s3;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.testcontainers.containers.localstack.LocalStackContainer.Service.S3;
 
 import moa.global.s3.AwsS3Property;
 import moa.global.s3.PresignedUrlClient;
@@ -23,7 +24,7 @@ class PresignedUrlClientTest {
     @Container
     public LocalStackContainer localStackContainer = new LocalStackContainer(
             DockerImageName.parse("localstack/localstack"))
-            .withServices(LocalStackContainer.Service.S3);
+            .withServices(S3);
 
     @Test
     void 이미지_확장자를_받아_이미지_이름을_UUID로_생성_후_프리사인드_URL을_생성하여_반환한다() {
@@ -43,7 +44,6 @@ class PresignedUrlClientTest {
         // when
         var response = service.create("testImage.png");
 
-        System.out.println(response);
         // then
         assertThat(response.presignedUrl()).contains(
                 "https://mallang-bucket.s3.amazonaws.com/",

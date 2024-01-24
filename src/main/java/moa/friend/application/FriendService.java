@@ -14,9 +14,9 @@ import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import org.springframework.stereotype.Service;
 
-@RequiredArgsConstructor
-@Transactional
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class FriendService {
 
     private final MemberRepository memberRepository;

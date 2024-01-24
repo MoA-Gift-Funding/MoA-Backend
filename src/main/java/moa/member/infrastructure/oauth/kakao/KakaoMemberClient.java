@@ -11,8 +11,8 @@ import moa.member.infrastructure.oauth.kakao.response.KakaoMemberResponse;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class KakaoMemberClient implements OauthMemberClient {
 
     private final KakaoApiClient kakaoApiClient;

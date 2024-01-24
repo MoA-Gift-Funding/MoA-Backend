@@ -27,8 +27,8 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import org.springframework.web.util.WebUtils;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class RequestLoggingFilter implements Filter {
 
     public static final String REQUEST_ID = "requestId";

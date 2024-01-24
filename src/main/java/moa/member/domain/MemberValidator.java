@@ -8,8 +8,8 @@ import moa.member.domain.phone.Phone;
 import moa.member.exception.MemberException;
 import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class MemberValidator {
 
     private final MemberRepository memberRepository;

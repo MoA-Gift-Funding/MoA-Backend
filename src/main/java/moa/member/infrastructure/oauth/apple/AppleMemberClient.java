@@ -3,6 +3,7 @@ package moa.member.infrastructure.oauth.apple;
 import static java.lang.System.currentTimeMillis;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
+import static moa.member.domain.OauthId.OauthProvider.APPLE;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -27,8 +28,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class AppleMemberClient implements OauthMemberClient {
 
     private static final String GRANT_TYPE = "authorization_code";
@@ -40,7 +41,7 @@ public class AppleMemberClient implements OauthMemberClient {
 
     @Override
     public OauthProvider supportsProvider() {
-        return OauthProvider.APPLE;
+        return APPLE;
     }
 
     @Override

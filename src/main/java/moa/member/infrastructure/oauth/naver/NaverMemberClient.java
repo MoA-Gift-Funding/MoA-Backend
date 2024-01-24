@@ -11,8 +11,8 @@ import moa.member.infrastructure.oauth.naver.response.NaverMemberResponse;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class NaverMemberClient implements OauthMemberClient {
 
     private final NaverApiClient naverApiClient;

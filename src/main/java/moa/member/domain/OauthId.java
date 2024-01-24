@@ -11,8 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor(access = PROTECTED)
 @Embeddable
+@NoArgsConstructor(access = PROTECTED)
 public class OauthId {
 
     @Column(nullable = false, name = "oauth_id")

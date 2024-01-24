@@ -17,9 +17,9 @@ import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
+@MappedSuperclass
 @NoArgsConstructor(access = PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-@MappedSuperclass
 public abstract class RootEntity<ID> extends AbstractAggregateRoot<RootEntity<ID>> {
 
     @CreatedDate

@@ -24,8 +24,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DisplayName("펀딩 인수테스트 (FundingAcceptance) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
+@DisplayName("펀딩 인수테스트 (FundingAcceptance) 은(는)")
 public class FundingAcceptanceTest extends AcceptanceTest {
 
     @Autowired
