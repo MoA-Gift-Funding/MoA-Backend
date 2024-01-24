@@ -68,6 +68,10 @@ public class Funding extends RootEntity<Long> {
     private Price maximumAmount;
 
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "minimum_amount"))
+    private Price minimumAmount;
+
+    @Embedded
     private Address deliveryAddress;
 
     @ManyToOne(fetch = LAZY)
@@ -108,6 +112,7 @@ public class Funding extends RootEntity<Long> {
         this.member = member;
         this.product = product;
         this.delivery = delivery;
+        this.minimumAmount = MINIMUM_AMOUNT;
     }
 
     public void create() {
