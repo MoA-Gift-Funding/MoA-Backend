@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import moa.friend.domain.Friend;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingParticipant;
 import moa.funding.domain.Price;
@@ -33,9 +35,15 @@ public record FundingResponse(
             @Schema(description = "메시지 내용", example = "형님이 보태준다") String message,
             @Schema(description = "메시지 작성 시간", example = "2024-11-02 12:00:01") @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime createAt
     ) {
-        public static Message from(FundingParticipant participant) {
+        public static Message of(FundingParticipant participant, List<Friend> friends) {
+            String nickName = friends.stream()
+                    .filter(friend -> Objects.equals(friend.getMember().getId(), participant.getMember().getId()))
+                    .findAny()
+                    .map(Friend::getNickname)
+                    .orElseGet(() -> participant.getMember().getNickname());
+
             return new Message(
-                    participant.getMember().getNickname(), // TODO: Friend의 NickName 이름으로 반환해야한다.
+                    nickName,
                     participant.getMember().getProfileImageUrl(),
                     participant.getMessage(),
                     participant.getCreatedDate()
@@ -43,7 +51,7 @@ public record FundingResponse(
         }
     }
 
-    public static FundingResponse from(Funding funding, Member member) {
+    public static FundingResponse from(Funding funding, Member member, List<Friend> friends) {
         Product product = funding.getProduct();
         Price remainAmount = product.getPrice().minus(funding.getFundedAmount());
         Price maximumAmount =
@@ -61,14 +69,14 @@ public record FundingResponse(
                 funding.getFundedAmount().value().longValue(),
                 funding.getParticipants().size(),
                 product.getImageUrl(),
-                getMessages(funding)
+                getMessages(funding, friends)
         );
     }
 
-    private static List<Message> getMessages(Funding funding) {
+    private static List<Message> getMessages(Funding funding, List<Friend> friends) {
         return funding.getParticipants()
                 .stream()
-                .map(Message::from)
+                .map(participant -> Message.of(participant, friends))
                 .toList();
     }
 }
