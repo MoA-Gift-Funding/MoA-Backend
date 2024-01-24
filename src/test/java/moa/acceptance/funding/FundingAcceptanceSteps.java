@@ -16,11 +16,6 @@ public class FundingAcceptanceSteps {
                 .extract();
     }
 
-    public static Long 펀딩_생성_요청_ID_반환(String 준호_Token, Object request) {
-        var response = 펀딩_생성_요청(준호_Token, request);
-        return Long.parseLong(response.header("Location").split("/")[2]);
-    }
-
     public static ExtractableResponse<Response> 나의_펀딩목록_조회_요청(String 준호_Token) {
         return given(준호_Token)
                 .get("/fundings/my")

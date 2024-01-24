@@ -1,10 +1,10 @@
 package moa.acceptance.funding;
 
+import static moa.acceptance.AcceptanceSupport.ID를_추출한다;
 import static moa.acceptance.AcceptanceSupport.assertStatus;
 import static moa.acceptance.funding.FundingAcceptanceSteps.나의_펀딩목록_조회_요청;
 import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_상세_조회_요청;
 import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_생성_요청;
-import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_생성_요청_ID_반환;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -168,7 +168,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     "택배함 옆에 놔주세요",
                     배송_정보.getId()
             );
-            Long fundingId = 펀딩_생성_요청_ID_반환(준호_token, request);
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
 
             // when
             var response = 펀딩_상세_조회_요청(준호_token, fundingId);
