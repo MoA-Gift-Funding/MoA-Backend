@@ -28,10 +28,10 @@ public record FundingCreateCommand(
                 title,
                 description,
                 endDate,
-                maximumAmount,
-                deliveryAddress,
                 visible,
                 status,
+                maximumAmount,
+                deliveryAddress,
                 member,
                 product,
                 delivery

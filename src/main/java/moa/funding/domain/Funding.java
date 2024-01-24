@@ -94,10 +94,10 @@ public class Funding extends RootEntity<Long> {
             String title,
             String description,
             LocalDate endDate,
-            Price maximumAmount,
-            Address deliveryAddress,
             Visibility visible,
             FundingStatus status,
+            Price maximumAmount,
+            Address deliveryAddress,
             Member member,
             Product product,
             Delivery delivery
@@ -105,14 +105,14 @@ public class Funding extends RootEntity<Long> {
         this.title = title;
         this.description = description;
         this.endDate = endDate;
-        this.maximumAmount = maximumAmount;
-        this.deliveryAddress = deliveryAddress;
         this.visible = visible;
         this.status = status;
+        this.maximumAmount = maximumAmount;
+        this.minimumAmount = MINIMUM_AMOUNT;
+        this.deliveryAddress = deliveryAddress;
         this.member = member;
         this.product = product;
         this.delivery = delivery;
-        this.minimumAmount = MINIMUM_AMOUNT;
     }
 
     public void create() {
