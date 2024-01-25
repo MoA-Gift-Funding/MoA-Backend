@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface FundingQueryRepository extends JpaRepository<Funding, Long> {
 
@@ -20,7 +21,7 @@ public interface FundingQueryRepository extends JpaRepository<Funding, Long> {
 
     @Query("""
             SELECT f FROM Funding f
-            LEFT JOIN Friend friend ON f.member.id = friend.member.id OR f.member.id = friend.target.id
+            JOIN Friend friend ON f.member.id = friend.target.id AND friend.member.id = :memberId
             WHERE NOT EXISTS (
                 SELECT 1
                 FROM Friend blockedFriend
@@ -29,5 +30,5 @@ public interface FundingQueryRepository extends JpaRepository<Funding, Long> {
             )
             """
     )
-    Page<Funding> findOthersByMemberId(Long memberId, Pageable pageable);
+    Page<Funding> findMembersFriend(@Param(value = "memberId") Long memberId, Pageable pageable);
 }
