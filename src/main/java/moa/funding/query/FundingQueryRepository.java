@@ -7,6 +7,7 @@ import moa.funding.exception.FundingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface FundingQueryRepository extends JpaRepository<Funding, Long> {
 
@@ -16,4 +17,18 @@ public interface FundingQueryRepository extends JpaRepository<Funding, Long> {
     }
 
     Page<Funding> findAllByMemberId(Long memberId, Pageable pageable);
+
+
+    @Query("""
+            SELECT f FROM Funding f
+            LEFT JOIN Friend friend ON f.member.id = friend.member.id OR f.member.id = friend.target.id
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM Friend blockedFriend
+                WHERE (f.member.id = blockedFriend.member.id OR f.member.id = blockedFriend.target.id)
+                  AND blockedFriend.isBlocked = TRUE
+            )
+            """
+    )
+    Page<Funding> findOthersByMemberId(Long memberId, Pageable pageable);
 }

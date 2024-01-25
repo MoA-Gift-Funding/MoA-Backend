@@ -1,6 +1,7 @@
 package moa.funding.presentation;
 
 import static moa.member.domain.MemberStatus.SIGNED_UP;
+import static org.springframework.data.domain.Sort.Direction.ASC;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
@@ -10,9 +11,11 @@ import moa.auth.Auth;
 import moa.funding.application.FundingService;
 import moa.funding.presentation.request.FundingCreateRequest;
 import moa.funding.query.FundingQueryService;
+import moa.funding.query.response.FundingDetailResponse;
 import moa.funding.query.response.FundingResponse;
 import moa.funding.query.response.MyFundingsResponse.MyFundingDetail;
 import moa.global.presentation.PageResponse;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -50,11 +53,20 @@ public class FundingController implements FundingApi {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FundingResponse> findFunding(
+    public ResponseEntity<FundingDetailResponse> findFundingDetail(
             @Auth(permit = {SIGNED_UP}) Long memberId,
             @Parameter(description = "펀딩 ID") @PathVariable Long id
     ) {
         var result = fundingQueryService.findFundingById(memberId, id);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping
+    public ResponseEntity<PageResponse<FundingResponse>> findFundings(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            @ParameterObject @PageableDefault(size = 10, sort = "endDate", direction = ASC) Pageable pageable
+    ) {
+        var result = fundingQueryService.findFundings(memberId, pageable);
+        return ResponseEntity.ok(PageResponse.from(result));
     }
 }
