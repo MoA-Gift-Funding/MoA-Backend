@@ -12,8 +12,9 @@ import static org.springframework.http.HttpStatus.OK;
 
 import java.time.LocalDate;
 import moa.acceptance.AcceptanceTest;
-import moa.delivery.domain.Delivery;
-import moa.delivery.domain.DeliveryRepository;
+import moa.address.domain.Address;
+import moa.address.domain.DeliveryAddress;
+import moa.address.domain.DeliveryAddressRepository;
 import moa.funding.domain.Price;
 import moa.funding.presentation.request.FundingCreateRequest;
 import moa.global.presentation.PageResponse;
@@ -34,11 +35,11 @@ public class FundingAcceptanceTest extends AcceptanceTest {
     private ProductRepository productRepository;
 
     @Autowired
-    private DeliveryRepository deliveryRepository;
+    private DeliveryAddressRepository deliveryRepository;
 
     private Member 준호;
     private Product 상품;
-    private Delivery 배송_정보;
+    private DeliveryAddress 배송_정보;
     private String 준호_token;
 
     @BeforeEach
@@ -47,7 +48,19 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         준호 = signup("준호", "010-2222-2222");
         준호_token = login(준호);
         상품 = productRepository.save(new Product("에어팟 맥스", Price.from(700000L)));
-        배송_정보 = deliveryRepository.save(new Delivery("한진 택배"));
+        배송_정보 = deliveryRepository.save(new DeliveryAddress(
+                준호,
+                "준호집",
+                "최준호",
+                "010-1111-1111",
+                new Address(
+                        "11111",
+                        "도로명",
+                        "지번",
+                        "상세"
+                ),
+                true
+        ));
     }
 
     @Nested
@@ -62,11 +75,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     "저에게 에어팟 맥스를 선물할 기회!!",
                     LocalDate.now().plusDays(5L).toString(),
                     "10000",
-                    "주노", "010-1234-5678",
-                    "13529", "경기 성남시 분당구 판교역로 166 (카카오 판교 아지트)",
-                    "경기 성남시 분당구 백현동 532", "판교 아지트 3층 택배함",
-                    "택배함 옆에 놔주세요",
-                    배송_정보.getId()
+                    배송_정보.getId(),
+                    "택배함 옆에 놔주세요"
             );
 
             // when
@@ -85,11 +95,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     "저에게 에어팟 맥스를 선물할 기회!!",
                     LocalDate.now().plusDays(5L).toString(),
                     "4000",
-                    "주노", "010-1234-5678",
-                    "13529", "경기 성남시 분당구 판교역로 166 (카카오 판교 아지트)",
-                    "경기 성남시 분당구 백현동 532", "판교 아지트 3층 택배함",
-                    "택배함 옆에 놔주세요",
-                    배송_정보.getId()
+                    배송_정보.getId(),
+                    "택배함 옆에 놔주세요"
             );
 
             // when
@@ -108,11 +115,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     "저에게 에어팟 맥스를 선물할 기회!!",
                     LocalDate.now().plusDays(5L).toString(),
                     "800000",
-                    "주노", "010-1234-5678",
-                    "13529", "경기 성남시 분당구 판교역로 166 (카카오 판교 아지트)",
-                    "경기 성남시 분당구 백현동 532", "판교 아지트 3층 택배함",
-                    "택배함 옆에 놔주세요",
-                    배송_정보.getId()
+                    배송_정보.getId(),
+                    "택배함 옆에 놔주세요"
             );
 
             // when
@@ -135,11 +139,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     "저에게 에어팟 맥스를 선물할 기회!!",
                     LocalDate.now().plusDays(5L).toString(),
                     "10000",
-                    "주노", "010-1234-5678",
-                    "13529", "경기 성남시 분당구 판교역로 166 (카카오 판교 아지트)",
-                    "경기 성남시 분당구 백현동 532", "판교 아지트 3층 택배함",
-                    "택배함 옆에 놔주세요",
-                    배송_정보.getId()
+                    배송_정보.getId(),
+                    "택배함 옆에 놔주세요"
             );
             펀딩_생성_요청(준호_token, request);
             펀딩_생성_요청(준호_token, request);
@@ -162,11 +163,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     "저에게 에어팟 맥스를 선물할 기회!!",
                     LocalDate.now().plusDays(5L).toString(),
                     "10000",
-                    "주노", "010-1234-5678",
-                    "13529", "경기 성남시 분당구 판교역로 166 (카카오 판교 아지트)",
-                    "경기 성남시 분당구 백현동 532", "판교 아지트 3층 택배함",
-                    "택배함 옆에 놔주세요",
-                    배송_정보.getId()
+                    배송_정보.getId(),
+                    "택배함 옆에 놔주세요"
             );
             Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
 

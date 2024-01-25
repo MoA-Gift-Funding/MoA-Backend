@@ -2,8 +2,8 @@ package moa.funding.application;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import moa.delivery.domain.Delivery;
-import moa.delivery.domain.DeliveryRepository;
+import moa.address.domain.DeliveryAddress;
+import moa.address.domain.DeliveryAddressRepository;
 import moa.funding.application.command.FundingCreateCommand;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingRepository;
@@ -21,13 +21,13 @@ public class FundingService {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
     private final FundingRepository fundingRepository;
-    private final DeliveryRepository deliveryRepository;
+    private final DeliveryAddressRepository addressRepository;
 
     public Long create(FundingCreateCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Product product = productRepository.getById(command.productId());
-        Delivery delivery = deliveryRepository.getById(command.deliveryId());
-        Funding funding = command.toFunding(member, product, delivery);
+        DeliveryAddress address = addressRepository.getById(command.deliveryAddressId());
+        Funding funding = command.toFunding(member, product, address);
         funding.create();
         fundingRepository.save(funding);
         return funding.getId();

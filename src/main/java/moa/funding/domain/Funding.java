@@ -4,11 +4,9 @@ import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
-import static moa.funding.domain.FundingStatus.PREPARING;
+import static moa.funding.domain.FundingStatus.PROCESSING;
 import static moa.funding.domain.Price.ZERO;
-import static moa.funding.domain.Price.from;
 import static moa.funding.exception.FundingExceptionType.INVALID_END_DATE;
-import static moa.funding.exception.FundingExceptionType.INVALID_FUNDING_STATUS;
 import static moa.funding.exception.FundingExceptionType.MAXIMUM_AMOUNT_GREATER_THAN_PRODUCT;
 import static moa.funding.exception.FundingExceptionType.MAXIMUM_AMOUNT_LESS_THAN_MINIMUM;
 
@@ -28,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import moa.delivery.domain.Delivery;
+import moa.address.domain.DeliveryAddress;
 import moa.funding.exception.FundingException;
 import moa.global.domain.RootEntity;
 import moa.member.domain.Member;
@@ -39,7 +37,7 @@ import moa.product.domain.Product;
 @NoArgsConstructor(access = PROTECTED)
 public class Funding extends RootEntity<Long> {
 
-    private static final Price MINIMUM_AMOUNT = from("5000");
+    private static final Price MINIMUM_AMOUNT = Price.from("5000");
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -71,9 +69,6 @@ public class Funding extends RootEntity<Long> {
     @AttributeOverride(name = "value", column = @Column(name = "minimum_amount"))
     private Price minimumAmount;
 
-    @Embedded
-    private Address deliveryAddress;
-
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -83,8 +78,11 @@ public class Funding extends RootEntity<Long> {
     private Product product;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "delivery_id")
-    private Delivery delivery;
+    @JoinColumn(name = "delivery_address_id")
+    private DeliveryAddress address;
+
+    @Column
+    private String deliveryRequestMessage;
 
     @OneToMany(fetch = LAZY)
     @JoinColumn(name = "funding_id")
@@ -95,24 +93,23 @@ public class Funding extends RootEntity<Long> {
             String description,
             LocalDate endDate,
             Visibility visible,
-            FundingStatus status,
             Price maximumAmount,
-            Address deliveryAddress,
             Member member,
             Product product,
-            Delivery delivery
+            DeliveryAddress address,
+            String deliveryRequestMessage
     ) {
         this.title = title;
         this.description = description;
         this.endDate = endDate;
         this.visible = visible;
-        this.status = status;
+        this.status = PROCESSING;
         this.maximumAmount = maximumAmount;
         this.minimumAmount = MINIMUM_AMOUNT;
-        this.deliveryAddress = deliveryAddress;
         this.member = member;
         this.product = product;
-        this.delivery = delivery;
+        this.address = address;
+        this.deliveryRequestMessage = deliveryRequestMessage;
     }
 
     public void create() {
@@ -126,10 +123,6 @@ public class Funding extends RootEntity<Long> {
 
         if (endDate.isBefore(LocalDate.now())) {
             throw new FundingException(INVALID_END_DATE);
-        }
-
-        if (status != PREPARING) {
-            throw new FundingException(INVALID_FUNDING_STATUS);
         }
     }
 

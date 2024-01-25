@@ -1,4 +1,4 @@
-package moa.funding.domain;
+package moa.address.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
