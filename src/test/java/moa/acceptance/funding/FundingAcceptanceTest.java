@@ -14,12 +14,10 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.time.LocalDate;
-import java.util.List;
 import moa.acceptance.AcceptanceTest;
 import moa.address.domain.Address;
 import moa.address.domain.DeliveryAddress;
 import moa.address.domain.DeliveryAddressRepository;
-import moa.friend.domain.FriendRepository;
 import moa.friend.presentation.request.SyncContactRequest;
 import moa.friend.presentation.request.SyncContactRequest.ContactRequest;
 import moa.funding.domain.Price;
@@ -43,9 +41,6 @@ public class FundingAcceptanceTest extends AcceptanceTest {
 
     @Autowired
     private DeliveryAddressRepository deliveryRepository;
-
-    @Autowired
-    private FriendRepository friendRepository;
 
     private Member 준호;
     private Member 말랑;
@@ -234,11 +229,5 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                 배송_정보.getId(),
                 "택배함 옆에 놔주세요"
         );
-    }
-
-    protected Long getFriendId(Member me, Member target) {
-        return friendRepository.findByMemberAndTargetIn(me, List.of(target))
-                .get(0)
-                .getId();
     }
 }

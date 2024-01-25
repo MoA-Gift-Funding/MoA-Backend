@@ -38,7 +38,7 @@ public class FundingQueryService {
 
     public Page<FundingResponse> findFundings(Long memberId, Pageable pageable) {
         List<Friend> friends = friendQueryRepository.findUnblockedByMemberId(memberId);
-        Page<Funding> fundings = fundingRepository.findOthersByMemberId(memberId, pageable);
+        Page<Funding> fundings = fundingRepository.findMembersFriend(memberId, pageable);
         return fundings.map(funding -> FundingResponse.of(funding, friends));
     }
 }
