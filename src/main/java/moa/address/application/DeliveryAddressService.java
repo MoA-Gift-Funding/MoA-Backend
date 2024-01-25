@@ -2,6 +2,7 @@ package moa.address.application;
 
 import lombok.RequiredArgsConstructor;
 import moa.address.application.command.AddressCreateCommand;
+import moa.address.application.command.AddressUpdateCommand;
 import moa.address.domain.AddressBook;
 import moa.address.domain.DeliveryAddress;
 import moa.address.domain.DeliveryAddressRepository;
@@ -25,5 +26,20 @@ public class DeliveryAddressService {
         addressBook.add(address);
         return deliveryAddressRepository.save(address)
                 .getId();
+    }
+
+    public void update(AddressUpdateCommand command) {
+        Member member = memberRepository.getById(command.memberId());
+        DeliveryAddress deliveryAddress = deliveryAddressRepository.getById(command.deliveryAddressId());
+        deliveryAddress.validateOwner(member);
+        deliveryAddress.update(
+                command.name(),
+                command.recipientName(),
+                command.phoneNumber(),
+                command.toAddress(),
+                command.isDefault()
+        );
+        AddressBook addressBook = deliveryAddressRepository.getAddressBookByMember(member);
+        addressBook.update(deliveryAddress);
     }
 }

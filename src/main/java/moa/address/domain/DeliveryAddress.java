@@ -3,6 +3,8 @@ package moa.address.domain;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
+import static moa.address.exception.DeliveryAddressExceptionType.NO_AUTHORITY;
+import static moa.address.exception.DeliveryAddressExceptionType.REQUIRED_DEFAULT_ADDRESS;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -13,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import moa.address.exception.DeliveryAddressException;
 import moa.global.domain.RootEntity;
 import moa.member.domain.Member;
 
@@ -49,22 +52,38 @@ public class DeliveryAddress extends RootEntity<Long> {
             String name,
             String recipientName,
             String phoneNumber,
-            String zonecode,
-            String roadAddress,
-            String jibunAddress,
-            String detailAddress,
+            Address address,
             boolean isDefault
     ) {
         this.member = member;
         this.name = name;
         this.recipientName = recipientName;
         this.phoneNumber = phoneNumber;
-        this.address = new Address(zonecode, roadAddress, jibunAddress, detailAddress);
+        this.address = address;
         this.isDefault = isDefault;
     }
 
-    public void makeDefault() {
-        this.isDefault = true;
+    public void validateOwner(Member member) {
+        if (!this.member.equals(member)) {
+            throw new DeliveryAddressException(NO_AUTHORITY);
+        }
+    }
+
+    public void update(
+            String name,
+            String recipientName,
+            String phoneNumber,
+            Address address,
+            boolean isDefault
+    ) {
+        if (this.isDefault && !isDefault) {
+            throw new DeliveryAddressException(REQUIRED_DEFAULT_ADDRESS);
+        }
+        this.name = name;
+        this.recipientName = recipientName;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.isDefault = isDefault;
     }
 
     public void unDefault() {

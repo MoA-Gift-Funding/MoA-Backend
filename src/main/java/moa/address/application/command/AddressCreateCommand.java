@@ -1,5 +1,6 @@
 package moa.address.application.command;
 
+import moa.address.domain.Address;
 import moa.address.domain.DeliveryAddress;
 import moa.member.domain.Member;
 
@@ -20,10 +21,7 @@ public record AddressCreateCommand(
                 name,
                 recipientName,
                 phoneNumber,
-                zonecode,
-                roadAddress,
-                jibunAddress,
-                detailAddress,
+                new Address(zonecode, roadAddress, jibunAddress, detailAddress),
                 isDefault
         );
     }

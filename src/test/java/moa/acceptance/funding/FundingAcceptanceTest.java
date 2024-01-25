@@ -12,6 +12,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 import java.time.LocalDate;
 import moa.acceptance.AcceptanceTest;
+import moa.address.domain.Address;
 import moa.address.domain.DeliveryAddress;
 import moa.address.domain.DeliveryAddressRepository;
 import moa.funding.domain.Price;
@@ -52,10 +53,12 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                 "준호집",
                 "최준호",
                 "010-1111-1111",
-                "11111",
-                "도로명",
-                "지번",
-                "상세",
+                new Address(
+                        "11111",
+                        "도로명",
+                        "지번",
+                        "상세"
+                ),
                 true
         ));
     }

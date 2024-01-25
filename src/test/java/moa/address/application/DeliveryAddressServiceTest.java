@@ -1,5 +1,6 @@
 package moa.address.application;
 
+import static moa.address.exception.DeliveryAddressExceptionType.NO_AUTHORITY;
 import static moa.address.exception.DeliveryAddressExceptionType.REQUIRED_DEFAULT_ADDRESS;
 import static moa.fixture.MemberFixture.member;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
@@ -7,6 +8,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import moa.address.application.command.AddressCreateCommand;
+import moa.address.application.command.AddressUpdateCommand;
+import moa.address.domain.Address;
 import moa.address.domain.DeliveryAddress;
 import moa.address.domain.DeliveryAddressRepository;
 import moa.address.exception.DeliveryAddressException;
@@ -138,6 +141,129 @@ class DeliveryAddressServiceTest {
             assertThat(junos.isDefault()).isTrue();
             DeliveryAddress mallangs = deliveryAddressRepository.getById(mallangAddressId);
             assertThat(mallangs.isDefault()).isFalse();
+        }
+    }
+
+    @Nested
+    class 배송지_수정_시 {
+
+        private Long defaultDeliveryAddressId;
+
+        @BeforeEach
+        void setUp() {
+            defaultDeliveryAddressId = deliveryAddressRepository.save(new DeliveryAddress(
+                    member,
+                    "말랑이네 집",
+                    "신동훈",
+                    "010-1111-2222",
+                    new Address(
+                            "12345",
+                            "땡땡시 땡땡구 땡떙로",
+                            "땡땡시 땡땡구 떙떙동",
+                            "땡땡아파트 1000동 1001호"
+                    ),
+                    true
+            )).getId();
+        }
+
+        @Test
+        void 나의_주소지가_아니라면_예외() {
+            // given
+            Member juno = memberRepository.save(member(null, "주노", "010-3333-3333", SIGNED_UP));
+            var command = new AddressUpdateCommand(
+                    juno.getId(),
+                    defaultDeliveryAddressId,
+                    "준호네 집",
+                    "준호",
+                    "010-2222-2222",
+                    "12345",
+                    "땡땡시 땡땡구 땡떙로",
+                    "땡땡시 땡땡구 떙떙동",
+                    "땡땡아파트 1000동 1001호",
+                    true
+            );
+
+            // when & then
+            MoaExceptionType exceptionType = assertThrows(DeliveryAddressException.class, () -> {
+                deliveryAddressService.update(command);
+            }).getExceptionType();
+            assertThat(exceptionType).isEqualTo(NO_AUTHORITY);
+        }
+
+        @Test
+        void 기본_배송지로_변경할_수_있다() {
+            // given
+            DeliveryAddress junos = deliveryAddressRepository.save(new DeliveryAddress(
+                    member,
+                    "주노네 집",
+                    "최준호",
+                    "010-2222-2222",
+                    new Address(
+                            "12345",
+                            "땡땡시 땡땡구 땡떙로",
+                            "땡땡시 땡땡구 떙떙동",
+                            "땡땡아파트 1000동 1001호"
+                    ),
+                    false
+            ));
+            var command = new AddressUpdateCommand(
+                    member.getId(),
+                    junos.getId(),
+                    "준호네 집",
+                    "준호",
+                    "010-2222-2222",
+                    "12345",
+                    "땡땡시 땡땡구 땡떙로",
+                    "땡땡시 땡땡구 떙떙동",
+                    "땡땡아파트 1000동 1001호",
+                    true
+            );
+
+            // when
+            deliveryAddressService.update(command);
+
+            // then
+            DeliveryAddress updatedJunos = deliveryAddressRepository.getById(junos.getId());
+            assertThat(updatedJunos.getName()).isEqualTo("준호네 집");
+            assertThat(updatedJunos.isDefault()).isTrue();
+            DeliveryAddress defaultDeliveryAddress = deliveryAddressRepository.getById(defaultDeliveryAddressId);
+            assertThat(defaultDeliveryAddress.isDefault()).isFalse();
+        }
+
+        @Test
+        void 기존의_기본_배송지_수정_시_기본_배송지로_설정되지_않은_경우_예외() {
+            // given
+            DeliveryAddress junos = deliveryAddressRepository.save(new DeliveryAddress(
+                    member,
+                    "주노네 집",
+                    "최준호",
+                    "010-2222-2222",
+                    new Address(
+                            "12345",
+                            "땡땡시 땡땡구 땡떙로",
+                            "땡땡시 땡땡구 떙떙동",
+                            "땡땡아파트 1000동 1001호"
+                    ),
+                    false
+            ));
+            var command = new AddressUpdateCommand(
+                    member.getId(),
+                    defaultDeliveryAddressId,
+                    "말랑이네 집",
+                    "신동훈",
+                    "010-1111-2222",
+                    "12345",
+                    "땡땡시 땡땡구 땡떙로",
+                    "땡땡시 땡땡구 떙떙동",
+                    "땡땡아파트 1000동 1001호",
+                    false
+            );
+
+            // when & then
+            MoaExceptionType exceptionType = assertThrows(DeliveryAddressException.class, () -> {
+                deliveryAddressService.update(command);
+            }).getExceptionType();
+            assertThat(exceptionType).isEqualTo(REQUIRED_DEFAULT_ADDRESS);
         }
     }
 }

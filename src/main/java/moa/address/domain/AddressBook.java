@@ -29,4 +29,11 @@ public class AddressBook {
             address.unDefault();
         }
     }
+
+    public void update(DeliveryAddress deliveryAddress) {
+        addresses.remove(deliveryAddress);
+        if (deliveryAddress.isDefault()) {
+            makeAllUnDefault();
+        }
+    }
 }
