@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "친구 API", description = "친구 관련 API")
 @SecurityRequirement(name = "JWT")
@@ -41,7 +42,8 @@ public interface FriendApi {
             @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
-            @Schema SyncContactRequest request
+            @Schema
+            @RequestBody SyncContactRequest request
     );
 
     @ApiResponses(
@@ -62,7 +64,8 @@ public interface FriendApi {
             @Parameter(description = "친구 id (친구의 회원 id가 아니라 '친구' id)", in = PATH, required = true)
             @PathVariable("id") Long friendId,
 
-            @Schema UpdateFriendRequest request
+            @Schema
+            @RequestBody UpdateFriendRequest request
     );
 
     @ApiResponses(

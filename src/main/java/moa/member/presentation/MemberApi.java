@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "회원 API", description = "회원 관련 API")
 @SecurityRequirement(name = "JWT")
@@ -46,7 +47,8 @@ public interface MemberApi {
     @Operation(summary = "회원 프로필 조회")
     @GetMapping("/my")
     ResponseEntity<MemberResponse> findMyProfile(
-            @Parameter(hidden = true) @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId
+            @Parameter(hidden = true)
+            @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId
     );
 
     @ApiResponses(
@@ -61,8 +63,11 @@ public interface MemberApi {
     @Operation(summary = "핸드폰 인증번호 전송")
     @PostMapping("/verification/phone/send-number")
     ResponseEntity<Void> sendPhoneVerificationNumber(
-            @Parameter(hidden = true) @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId,
-            @Schema SendPhoneVerificationNumberRequest request
+            @Parameter(hidden = true)
+            @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId,
+
+            @Schema
+            @RequestBody SendPhoneVerificationNumberRequest request
     );
 
     @ApiResponses(
@@ -78,8 +83,11 @@ public interface MemberApi {
     @Operation(summary = "핸드폰 인증번호 확인")
     @PostMapping("/verification/phone/verify")
     ResponseEntity<Void> verifyPhone(
-            @Parameter(hidden = true) @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId,
-            @Schema VerifyPhoneRequest request
+            @Parameter(hidden = true)
+            @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId,
+
+            @Schema
+            @RequestBody VerifyPhoneRequest request
     );
 
     @ApiResponses(
@@ -93,8 +101,11 @@ public interface MemberApi {
     @Operation(summary = "회원가입")
     @PostMapping
     ResponseEntity<Void> signup(
-            @Parameter(hidden = true) @Auth(permit = {PRESIGNED_UP}) Long memberId,
-            @Schema SignupRequest request
+            @Parameter(hidden = true)
+            @Auth(permit = {PRESIGNED_UP}) Long memberId,
+
+            @Schema
+            @RequestBody SignupRequest request
     );
 
     @ApiResponses(
@@ -109,7 +120,10 @@ public interface MemberApi {
     @Operation(summary = "회원정보 수정")
     @PutMapping
     ResponseEntity<Void> update(
-            @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId,
-            @Schema MemberUpdateRequest request
+            @Parameter(hidden = true)
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+
+            @Schema
+            @RequestBody MemberUpdateRequest request
     );
 }

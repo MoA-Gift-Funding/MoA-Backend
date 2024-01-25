@@ -36,14 +36,20 @@ public interface FundingApi {
                     @ApiResponse(responseCode = "201"),
                     @ApiResponse(responseCode = "400"),
                     @ApiResponse(responseCode = "401"),
-                    @ApiResponse(responseCode = "403", description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)"),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)"
+                    ),
                     @ApiResponse(responseCode = "404"),
             }
     )
     @Operation(summary = "펀딩 생성")
     @PostMapping
     ResponseEntity<Void> createFunding(
-            @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId,
+            @Parameter(hidden = true)
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+
+            @Schema
             @Valid @RequestBody FundingCreateRequest request
     );
 
@@ -72,8 +78,11 @@ public interface FundingApi {
     @Operation(summary = "내가 개설한 펀딩 조회")
     @GetMapping
     ResponseEntity<PageResponse<MyFundingDetail>> findMyFundings(
-            @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId,
-            @ParameterObject @PageableDefault(size = 10) Pageable pageable
+            @Parameter(hidden = true)
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+
+            @ParameterObject
+            @PageableDefault(size = 10) Pageable pageable
     );
 
     @ApiResponses(
@@ -81,15 +90,22 @@ public interface FundingApi {
                     @ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
-                    @ApiResponse(responseCode = "403", description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
                     @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
             }
     )
     @Operation(summary = "펀딩 상세 조회")
     @GetMapping("/{fundingId}")
     ResponseEntity<FundingDetailResponse> findFundingDetail(
-            @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId,
-            @Parameter(in = PATH) @PathVariable Long fundingId
+            @Parameter(hidden = true)
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+
+            @Parameter(in = PATH, required = true)
+            @PathVariable Long fundingId
     );
 
     @ApiResponses(
@@ -97,14 +113,21 @@ public interface FundingApi {
                     @ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
-                    @ApiResponse(responseCode = "403", description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
                     @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
             }
     )
     @Operation(summary = "펀딩 목록 조회")
     @GetMapping
     ResponseEntity<PageResponse<FundingResponse>> findFundings(
-            @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId,
-            @ParameterObject @PageableDefault(size = 10) Pageable pageable
+            @Parameter(hidden = true)
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+
+            @ParameterObject
+            @PageableDefault(size = 10) Pageable pageable
     );
 }

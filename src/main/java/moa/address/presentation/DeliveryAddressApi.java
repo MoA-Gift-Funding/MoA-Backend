@@ -32,9 +32,10 @@ public interface DeliveryAddressApi {
 
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "201", headers = {
-                            @Header(name = "Location", description = "/addresses/{id} 형식")
-                    }),
+                    @ApiResponse(
+                            responseCode = "201",
+                            headers = {@Header(name = "Location", description = "/addresses/{id} 형식")}
+                    ),
                     @ApiResponse(responseCode = "400"),
                     @ApiResponse(responseCode = "401"),
                     @ApiResponse(
@@ -47,8 +48,11 @@ public interface DeliveryAddressApi {
     @Operation(summary = "배송지 생성")
     @PostMapping
     ResponseEntity<Void> create(
-            @Parameter(hidden = true) @Auth(permit = SIGNED_UP) Long memberId,
-            @Schema @Valid @RequestBody AddressCreateRequest request
+            @Parameter(hidden = true)
+            @Auth(permit = SIGNED_UP) Long memberId,
+
+            @Schema
+            @Valid @RequestBody AddressCreateRequest request
     );
 
     @ApiResponses(
@@ -63,12 +67,14 @@ public interface DeliveryAddressApi {
     @Operation(summary = "배송지 수정")
     @PutMapping("/{id}")
     ResponseEntity<Void> update(
-            @Parameter(hidden = true) @Auth(permit = SIGNED_UP) Long memberId,
+            @Parameter(hidden = true)
+            @Auth(permit = SIGNED_UP) Long memberId,
 
             @Parameter(description = "배송지 id", in = PATH, required = true)
             @PathVariable("id") Long id,
 
-            @Schema @RequestBody AddressUpdateRequest request
+            @Schema
+            @RequestBody AddressUpdateRequest request
     );
 
     @ApiResponses(
@@ -83,7 +89,8 @@ public interface DeliveryAddressApi {
     @Operation(summary = "배송지 제거")
     @DeleteMapping("/{id}")
     ResponseEntity<Void> delete(
-            @Parameter(hidden = true) @Auth(permit = SIGNED_UP) Long memberId,
+            @Parameter(hidden = true)
+            @Auth(permit = SIGNED_UP) Long memberId,
 
             @Parameter(description = "배송지 id", in = PATH, required = true)
             @PathVariable("id") Long id
@@ -114,6 +121,7 @@ public interface DeliveryAddressApi {
     @Operation(summary = "내 배송지 목록 조회")
     @GetMapping
     ResponseEntity<List<AddressResponse>> findMy(
-            @Parameter(hidden = true) @Auth(permit = SIGNED_UP) Long memberId
+            @Parameter(hidden = true)
+            @Auth(permit = SIGNED_UP) Long memberId
     );
 }
