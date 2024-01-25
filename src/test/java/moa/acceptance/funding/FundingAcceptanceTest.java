@@ -7,6 +7,7 @@ import static moa.acceptance.freind.FriendAcceptanceSteps.친구_차단_요청;
 import static moa.acceptance.funding.FundingAcceptanceSteps.나의_펀딩목록_조회_요청;
 import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_목록_조회_요청;
 import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_상세_조회_요청;
+import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_생성_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -80,7 +81,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var request = 펀딩_생성_요청_데이터();
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request);
+            var response = 펀딩_생성_요청(준호_token, request);
 
             // then
             assertStatus(response, CREATED);
@@ -100,7 +101,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             );
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request);
+            var response = 펀딩_생성_요청(준호_token, request);
 
             // then
             assertStatus(response, BAD_REQUEST);
@@ -120,7 +121,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             );
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request);
+            var response = 펀딩_생성_요청(준호_token, request);
 
             // then
             assertStatus(response, BAD_REQUEST);
@@ -134,8 +135,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         void 사용자의_펀딩_목록을_조회한다() {
             // given
             var request = 펀딩_생성_요청_데이터();
-            FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request);
-            FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request);
+            펀딩_생성_요청(준호_token, request);
+            펀딩_생성_요청(준호_token, request);
 
             // when
             var response = 나의_펀딩목록_조회_요청(준호_token);
@@ -150,7 +151,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         void 펀딩_상세_정보를_조회한다() {
             // given
             var request = 펀딩_생성_요청_데이터();
-            Long fundingId = ID를_추출한다(FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request));
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
 
             // when
             var response = 펀딩_상세_조회_요청(준호_token, fundingId);
@@ -166,7 +167,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     new ContactRequest("신동훈 (모아)", "010-1234-5678")
             ));
             var request = 펀딩_생성_요청_데이터();
-            FundingAcceptanceSteps.펀딩_생성_요청(말랑_token, request);
+            펀딩_생성_요청(말랑_token, request);
 
             // when
             var response = 펀딩_목록_조회_요청(준호_token);
@@ -186,7 +187,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             Long 말랑의_준호_친구_ID = getFriendId(말랑, 준호);
             친구_차단_요청(말랑_token, 말랑의_준호_친구_ID);
             var request = 펀딩_생성_요청_데이터();
-            FundingAcceptanceSteps.펀딩_생성_요청(말랑_token, request);
+            펀딩_생성_요청(말랑_token, request);
 
             // when
             var response = 펀딩_목록_조회_요청(준호_token);
@@ -206,7 +207,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             Long 준호의_말랑_친구_ID = getFriendId(준호, 말랑);
             친구_차단_요청(준호_token, 준호의_말랑_친구_ID);
             var request = 펀딩_생성_요청_데이터();
-            FundingAcceptanceSteps.펀딩_생성_요청(말랑_token, request);
+            펀딩_생성_요청(말랑_token, request);
 
             // when
             var response = 펀딩_목록_조회_요청(준호_token);
