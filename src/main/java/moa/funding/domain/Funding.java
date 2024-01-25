@@ -139,8 +139,9 @@ public class Funding extends RootEntity<Long> {
     }
 
     public Price possibleMaxAmount() {
-        if (maximumAmount.isGreaterThan(remainAmount())) {
-            return remainAmount();
+        Price remained = remainAmount();
+        if (maximumAmount.isGreaterThan(remained)) {
+            return remained;
         }
         return maximumAmount;
     }
