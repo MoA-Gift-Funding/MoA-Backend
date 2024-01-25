@@ -43,4 +43,31 @@ public class DeliveryAddress extends RootEntity<Long> {
 
     @Column
     private boolean isDefault;
+
+    public DeliveryAddress(
+            Member member,
+            String name,
+            String recipientName,
+            String phoneNumber,
+            String zonecode,
+            String roadAddress,
+            String jibunAddress,
+            String detailAddress,
+            boolean isDefault
+    ) {
+        this.member = member;
+        this.name = name;
+        this.recipientName = recipientName;
+        this.phoneNumber = phoneNumber;
+        this.address = new Address(zonecode, roadAddress, jibunAddress, detailAddress);
+        this.isDefault = isDefault;
+    }
+
+    public void makeDefault() {
+        this.isDefault = true;
+    }
+
+    public void unDefault() {
+        this.isDefault = false;
+    }
 }
