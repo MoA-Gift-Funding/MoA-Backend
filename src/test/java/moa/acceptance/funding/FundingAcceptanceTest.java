@@ -179,6 +179,21 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
+        void 펀딩_목록을_조회한다_친구가_아닌사람의_펀딩은_조회되지_않는다() {
+            // given
+            var request = 펀딩_생성_요청_데이터();
+            펀딩_생성_요청(말랑_token, request);
+
+            // when
+            var response = 펀딩_목록_조회_요청(준호_token);
+
+            // then
+            assertStatus(response, OK);
+            var result = response.as(PageResponse.class);
+            assertThat(result.content()).isEmpty();
+        }
+
+        @Test
         void 펀딩_목록을_조회한다_상대방이_나를_차단한_경우_보이지_않는다() {
             // given
             연락처_동기화(준호_token, new SyncContactRequest(
