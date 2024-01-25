@@ -1,12 +1,13 @@
 package moa.funding.presentation.request;
 
+import static moa.funding.domain.Visibility.PUBLIC;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import moa.funding.application.command.FundingCreateCommand;
 import moa.funding.domain.Price;
-import moa.funding.domain.Visibility;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public record FundingCreateRequest(
@@ -24,7 +25,7 @@ public record FundingCreateRequest(
                 title,
                 description,
                 LocalDate.parse(endDate),
-                Visibility.PUBLIC,
+                PUBLIC,
                 Price.from(maximumAmount),
                 productId,
                 deliveryAddressId,

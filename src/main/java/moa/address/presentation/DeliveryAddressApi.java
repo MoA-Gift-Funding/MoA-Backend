@@ -37,7 +37,10 @@ public interface DeliveryAddressApi {
                     }),
                     @ApiResponse(responseCode = "400"),
                     @ApiResponse(responseCode = "401"),
-                    @ApiResponse(responseCode = "403", description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)"),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)"
+                    ),
                     @ApiResponse(responseCode = "404"),
             }
     )
@@ -89,14 +92,23 @@ public interface DeliveryAddressApi {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200"),
-                    @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
-                    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(
+                            responseCode = "400",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
                     @ApiResponse(
                             responseCode = "403",
                             description = "임시 회원가입이거나 탈퇴한 회원의 경우",
                             content = @Content(schema = @Schema(hidden = true))
                     ),
-                    @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(
+                            responseCode = "404",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
             }
     )
     @Operation(summary = "내 배송지 목록 조회")
