@@ -84,8 +84,7 @@ public class Funding extends RootEntity<Long> {
     @Column
     private String deliveryRequestMessage;
 
-    @OneToMany(fetch = LAZY)
-    @JoinColumn(name = "funding_id")
+    @OneToMany(fetch = LAZY, mappedBy = "funding")
     private List<FundingParticipant> participants = new ArrayList<>();
 
     public Funding(
