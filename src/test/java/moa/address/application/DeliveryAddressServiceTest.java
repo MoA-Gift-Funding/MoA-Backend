@@ -266,4 +266,60 @@ class DeliveryAddressServiceTest {
             assertThat(exceptionType).isEqualTo(REQUIRED_DEFAULT_ADDRESS);
         }
     }
+
+    @Nested
+    class 배송지_삭제_시 {
+
+        private Long defaultDeliveryAddressId;
+
+        @BeforeEach
+        void setUp() {
+            defaultDeliveryAddressId = deliveryAddressRepository.save(new DeliveryAddress(
+                    member,
+                    "말랑이네 집",
+                    "신동훈",
+                    "010-1111-2222",
+                    new Address(
+                            "12345",
+                            "땡땡시 땡땡구 땡떙로",
+                            "땡땡시 땡땡구 떙떙동",
+                            "땡땡아파트 1000동 1001호"
+                    ),
+                    true
+            )).getId();
+        }
+
+        @Test
+        void 기본_배송지는_삭제할_수_없다() {
+            // when & then
+            MoaExceptionType exceptionType = assertThrows(DeliveryAddressException.class, () ->
+                    deliveryAddressService.delete(member.getId(), defaultDeliveryAddressId)
+            ).getExceptionType();
+            assertThat(exceptionType).isEqualTo(REQUIRED_DEFAULT_ADDRESS);
+        }
+
+        @Test
+        void 기본_배송지가_아니면_삭제된다() {
+            // given
+            deliveryAddressService.create(
+                    new AddressCreateCommand(
+                            member.getId(),
+                            "주노네 집",
+                            "최준호",
+                            "010-2222-2222",
+                            "12345",
+                            "땡땡시 땡땡구 땡떙로",
+                            "땡땡시 땡땡구 떙떙동",
+                            "땡땡아파트 1000동 1001호",
+                            true
+                    )
+            );
+
+            // when
+            deliveryAddressService.delete(member.getId(), defaultDeliveryAddressId);
+
+            // then
+            assertThat(deliveryAddressRepository.existsById(defaultDeliveryAddressId)).isFalse();
+        }
+    }
 }

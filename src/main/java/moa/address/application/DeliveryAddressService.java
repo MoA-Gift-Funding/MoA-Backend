@@ -42,4 +42,12 @@ public class DeliveryAddressService {
         AddressBook addressBook = deliveryAddressRepository.getAddressBookByMember(member);
         addressBook.update(deliveryAddress);
     }
+
+    public void delete(Long memberId, Long deliveryAddressId) {
+        Member member = memberRepository.getById(memberId);
+        DeliveryAddress deliveryAddress = deliveryAddressRepository.getById(deliveryAddressId);
+        deliveryAddress.validateOwner(member);
+        deliveryAddress.delete();
+        deliveryAddressRepository.delete(deliveryAddress);
+    }
 }

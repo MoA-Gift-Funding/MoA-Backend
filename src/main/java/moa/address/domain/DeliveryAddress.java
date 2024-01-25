@@ -89,4 +89,10 @@ public class DeliveryAddress extends RootEntity<Long> {
     public void unDefault() {
         this.isDefault = false;
     }
+
+    public void delete() {
+        if (isDefault) {
+            throw new DeliveryAddressException(REQUIRED_DEFAULT_ADDRESS);
+        }
+    }
 }
