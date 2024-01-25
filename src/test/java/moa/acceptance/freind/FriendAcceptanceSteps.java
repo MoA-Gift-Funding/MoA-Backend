@@ -9,9 +9,6 @@ import moa.friend.presentation.request.SyncContactRequest;
 @SuppressWarnings("NonAsciiCharacters")
 public class FriendAcceptanceSteps {
 
-    public static final boolean 차단됨 = true;
-    public static final boolean 차단되지_않음 = false;
-
     public static ExtractableResponse<Response> 연락처_동기화(String 말랑_Token, SyncContactRequest request) {
         return given(말랑_Token)
                 .body(request)
@@ -34,10 +31,9 @@ public class FriendAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 내_친구_목록_조회_요청(String accessToken, boolean 차단여부) {
+    public static ExtractableResponse<Response> 내_친구_목록_조회_요청(String accessToken) {
         return given(accessToken)
-                .queryParam("isBlocked", 차단여부)
-                .get("/friends/my")
+                .get("/friends")
                 .then()
                 .extract();
     }
