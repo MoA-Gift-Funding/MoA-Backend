@@ -10,7 +10,6 @@ import java.util.Objects;
 import moa.friend.domain.Friend;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingParticipant;
-import moa.funding.domain.Price;
 import moa.member.domain.Member;
 import moa.product.domain.Product;
 
@@ -37,7 +36,7 @@ public record FundingDetailResponse(
     ) {
         private static Message of(FundingParticipant participant, List<Friend> friends) {
             String nickName = friends.stream()
-                    .filter(friend -> Objects.equals(friend.getMember().getId(), participant.getMember().getId()))
+                    .filter(friend -> Objects.equals(friend.getTarget().getId(), participant.getMember().getId()))
                     .findAny()
                     .map(Friend::getNickname)
                     .orElseGet(() -> participant.getMember().getNickname());
@@ -53,17 +52,14 @@ public record FundingDetailResponse(
 
     public static FundingDetailResponse of(Funding funding, Member member, List<Friend> friends) {
         Product product = funding.getProduct();
-        Price remainAmount = product.getPrice().minus(funding.getFundedAmount());
-        Price maximumAmount = // 최대 금액이 남은 금액보다 크면 최대금액 = 남은 금액
-                funding.getMaximumAmount().isGreaterThan(remainAmount) ? remainAmount : funding.getMaximumAmount();
         return new FundingDetailResponse(
                 funding.getId(),
                 member.getId(),
                 funding.getTitle(),
                 funding.getDescription(),
                 funding.getEndDate(),
-                maximumAmount.longValue(),
-                remainAmount.longValue(),
+                funding.possibleMaxAmount().longValue(),
+                funding.remainAmount().longValue(),
                 funding.getFundingRate(),
                 funding.getStatus().getDescription(),
                 funding.getFundedAmount().longValue(),

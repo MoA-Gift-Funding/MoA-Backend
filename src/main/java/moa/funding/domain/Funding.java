@@ -137,4 +137,15 @@ public class Funding extends RootEntity<Long> {
                 .reduce(ZERO, Price::add);
         return fundedAmount.divide(maximumAmount).value().doubleValue() * 100;
     }
+
+    public Price possibleMaxAmount() {
+        if (maximumAmount.isGreaterThan(remainAmount())) {
+            return remainAmount();
+        }
+        return maximumAmount;
+    }
+
+    public Price remainAmount() {
+        return product.getPrice().minus(this.getFundedAmount());
+    }
 }
