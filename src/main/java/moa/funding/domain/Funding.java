@@ -146,6 +146,6 @@ public class Funding extends RootEntity<Long> {
     }
 
     public Price remainAmount() {
-        return product.getPrice().minus(this.getFundedAmount());
+        return product.getPrice().minus(getFundedAmount());
     }
 }

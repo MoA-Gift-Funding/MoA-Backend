@@ -23,17 +23,17 @@ public class FundingQueryService {
 
     private final FundingValidator fundingValidator;
     private final MemberQueryRepository memberQueryRepository;
-    private final FundingQueryRepository fundingRepository;
+    private final FundingQueryRepository fundingQueryRepository;
     private final FriendQueryRepository friendQueryRepository;
 
     public Page<MyFundingDetail> findMyFundings(Long memberId, Pageable pageable) {
-        return fundingRepository.findAllByMemberId(memberId, pageable)
+        return fundingQueryRepository.findAllByMemberId(memberId, pageable)
                 .map(MyFundingDetail::from);
     }
 
     public FundingDetailResponse findFundingById(Long memberId, Long fundingId) {
         Member member = memberQueryRepository.getById(memberId);
-        Funding funding = fundingRepository.getById(fundingId);
+        Funding funding = fundingQueryRepository.getById(fundingId);
         fundingValidator.validateVisible(member, funding);
         List<Friend> friends = friendQueryRepository.findAllByMemberId(memberId);
         return FundingDetailResponse.of(funding, member, friends);
@@ -41,7 +41,7 @@ public class FundingQueryService {
 
     public Page<FundingResponse> findFundings(Long memberId, Pageable pageable) {
         List<Friend> friends = friendQueryRepository.findUnblockedByMemberId(memberId);
-        Page<Funding> fundings = fundingRepository.findByMembersFriend(memberId, pageable);
+        Page<Funding> fundings = fundingQueryRepository.findByMembersFriend(memberId, pageable);
         return fundings.map(funding -> FundingResponse.of(funding, friends));
     }
 }
