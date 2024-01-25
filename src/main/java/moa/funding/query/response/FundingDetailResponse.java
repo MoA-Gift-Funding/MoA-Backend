@@ -40,7 +40,6 @@ public record FundingDetailResponse(
                     .findAny()
                     .map(Friend::getNickname)
                     .orElseGet(() -> participant.getMember().getNickname());
-
             return new Message(
                     nickName,
                     participant.getMember().getProfileImageUrl(),

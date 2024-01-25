@@ -29,7 +29,6 @@ public record FundingResponse(
                 .findAny()
                 .map(Friend::getNickname)
                 .orElseGet(() -> funding.getMember().getNickname());
-
         return new FundingResponse(
                 funding.getId(),
                 funding.getTitle(),
