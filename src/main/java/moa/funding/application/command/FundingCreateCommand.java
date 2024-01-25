@@ -17,7 +17,7 @@ public record FundingCreateCommand(
         Price maximumAmount,
         Long productId,
         Long deliveryAddressId,
-        String deliveryRequest
+        String deliveryRequestMessage
 ) {
     public Funding toFunding(Member member, Product product, DeliveryAddress deliveryAddress) {
         return new Funding(
@@ -29,7 +29,7 @@ public record FundingCreateCommand(
                 member,
                 product,
                 deliveryAddress,
-                deliveryRequest
+                deliveryRequestMessage
         );
     }
 }

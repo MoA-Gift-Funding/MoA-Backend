@@ -34,6 +34,6 @@ public class FundingParticipant extends RootEntity<Long> {
     @AttributeOverride(name = "value", column = @Column(name = "amount"))
     private Price amount;
 
-    @Column(name = "deliveryRequest")
+    @Column(name = "message")
     private String message;
 }

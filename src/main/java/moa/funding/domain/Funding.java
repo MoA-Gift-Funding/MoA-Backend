@@ -82,7 +82,7 @@ public class Funding extends RootEntity<Long> {
     private DeliveryAddress address;
 
     @Column
-    private String deliveryRequest;
+    private String deliveryRequestMessage;
 
     @OneToMany(fetch = LAZY)
     @JoinColumn(name = "funding_id")
@@ -97,7 +97,7 @@ public class Funding extends RootEntity<Long> {
             Member member,
             Product product,
             DeliveryAddress address,
-            String deliveryRequest
+            String deliveryRequestMessage
     ) {
         this.title = title;
         this.description = description;
@@ -109,7 +109,7 @@ public class Funding extends RootEntity<Long> {
         this.member = member;
         this.product = product;
         this.address = address;
-        this.deliveryRequest = deliveryRequest;
+        this.deliveryRequestMessage = deliveryRequestMessage;
     }
 
     public void create() {

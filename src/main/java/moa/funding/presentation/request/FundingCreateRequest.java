@@ -16,7 +16,7 @@ public record FundingCreateRequest(
         @Schema(example = "2023-12-25") @NotBlank @DateTimeFormat(pattern = "yyyy-MM-dd") String endDate,
         @Schema(description = "최대 펀딩 가능 금액", example = "5500") @NotBlank String maximumAmount,
         @Schema(description = "배송지 ID", example = "1") Long deliveryAddressId,
-        @Schema(description = "배송시 요청사항", example = "택배함 옆에 놔주세요") String deliveryRequest
+        @Schema(description = "배송시 요청사항", example = "택배함 옆에 놔주세요") String deliveryRequestMessage
 ) {
     public FundingCreateCommand toCommand(Long memberId) {
         return new FundingCreateCommand(
@@ -28,7 +28,7 @@ public record FundingCreateRequest(
                 Price.from(maximumAmount),
                 productId,
                 deliveryAddressId,
-                deliveryRequest
+                deliveryRequestMessage
         );
     }
 }

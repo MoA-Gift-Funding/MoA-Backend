@@ -23,7 +23,7 @@ public record FundingResponse(
         @Schema(description = "최대 지불 가능금액. 남은 금액보다 큰 경우 남은금액으로 반환한다", example = "50000") Long maximumAmount,
         @Schema(description = "남은 금액", example = "140000") Long leftAmount,
         @Schema(example = "56.1841") Double fundingRate,
-        @Schema(description = "펀딩 상태 / 준비중, 진행중, 완료, 취소", example = "진행중") String fundingStatus,
+        @Schema(description = "펀딩 상태 / 진행중, 완료, 취소", example = "진행중") String fundingStatus,
         @Schema(description = "지금까지 펀딩된 금액", example = "50000") Long fundedAmount,
         @Schema(example = "17") Integer participationCount,
         @Schema(description = "상품 이미지", example = "https://imageurl.example") String productImageUrl,
