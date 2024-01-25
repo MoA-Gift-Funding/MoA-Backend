@@ -53,12 +53,12 @@ public class Funding extends RootEntity<Long> {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Column(name = "visible")
     @Enumerated(STRING)
+    @Column(name = "visible")
     private Visibility visible;
 
-    @Column(name = "status")
     @Enumerated(STRING)
+    @Column(name = "status")
     private FundingStatus status;
 
     @Embedded
