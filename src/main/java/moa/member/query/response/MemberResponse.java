@@ -15,6 +15,7 @@ public record MemberResponse(
 
         @Schema(example = "KAKAO")
         OauthProvider oauthProvider,
+        
         @Schema(example = "test@gmail.com")
         @Nullable String email,
 
