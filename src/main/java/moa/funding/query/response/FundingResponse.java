@@ -25,7 +25,7 @@ public record FundingResponse(
 ) {
     public static FundingResponse of(Funding funding, List<Friend> friends) {
         String fundingMemberNickname = friends.stream()
-                .filter(friend -> Objects.equals(friend.getMember().getId(), funding.getMember().getId()))
+                .filter(friend -> Objects.equals(friend.getTarget().getId(), funding.getMember().getId()))
                 .findAny()
                 .map(Friend::getNickname)
                 .orElseGet(() -> funding.getMember().getNickname());
