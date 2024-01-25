@@ -18,7 +18,6 @@ public interface FundingQueryRepository extends JpaRepository<Funding, Long> {
 
     Page<Funding> findAllByMemberId(Long memberId, Pageable pageable);
 
-
     @Query("""
             SELECT f FROM Funding f
             LEFT JOIN Friend friend ON f.member.id = friend.member.id OR f.member.id = friend.target.id

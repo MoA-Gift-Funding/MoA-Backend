@@ -1,5 +1,6 @@
 package moa.funding.presentation;
 
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -75,7 +76,7 @@ public interface FundingApi {
     @GetMapping("/{fundingId}")
     ResponseEntity<FundingDetailResponse> findFundingDetail(
             @Parameter(hidden = true) @Auth(permit = {SIGNED_UP}) Long memberId,
-            @PathVariable Long fundingId
+            @Parameter(in = PATH) @PathVariable Long fundingId
     );
 
     @ApiResponses(
