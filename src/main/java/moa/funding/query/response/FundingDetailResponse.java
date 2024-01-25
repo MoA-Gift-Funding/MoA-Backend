@@ -63,7 +63,7 @@ public record FundingDetailResponse(
                 funding.getDescription(),
                 funding.getEndDate(),
                 maximumAmount.value().longValue(),
-                remainAmount.value().longValue(), // 펀딩까지 남은금액 ProductPrice - FundedAmount
+                remainAmount.value().longValue(),
                 funding.getFundingRate(),
                 funding.getStatus().getDescription(),
                 funding.getFundedAmount().value().longValue(),
