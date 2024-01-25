@@ -1,6 +1,7 @@
 package moa.funding.exception;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import moa.global.exception.MoaExceptionType;
@@ -13,6 +14,7 @@ public enum FundingExceptionType implements MoaExceptionType {
     INVALID_FUNDING_STATUS(BAD_REQUEST, "펀딩 상태가 유효하지 않습니다."),
     MAXIMUM_AMOUNT_LESS_THAN_MINIMUM(BAD_REQUEST, "최대 펀딩 금액이 기준 금액보다 작습니다."),
     MAXIMUM_AMOUNT_GREATER_THAN_PRODUCT(BAD_REQUEST, "최대 펀딩 금액이 상품 금액보다 큽니다."),
+    CAN_NOT_VISIBLE_FUNDING(FORBIDDEN, "해당 펀딩을 조회할 수 없습니다."),
     ;
 
     private final HttpStatus httpStatus;

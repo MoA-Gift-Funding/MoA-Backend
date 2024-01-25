@@ -53,12 +53,12 @@ public class Funding extends RootEntity<Long> {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Column(name = "visible")
     @Enumerated(STRING)
+    @Column(name = "visible")
     private Visibility visible;
 
-    @Column(name = "status")
     @Enumerated(STRING)
+    @Column(name = "status")
     private FundingStatus status;
 
     @Embedded
@@ -84,8 +84,7 @@ public class Funding extends RootEntity<Long> {
     @Column
     private String deliveryRequestMessage;
 
-    @OneToMany(fetch = LAZY)
-    @JoinColumn(name = "funding_id")
+    @OneToMany(fetch = LAZY, mappedBy = "funding")
     private List<FundingParticipant> participants = new ArrayList<>();
 
     public Funding(
@@ -137,5 +136,17 @@ public class Funding extends RootEntity<Long> {
                 .map(FundingParticipant::getAmount)
                 .reduce(ZERO, Price::add);
         return fundedAmount.divide(maximumAmount).value().doubleValue() * 100;
+    }
+
+    public Price possibleMaxAmount() {
+        Price remained = remainAmount();
+        if (maximumAmount.isGreaterThan(remained)) {
+            return remained;
+        }
+        return maximumAmount;
+    }
+
+    public Price remainAmount() {
+        return product.getPrice().minus(getFundedAmount());
     }
 }

@@ -30,6 +30,10 @@ public class FundingParticipant extends RootEntity<Long> {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "funding_id")
+    private Funding funding;
+
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "amount"))
     private Price amount;

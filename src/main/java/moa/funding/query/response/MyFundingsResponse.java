@@ -27,7 +27,7 @@ public record MyFundingsResponse(
                     funding.getEndDate(),
                     funding.getFundingRate(),
                     funding.getStatus().getDescription(),
-                    funding.getFundedAmount().value().longValue(),
+                    funding.getFundedAmount().longValue(),
                     funding.getParticipants().size(),
                     funding.getProduct().getImageUrl()
             );

@@ -29,4 +29,11 @@ public class FundingAcceptanceSteps {
                 .then()
                 .extract();
     }
+
+    public static ExtractableResponse<Response> 펀딩_목록_조회_요청(String 준호_Token) {
+        return given(준호_Token)
+                .get("/fundings")
+                .then()
+                .extract();
+    }
 }

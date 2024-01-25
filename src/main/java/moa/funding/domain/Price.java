@@ -37,4 +37,8 @@ public record Price(
     public Price divide(Price other) {
         return new Price(this.value.divide(other.value));
     }
+
+    public long longValue() {
+        return this.value.longValue();
+    }
 }
