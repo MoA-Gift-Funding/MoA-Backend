@@ -15,4 +15,6 @@ public interface FriendQueryRepository extends JpaRepository<Friend, Long> {
     List<Friend> findBlockedByMemberId(@Param("memberId") Long memberId);
 
     List<Friend> findAllByMemberId(Long memberId);
+
+    List<Friend> findAllByTargetId(Long targetId);
 }

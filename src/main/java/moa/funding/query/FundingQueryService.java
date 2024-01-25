@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import moa.friend.domain.Friend;
 import moa.friend.query.FriendQueryRepository;
 import moa.funding.domain.Funding;
+import moa.funding.domain.FundingValidator;
 import moa.funding.query.response.FundingDetailResponse;
 import moa.funding.query.response.FundingResponse;
 import moa.funding.query.response.MyFundingsResponse.MyFundingDetail;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class FundingQueryService {
 
+    private final FundingValidator fundingValidator;
     private final MemberQueryRepository memberQueryRepository;
     private final FundingQueryRepository fundingRepository;
     private final FriendQueryRepository friendQueryRepository;
@@ -32,13 +34,14 @@ public class FundingQueryService {
     public FundingDetailResponse findFundingById(Long memberId, Long fundingId) {
         Member member = memberQueryRepository.getById(memberId);
         Funding funding = fundingRepository.getById(fundingId);
+        fundingValidator.validateVisible(member, funding);
         List<Friend> friends = friendQueryRepository.findAllByMemberId(memberId);
         return FundingDetailResponse.of(funding, member, friends);
     }
 
     public Page<FundingResponse> findFundings(Long memberId, Pageable pageable) {
         List<Friend> friends = friendQueryRepository.findUnblockedByMemberId(memberId);
-        Page<Funding> fundings = fundingRepository.findMembersFriend(memberId, pageable);
+        Page<Funding> fundings = fundingRepository.findByMembersFriend(memberId, pageable);
         return fundings.map(funding -> FundingResponse.of(funding, friends));
     }
 }

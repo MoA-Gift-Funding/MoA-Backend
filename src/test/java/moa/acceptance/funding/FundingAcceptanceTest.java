@@ -11,6 +11,7 @@ import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_생성_요청
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.time.LocalDate;
@@ -158,6 +159,25 @@ public class FundingAcceptanceTest extends AcceptanceTest {
 
             // then
             assertStatus(response, OK);
+        }
+
+
+        @Test
+        void 펀딩_상세_정보를_조회한다_차단되었을_시_조회할_수_없다() {
+            // given
+            연락처_동기화(준호_token, new SyncContactRequest(
+                    new ContactRequest("신동훈 (모아)", "010-1234-5678")
+            ));
+            Long 말랑의_준호_친구_ID = getFriendId(말랑, 준호);
+            친구_차단_요청(말랑_token, 말랑의_준호_친구_ID);
+            var request = 펀딩_생성_요청_데이터();
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(말랑_token, request));
+
+            // when
+            var response = 펀딩_상세_조회_요청(준호_token, fundingId);
+
+            // then
+            assertStatus(response, FORBIDDEN);
         }
 
         @Test
