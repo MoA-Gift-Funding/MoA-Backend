@@ -14,8 +14,11 @@ public record SyncContactRequest(
     }
 
     public record ContactRequest(
-            @Schema(example = "말랑") String name,
-            @Schema(example = "010-1234-5678") String phoneNumber
+            @Schema(example = "말랑")
+            String name,
+
+            @Schema(example = "010-1234-5678")
+            String phoneNumber
     ) {
     }
 

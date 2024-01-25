@@ -11,17 +11,34 @@ import moa.funding.domain.Funding;
 
 public record FundingResponse(
         // 펀딩정보
-        @Schema(example = "3") Long fundingId,
-        @Schema(example = "주노 하와이 보내주기") String title,
-        @Schema(example = "2024-02-21") @JsonFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-        @Schema(description = "펀딩 상태 / 준비중, 진행중, 완료, 취소", example = "진행중") String status,
+        @Schema(example = "3")
+        Long fundingId,
+
+        @Schema(example = "주노 하와이 보내주기")
+        String title,
+
+        @Schema(example = "2024-02-21")
+        @JsonFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+
+        @Schema(description = "펀딩 상태 / 준비중, 진행중, 완료, 취소", example = "진행중")
+        String status,
+
         // 펀딩 작성자 정보
-        @Schema(example = "1") Long memberId,
-        @Schema(example = "최준호 (19학번)") String nickName,
-        @Schema(example = "https://example.url") String profileImageUrl,
+        @Schema(example = "1")
+        Long memberId,
+
+        @Schema(example = "최준호 (19학번)")
+        String nickName,
+
+        @Schema(example = "https://example.url")
+        String profileImageUrl,
+
         // 상품 정보
-        @Schema(example = "1") Long productId,
-        @Schema(example = "https://example.url") String productImageUrl
+        @Schema(example = "1")
+        Long productId,
+
+        @Schema(example = "https://example.url")
+        String productImageUrl
 ) {
     public static FundingResponse of(Funding funding, List<Friend> friends) {
         String fundingMemberNickname = friends.stream()

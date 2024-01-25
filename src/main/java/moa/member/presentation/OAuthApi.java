@@ -40,7 +40,11 @@ public interface OAuthApi {
             @Parameter(description = "OAuth2.0 제공 서비스", in = PATH, required = true)
             @PathVariable("oauthProvider") OauthProvider oauthProvider,
 
-            @Parameter(description = "해당 서비스에서 받아온 AccessToken (Apple의 경우에는 AuthCode)", in = HEADER, required = true)
+            @Parameter(
+                    description = "해당 서비스에서 받아온 AccessToken (Apple의 경우에는 AuthCode)",
+                    in = HEADER,
+                    required = true
+            )
             @RequestHeader(name = "OAuthAccessToken") String oauthAccessToken
     );
 }
