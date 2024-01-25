@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -65,14 +64,10 @@ public class FriendController implements FriendApi {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/my")
+    @GetMapping
     public ResponseEntity<List<FriendResponse>> findMyFriends(
-            @Auth(permit = {SIGNED_UP}) Long memberId,
-            @RequestParam(name = "isBlocked") boolean isBlocked
+            @Auth(permit = {SIGNED_UP}) Long memberId
     ) {
-        if (isBlocked) {
-            return ResponseEntity.ok(friendQueryService.findBlockedFriendsByMemberId(memberId));
-        }
-        return ResponseEntity.ok(friendQueryService.findUnblockedFriendsByMemberId(memberId));
+        return ResponseEntity.ok(friendQueryService.findFriendsByMemberId(memberId));
     }
 }

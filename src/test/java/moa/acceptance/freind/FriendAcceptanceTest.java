@@ -4,8 +4,6 @@ import static moa.acceptance.AcceptanceSupport.assertStatus;
 import static moa.acceptance.AcceptanceSupport.given;
 import static moa.acceptance.freind.FriendAcceptanceSteps.내_친구_목록_조회_요청;
 import static moa.acceptance.freind.FriendAcceptanceSteps.연락처_동기화;
-import static moa.acceptance.freind.FriendAcceptanceSteps.차단되지_않음;
-import static moa.acceptance.freind.FriendAcceptanceSteps.차단됨;
 import static moa.acceptance.freind.FriendAcceptanceSteps.친구_차단_요청;
 import static moa.acceptance.freind.FriendAcceptanceSteps.친구_차단_해제_요청;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -119,7 +117,7 @@ public class FriendAcceptanceTest extends AcceptanceTest {
     class 친구_목록_조회_API {
 
         @Test
-        void 나의_차단되지_않은_친구_목록_조회() {
+        void 내_친구_목록을_차단_여부와_함께_조회한다() {
             // given
             signup("루마", "010-3333-3333");
             연락처_동기화(말랑_token, new SyncContactRequest(
@@ -130,38 +128,15 @@ public class FriendAcceptanceTest extends AcceptanceTest {
             친구_차단_요청(말랑_token, 주노_친구_ID);
 
             // when
-            var response = 내_친구_목록_조회_요청(말랑_token, 차단되지_않음);
+            var response = 내_친구_목록_조회_요청(말랑_token);
 
             // then
             List<FriendResponse> result = response.as(new TypeRef<>() {
             });
             assertThat(result)
-                    .hasSize(1)
+                    .hasSize(2)
                     .extracting(FriendResponse::customNickname)
-                    .containsExactly("루마");
-        }
-
-        @Test
-        void 나의_차단된_친구_목록_조회() {
-            // given
-            signup("루마", "010-3333-3333");
-            연락처_동기화(말랑_token, new SyncContactRequest(
-                    new ContactRequest("주노", "010-2222-2222"),
-                    new ContactRequest("루마", "010-3333-3333")
-            ));
-            var 주노_친구_ID = getFriendId(말랑, 준호);
-            친구_차단_요청(말랑_token, 주노_친구_ID);
-
-            // when
-            var response = 내_친구_목록_조회_요청(말랑_token, 차단됨);
-
-            // then
-            List<FriendResponse> result = response.as(new TypeRef<>() {
-            });
-            assertThat(result)
-                    .hasSize(1)
-                    .extracting(FriendResponse::customNickname)
-                    .containsExactly("주노");
+                    .containsExactly("주노", "루마");
         }
 
         @Test
@@ -174,7 +149,7 @@ public class FriendAcceptanceTest extends AcceptanceTest {
             친구_차단_요청(말랑_token, 주노_친구_ID);
 
             // when
-            var response = 내_친구_목록_조회_요청(준호_token, 차단되지_않음);
+            var response = 내_친구_목록_조회_요청(준호_token);
 
             // then
             List<FriendResponse> result = response.as(new TypeRef<>() {

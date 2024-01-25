@@ -35,48 +35,7 @@ class FriendQueryServiceTest {
     private FriendRepository friendRepository;
 
     @Test
-    void 특정_회원의_친구들_중_차단되지_않은_친구들을_조회한다() {
-        // given
-        Member member1 = member(null, "회원 1", "010-1111-1111", SIGNED_UP);
-        Member member2 = new Member(
-                new OauthId("2", KAKAO),
-                null,
-                "회원 2",
-                "2002",
-                "1204",
-                "profile 2",
-                "010-2222-2222"
-        );
-        Member member3 = member(null, "회원 3", "010-3333-3333", SIGNED_UP);
-        memberRepository.saveAll(List.of(member1, member2, member3));
-
-        Long friendId = friendRepository.save(new Friend(member1, member2, "바보 2")).getId();
-        Friend block = new Friend(member1, member3, "바보 3");
-        block.block();
-        friendRepository.save(block);
-
-        // when
-        List<FriendResponse> result = friendQueryService.findUnblockedFriendsByMemberId(member1.getId());
-
-        // then
-        assertThat(result)
-                .usingRecursiveComparison()
-                .isEqualTo(List.of(
-                        new FriendResponse(
-                                friendId,
-                                member2.getId(),
-                                "profile 2",
-                                "바보 2",
-                                "회원 2",
-                                "010-2222-2222",
-                                "1204",
-                                "2002"
-                        )
-                ));
-    }
-
-    @Test
-    void 특정_회원의_친구들_중_차단된_친구들을_조회한다() {
+    void 특정_회원의_친구들을_조회한다() {
         // given
         Member member1 = member(null, "회원 1", "010-1111-1111", SIGNED_UP);
         Member member2 = member(null, "회원 2", "010-2222-2222", SIGNED_UP);
@@ -91,18 +50,29 @@ class FriendQueryServiceTest {
         );
         memberRepository.saveAll(List.of(member1, member2, member3));
 
-        friendRepository.save(new Friend(member1, member2, "바보 2"));
+        Friend unblock = friendRepository.save(new Friend(member1, member2, "바보 2"));
         Friend block = new Friend(member1, member3, "바보 3");
         block.block();
         friendRepository.save(block);
 
         // when
-        List<FriendResponse> result = friendQueryService.findBlockedFriendsByMemberId(member1.getId());
+        List<FriendResponse> result = friendQueryService.findFriendsByMemberId(member1.getId());
 
         // then
         assertThat(result)
                 .usingRecursiveComparison()
                 .isEqualTo(List.of(
+                        new FriendResponse(
+                                unblock.getId(),
+                                member2.getId(),
+                                null,
+                                "바보 2",
+                                "회원 2",
+                                "010-2222-2222",
+                                null,
+                                null,
+                                false
+                        ),
                         new FriendResponse(
                                 block.getId(),
                                 member3.getId(),
@@ -111,7 +81,8 @@ class FriendQueryServiceTest {
                                 "회원 3",
                                 "010-3333-3333",
                                 "1204",
-                                "2002"
+                                "2002",
+                                true
                         )
                 ));
     }

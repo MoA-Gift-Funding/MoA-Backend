@@ -14,13 +14,8 @@ public class FriendQueryService {
 
     private final FriendQueryRepository friendQueryRepository;
 
-    public List<FriendResponse> findUnblockedFriendsByMemberId(Long memberId) {
-        List<Friend> friends = friendQueryRepository.findUnblockedByMemberId(memberId);
-        return FriendResponse.from(friends);
-    }
-
-    public List<FriendResponse> findBlockedFriendsByMemberId(Long memberId) {
-        List<Friend> friends = friendQueryRepository.findBlockedByMemberId(memberId);
+    public List<FriendResponse> findFriendsByMemberId(Long memberId) {
+        List<Friend> friends = friendQueryRepository.findAllByMemberId(memberId);
         return FriendResponse.from(friends);
     }
 }
