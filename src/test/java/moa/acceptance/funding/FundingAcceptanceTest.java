@@ -12,8 +12,6 @@ import static org.springframework.http.HttpStatus.OK;
 
 import java.time.LocalDate;
 import moa.acceptance.AcceptanceTest;
-import moa.delivery.domain.Delivery;
-import moa.delivery.domain.DeliveryRepository;
 import moa.funding.domain.Price;
 import moa.funding.presentation.request.FundingCreateRequest;
 import moa.global.presentation.PageResponse;

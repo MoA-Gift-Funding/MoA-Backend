@@ -1,10 +1,9 @@
-package moa.funding.domain;
+package moa.address.domain;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
-import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -17,10 +16,10 @@ import lombok.NoArgsConstructor;
 import moa.global.domain.RootEntity;
 import moa.member.domain.Member;
 
-@Entity
 @Getter
+@Entity
 @NoArgsConstructor(access = PROTECTED)
-public class FundingParticipant extends RootEntity<Long> {
+public class DeliveryAddress extends RootEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -30,10 +29,18 @@ public class FundingParticipant extends RootEntity<Long> {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "amount"))
-    private Price amount;
+    @Column
+    private String name;
 
-    @Column(name = "deliveryRequest")
-    private String message;
+    @Column
+    private String recipientName;
+
+    @Column
+    private String phoneNumber;
+
+    @Embedded
+    private Address address;
+
+    @Column
+    private boolean isDefault;
 }

@@ -1,19 +1,19 @@
-package moa.delivery.exception;
+package moa.address.exception;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import moa.global.exception.MoaExceptionType;
 import org.springframework.http.HttpStatus;
 
-public enum DeliveryExceptionType implements MoaExceptionType {
+public enum DeliveryAddressExceptionType implements MoaExceptionType {
 
-    NOT_FOUND_DELIVERY(NOT_FOUND, "배송지를 찾을 수 없습니다."),
+    NOT_FOUND_ADDRESS(NOT_FOUND, "배송지를 찾을 수 없습니다."),
     ;
 
     private final HttpStatus httpStatus;
     private final String message;
 
-    DeliveryExceptionType(HttpStatus httpStatus, String message) {
+    DeliveryAddressExceptionType(HttpStatus httpStatus, String message) {
         this.httpStatus = httpStatus;
         this.message = message;
     }
