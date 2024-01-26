@@ -9,24 +9,24 @@ import moa.friend.presentation.request.SyncContactRequest;
 @SuppressWarnings("NonAsciiCharacters")
 public class FriendAcceptanceSteps {
 
-    public static ExtractableResponse<Response> 연락처_동기화(String 말랑_Token, SyncContactRequest request) {
-        return given(말랑_Token)
+    public static ExtractableResponse<Response> 연락처_동기화(String 요청자_token, SyncContactRequest request) {
+        return given(요청자_token)
                 .body(request)
                 .post("/friends/sync-contact")
                 .then()
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 친구_차단_요청(String 말랑_Token, Long 나쁜놈_친구_ID) {
-        return given(말랑_Token)
-                .post("/friends/block/{id}", 나쁜놈_친구_ID)
+    public static ExtractableResponse<Response> 친구_차단_요청(String 요청자_token, Long 대상_친구_ID) {
+        return given(요청자_token)
+                .post("/friends/block/{id}", 대상_친구_ID)
                 .then()
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 친구_차단_해제_요청(String 말랑_Token, Long 나쁜놈_친구_ID) {
-        return given(말랑_Token)
-                .post("/friends/unblock/{id}", 나쁜놈_친구_ID)
+    public static ExtractableResponse<Response> 친구_차단_해제_요청(String 요청자_token, Long 대상_친구_ID) {
+        return given(요청자_token)
+                .post("/friends/unblock/{id}", 대상_친구_ID)
                 .then()
                 .extract();
     }
