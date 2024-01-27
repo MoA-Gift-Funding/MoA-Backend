@@ -199,6 +199,22 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
+        void 펀딩_목록을_조회한다_나는_내_펀딩을_볼_수_있다() {
+            // given
+            var request = 펀딩_생성_요청_데이터();
+            펀딩_생성_요청(준호_token, request);
+
+            // when
+            var response = 펀딩_목록_조회_요청(준호_token);
+
+            // then
+            assertStatus(response, OK);
+            var result = response.as(PageResponse.class);
+            assertThat(result.content()).hasSize(1);
+        }
+
+
+        @Test
         void 펀딩_목록을_조회한다_친구가_아닌사람의_펀딩은_조회되지_않는다() {
             // given
             var request = 펀딩_생성_요청_데이터();
@@ -251,6 +267,29 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             assertStatus(response, OK);
             var result = response.as(PageResponse.class);
             assertThat(result.content()).isEmpty();
+        }
+
+        @Test
+        void 펀딩_목록을_조회한다_내가_펀딩을_올린_친구를_차단했거나_차단당했지_않았다면_친구의_다른_사람과의_차단_여부와_관계없이_조회된다() {
+            // given
+            Member 루마 = signup("루마", "010-3333-3333");
+            String 루마_token = login(루마);
+            연락처_동기화(준호_token, new SyncContactRequest(
+                    new ContactRequest("신동훈 (모아)", "010-1234-5678"),
+                    new ContactRequest("루마", "010-3333-3333")
+            ));
+            Long 루마의_주노_친구 = getFriendId(루마, 준호);
+            친구_차단_요청(루마_token, 루마의_주노_친구);
+            var request = 펀딩_생성_요청_데이터();
+            펀딩_생성_요청(준호_token, request);
+
+            // when
+            var response = 펀딩_목록_조회_요청(말랑_token);
+
+            // then
+            assertStatus(response, OK);
+            var result = response.as(PageResponse.class);
+            assertThat(result.content()).hasSize(1);
         }
     }
 

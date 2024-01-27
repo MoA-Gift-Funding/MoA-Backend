@@ -21,13 +21,23 @@ public interface FundingQueryRepository extends JpaRepository<Funding, Long> {
 
     @Query("""
             SELECT f FROM Funding f
-            JOIN Friend friend ON f.member.id = friend.target.id AND friend.member.id = :memberId
-            WHERE NOT EXISTS (
-                SELECT 1
-                FROM Friend blockedFriend
-                WHERE (f.member.id = blockedFriend.member.id OR f.member.id = blockedFriend.target.id)
-                  AND blockedFriend.isBlocked = TRUE
-            )
+             
+            LEFT JOIN Friend friend
+                ON f.member.id = friend.target.id
+                AND friend.member.id = :memberId
+                AND friend.isBlocked = FALSE
+
+            WHERE
+                f.member.id = :memberId
+                OR (
+                    f.member.id = friend.target.id
+                    AND NOT EXISTS (
+                        SELECT 1
+                        FROM Friend blockedFriend
+                        WHERE f.member.id = blockedFriend.member.id
+                            AND blockedFriend.target.id = :memberId
+                            AND blockedFriend.isBlocked = TRUE)
+                    )
             """)
     Page<Funding> findByMembersFriend(@Param(value = "memberId") Long memberId, Pageable pageable);
 }
