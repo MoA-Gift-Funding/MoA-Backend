@@ -3,7 +3,6 @@ package moa.global.exception;
 import static moa.global.log.RequestLoggingFilter.REQUEST_ID;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,17 +53,21 @@ public class ExceptionControllerAdvice {
     }
 
     private String getRequestBody(HttpServletRequest request) {
-        ContentCachingRequestWrapper wrapper = WebUtils.getNativeRequest(request, ContentCachingRequestWrapper.class);
-        if (wrapper != null) {
-            byte[] buf = wrapper.getContentAsByteArray();
-            if (buf.length > 0) {
-                try {
-                    return new String(buf, wrapper.getCharacterEncoding());
-                } catch (UnsupportedEncodingException e) {
-                    return " - ";
-                }
-            }
+        var wrapper = WebUtils.getNativeRequest(request, ContentCachingRequestWrapper.class);
+        if (wrapper == null) {
+            return " - ";
         }
-        return " - ";
+        try {
+            // body 가 읽히지 않고 예외처리 되는 경우에 캐시하기 위함
+            wrapper.getInputStream().readAllBytes();
+
+            byte[] buf = wrapper.getContentAsByteArray();
+            if (buf.length == 0) {
+                return " - ";
+            }
+            return new String(buf, wrapper.getCharacterEncoding());
+        } catch (Exception e) {
+            return " - ";
+        }
     }
 }

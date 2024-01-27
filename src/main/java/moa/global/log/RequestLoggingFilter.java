@@ -24,7 +24,6 @@ import org.springframework.util.StopWatch;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
-import org.springframework.web.util.WebUtils;
 
 @Slf4j
 @Component
@@ -49,9 +48,8 @@ public class RequestLoggingFilter implements Filter {
             return;
         }
 
-        ContentCachingRequestWrapper cachedRequest = new ContentCachingRequestWrapper((HttpServletRequest) request);
-        ContentCachingResponseWrapper cachedResponse = new ContentCachingResponseWrapper(
-                (HttpServletResponse) response);
+        var cachedRequest = new ContentCachingRequestWrapper((HttpServletRequest) request);
+        var cachedResponse = new ContentCachingResponseWrapper((HttpServletResponse) response);
 
         StopWatch stopWatch = new StopWatch();
         try {
@@ -83,16 +81,14 @@ public class RequestLoggingFilter implements Filter {
         return requestId;
     }
 
-    private String getResponseBody(HttpServletResponse response) throws IOException {
+    private String getResponseBody(ContentCachingResponseWrapper response) throws IOException {
         String payload = null;
-        ContentCachingResponseWrapper wrapper =
-                WebUtils.getNativeResponse(response, ContentCachingResponseWrapper.class);
-        if (wrapper != null) {
-            wrapper.setCharacterEncoding("UTF-8");
-            byte[] buf = wrapper.getContentAsByteArray();
+        if (response != null) {
+            response.setCharacterEncoding("UTF-8");
+            byte[] buf = response.getContentAsByteArray();
             if (buf.length > 0) {
-                payload = new String(buf, wrapper.getCharacterEncoding());
-                wrapper.copyBodyToResponse();
+                payload = new String(buf, response.getCharacterEncoding());
+                response.copyBodyToResponse();
             }
         }
         return null == payload ? " - " : payload;
