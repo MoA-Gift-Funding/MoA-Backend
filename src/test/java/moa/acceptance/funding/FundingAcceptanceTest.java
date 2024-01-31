@@ -165,16 +165,16 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         @Test
         void 펀딩_상세_정보를_조회한다_차단되었을_시_조회할_수_없다() {
             // given
-            연락처_동기화(준호_token, new SyncContactRequest(
-                    new ContactRequest("신동훈 (모아)", "010-1234-5678")
+            연락처_동기화(말랑_token, new SyncContactRequest(
+                    new ContactRequest("최준호 (모아)", "010-2222-2222")
             ));
-            Long 말랑의_준호_친구_ID = getFriendId(말랑, 준호);
-            친구_차단_요청(말랑_token, 말랑의_준호_친구_ID);
+            Long 준호의_말랑_친구_ID = getFriendId(준호, 말랑);
+            친구_차단_요청(준호_token, 준호의_말랑_친구_ID);
             var request = 펀딩_생성_요청_데이터();
-            Long fundingId = ID를_추출한다(펀딩_생성_요청(말랑_token, request));
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
 
             // when
-            var response = 펀딩_상세_조회_요청(준호_token, fundingId);
+            var response = 펀딩_상세_조회_요청(말랑_token, fundingId);
 
             // then
             assertStatus(response, FORBIDDEN);
@@ -183,14 +183,14 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         @Test
         void 펀딩_목록을_조회한다() {
             // given
-            연락처_동기화(준호_token, new SyncContactRequest(
-                    new ContactRequest("신동훈 (모아)", "010-1234-5678")
+            연락처_동기화(말랑_token, new SyncContactRequest(
+                    new ContactRequest("최준호 (모아)", "010-2222-2222")
             ));
             var request = 펀딩_생성_요청_데이터();
-            펀딩_생성_요청(말랑_token, request);
+            펀딩_생성_요청(준호_token, request);
 
             // when
-            var response = 펀딩_목록_조회_요청(준호_token);
+            var response = 펀딩_목록_조회_요청(말랑_token);
 
             // then
             assertStatus(response, OK);
