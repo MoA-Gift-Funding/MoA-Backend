@@ -39,5 +39,5 @@ public interface FundingQueryRepository extends JpaRepository<Funding, Long> {
                             AND blockedFriend.isBlocked = TRUE)
                     )
             """)
-    Page<Funding> findByMembersFriend(@Param(value = "memberId") Long memberId, Pageable pageable);
+    Page<Funding> findByMembersFriend(@Param("memberId") Long memberId, Pageable pageable);
 }

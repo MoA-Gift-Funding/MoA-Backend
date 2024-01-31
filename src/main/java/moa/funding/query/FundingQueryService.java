@@ -9,6 +9,7 @@ import moa.funding.domain.FundingValidator;
 import moa.funding.query.response.FundingDetailResponse;
 import moa.funding.query.response.FundingResponse;
 import moa.funding.query.response.MyFundingsResponse.MyFundingDetail;
+import moa.funding.query.response.ParticipatedFundingResponse;
 import moa.member.domain.Member;
 import moa.member.query.MemberQueryRepository;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,7 @@ public class FundingQueryService {
     private final MemberQueryRepository memberQueryRepository;
     private final FundingQueryRepository fundingQueryRepository;
     private final FriendQueryRepository friendQueryRepository;
+    private final FundingParticipantQueryRepository fundingParticipantQueryRepository;
 
     public Page<MyFundingDetail> findMyFundings(Long memberId, Pageable pageable) {
         return fundingQueryRepository.findAllByMemberId(memberId, pageable)
@@ -43,5 +45,11 @@ public class FundingQueryService {
         List<Friend> myUnblockedFriends = friendQueryRepository.findUnblockedByMemberId(memberId);
         Page<Funding> fundings = fundingQueryRepository.findByMembersFriend(memberId, pageable);
         return fundings.map(funding -> FundingResponse.of(funding, myUnblockedFriends));
+    }
+
+    public Page<ParticipatedFundingResponse> findParticipatedFundings(Long memberId, Pageable pageable) {
+        List<Friend> myFriends = friendQueryRepository.findAllByMemberId(memberId);
+        return fundingParticipantQueryRepository.findAllByMemberId(memberId, pageable)
+                .map(it -> ParticipatedFundingResponse.of(it, myFriends));
     }
 }
