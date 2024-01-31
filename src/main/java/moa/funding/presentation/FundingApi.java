@@ -104,7 +104,7 @@ public interface FundingApi {
             @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
-            @Parameter(in = PATH, required = true)
+            @Parameter(in = PATH, required = true, description = "펀딩 ID")
             @PathVariable Long fundingId
     );
 

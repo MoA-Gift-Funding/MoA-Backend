@@ -33,13 +33,13 @@ public record FundingDetailResponse(
         Long maximumAmount,
 
         @Schema(description = "남은 금액", example = "140000")
-        Long leftAmount,
+        Long remainAmount,
 
         @Schema(example = "56")
         int fundingRate,
 
         @Schema(description = "펀딩 상태 / 준비중, 진행중, 완료, 취소", example = "진행중")
-        String fundingStatus,
+        String status,
 
         @Schema(description = "지금까지 펀딩된 금액", example = "50000")
         Long fundedAmount,
