@@ -24,11 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
 
-@DisplayName("test (FundingService) 은(는)")
-@SuppressWarnings("NonAsciiCharacters")
-@DisplayNameGeneration(ReplaceUnderscores.class)
+
 @ApplicationTest
 @RecordApplicationEvents
+@SuppressWarnings("NonAsciiCharacters")
+@DisplayName("펀딩 서비스 (FundingService) 은(는)")
+@DisplayNameGeneration(ReplaceUnderscores.class)
 class FundingServiceTest {
 
     @Autowired
