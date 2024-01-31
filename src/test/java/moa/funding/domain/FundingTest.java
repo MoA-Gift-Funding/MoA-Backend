@@ -1,16 +1,27 @@
 package moa.funding.domain;
 
-import static moa.funding.domain.Visibility.PUBLIC;
+import static moa.fixture.FundingFixture.funding;
+import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_AMOUNT;
+import static moa.funding.exception.FundingExceptionType.INVALID_END_DATE;
+import static moa.funding.exception.FundingExceptionType.MAXIMUM_AMOUNT_LESS_THAN_MINIMUM;
+import static moa.funding.exception.FundingExceptionType.PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT;
+import static moa.funding.exception.FundingExceptionType.PRODUCT_PRICE_UNDER_MINIMUM_PRICE;
+import static moa.funding.exception.FundingExceptionType.UNDER_MINIMUM_AMOUNT;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import java.time.LocalDate;
+import moa.funding.exception.FundingException;
+import moa.global.exception.MoaExceptionType;
 import moa.member.domain.Member;
 import moa.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -18,6 +29,95 @@ import org.junit.jupiter.params.provider.CsvSource;
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class FundingTest {
+
+    @Nested
+    class 펀딩_생성_시 {
+
+        @Test
+        void 펀딩_상품의_가격이_펀딩최소금액보다_낮으면_예외() {
+            // given
+            Funding funding = funding(
+                    mock(Member.class),
+                    new Product("", Price.from("4999")),
+                    "5000"
+            );
+
+            // when & then
+            MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
+                funding.create();
+            }).getExceptionType();
+            assertThat(exceptionType).isEqualTo(PRODUCT_PRICE_UNDER_MINIMUM_PRICE);
+        }
+
+        @Test
+        void 펀딩가능_최대금액이_최소금액보다_낮으면_예외() {
+            // given
+            Funding funding = funding(
+                    mock(Member.class),
+                    new Product("", Price.from("15000")),
+                    "4999"
+            );
+
+            // when & then
+            MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
+                funding.create();
+            }).getExceptionType();
+            assertThat(exceptionType).isEqualTo(MAXIMUM_AMOUNT_LESS_THAN_MINIMUM);
+        }
+
+        @Test
+        void 상품가격이_펀딩가능_최대금액보다_낮으면_예외() {
+            // given
+            Funding funding = funding(
+                    mock(Member.class),
+                    new Product("", Price.from("15000")),
+                    "15001"
+            );
+
+            // when & then
+            MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
+                funding.create();
+            }).getExceptionType();
+            assertThat(exceptionType).isEqualTo(PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT);
+        }
+
+        @Test
+        void 펀딩종료일이_과거인_경우_예외() {
+            // given
+            Funding funding = new Funding(
+                    "",
+                    "",
+                    LocalDate.now().minusDays(1),
+                    Visibility.PUBLIC,
+                    Price.from("15000"),
+                    mock(Member.class),
+                    new Product("", Price.from("15000")),
+                    null,
+                    ""
+            );
+
+            // when & then
+            MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
+                funding.create();
+            }).getExceptionType();
+            assertThat(exceptionType).isEqualTo(INVALID_END_DATE);
+        }
+
+        @Test
+        void 성공() {
+            // given
+            Funding funding = funding(
+                    mock(Member.class),
+                    new Product("", Price.from("15000")),
+                    "15000"
+            );
+
+            // when & then
+            assertDoesNotThrow(() -> {
+                funding.create();
+            });
+        }
+    }
 
     @Nested
     class 펀딩_진행률_계산_시 {
@@ -29,16 +129,10 @@ class FundingTest {
         }, delimiterString = ", ")
         void 계산한다(String productPrice, String fundedAmount, String rate) {
             // given
-            Funding funding = new Funding(
-                    "",
-                    "",
-                    LocalDate.now(),
-                    PUBLIC,
-                    Price.from(productPrice),
+            Funding funding = funding(
                     mock(Member.class),
                     new Product("", Price.from(productPrice)),
-                    null,
-                    ""
+                    fundedAmount
             );
             funding.participate(null, Price.from(fundedAmount), "");
 

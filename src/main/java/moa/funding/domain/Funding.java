@@ -112,12 +112,16 @@ public class Funding extends RootEntity<Long> {
     }
 
     public void create() {
+        if (product.getPrice().isLessThan(MINIMUM_AMOUNT)) {
+            throw new FundingException(PRODUCT_PRICE_UNDER_MINIMUM_PRICE);
+        }
+
         if (maximumAmount.isLessThan(MINIMUM_AMOUNT)) {
             throw new FundingException(MAXIMUM_AMOUNT_LESS_THAN_MINIMUM);
         }
 
-        if (maximumAmount.isGreaterThan(product.getPrice())) {
-            throw new FundingException(MAXIMUM_AMOUNT_GREATER_THAN_PRODUCT);
+        if (product.getPrice().isLessThan(maximumAmount)) {
+            throw new FundingException(PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT);
         }
 
         if (endDate.isBefore(LocalDate.now())) {
