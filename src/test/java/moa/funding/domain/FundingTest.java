@@ -2,9 +2,12 @@ package moa.funding.domain;
 
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
+import static moa.funding.domain.FundingStatus.DELIVERY_WAITING;
+import static moa.funding.exception.FundingExceptionType.DIFFERENT_FROM_REMAIN_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.INVALID_END_DATE;
 import static moa.funding.exception.FundingExceptionType.MAXIMUM_AMOUNT_LESS_THAN_MINIMUM;
+import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_FINISH;
 import static moa.funding.exception.FundingExceptionType.OWNER_CANNOT_PARTICIPATE;
 import static moa.funding.exception.FundingExceptionType.PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.PRODUCT_PRICE_UNDER_MINIMUM_PRICE;
@@ -302,6 +305,61 @@ class FundingTest {
             );
 
             // then
+            assertThat(funding.getStatus()).isEqualTo(DELIVERY_WAITING);
+        }
+    }
+
+    @Nested
+    class 펀딩_끝내기_시 {
+
+        @Test
+        void 주인이_아닌_다른_사람은_펀딩을_끝낼_수_없다() {
+            // given
+            Member member = member(1L, "", "", SIGNED_UP);
+            Funding funding = funding(
+                    member,
+                    new Product("", Price.from("10000")),
+                    "10000"
+            );
+
+            // when & then
+            MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
+                funding.finish(mock(Member.class), Price.from("10000"));
+            }).getExceptionType();
+            assertThat(exceptionType).isEqualTo(NO_AUTHORITY_FINISH);
+        }
+
+        @Test
+        void 추가할_금액이_남은_금액과_일치하지_않으면_예외() {
+            // given
+            Member member = member(1L, "", "", SIGNED_UP);
+            Funding funding = funding(
+                    member,
+                    new Product("", Price.from("10000")),
+                    "10000"
+            );
+
+            // when & then
+            MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
+                funding.finish(member, Price.from("10001"));
+            }).getExceptionType();
+            assertThat(exceptionType).isEqualTo(DIFFERENT_FROM_REMAIN_AMOUNT);
+        }
+
+        @Test
+        void 주인이_펀딩을_끝낸다() {
+            // given
+            Member member = member(1L, "", "", SIGNED_UP);
+            Funding funding = funding(
+                    member,
+                    new Product("", Price.from("10000")),
+                    "10000"
+            );
+
+            // when & then
+            assertDoesNotThrow(() -> {
+                funding.finish(member, Price.from("10000"));
+            });
             assertThat(funding.getStatus()).isEqualTo(DELIVERY_WAITING);
         }
     }

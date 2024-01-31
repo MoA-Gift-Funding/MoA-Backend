@@ -5,11 +5,15 @@ import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
+import static moa.funding.domain.FundingStatus.DELIVERY_WAITING;
 import static moa.funding.domain.FundingStatus.PROCESSING;
 import static moa.funding.domain.Price.ZERO;
+import static moa.funding.exception.FundingExceptionType.DIFFERENT_FROM_REMAIN_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.INVALID_END_DATE;
 import static moa.funding.exception.FundingExceptionType.MAXIMUM_AMOUNT_LESS_THAN_MINIMUM;
+import static moa.funding.exception.FundingExceptionType.NOT_PROCESSING;
+import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_FINISH;
 import static moa.funding.exception.FundingExceptionType.OWNER_CANNOT_PARTICIPATE;
 import static moa.funding.exception.FundingExceptionType.PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.PRODUCT_PRICE_UNDER_MINIMUM_PRICE;
@@ -176,6 +180,18 @@ public class Funding extends RootEntity<Long> {
         return participants.stream()
                 .map(FundingParticipant::getAmount)
                 .reduce(ZERO, Price::add);
+    }
+
+    public void finish(Member member, Price price) {
+        if (!this.member.equals(member)) {
+            throw new FundingException(NO_AUTHORITY_FINISH);
+        }
+
+        if (!remainAmount().equals(price)) {
+            throw new FundingException(DIFFERENT_FROM_REMAIN_AMOUNT);
+        }
+
+        this.status = DELIVERY_WAITING;
     }
 
     public int getFundingRate() {
