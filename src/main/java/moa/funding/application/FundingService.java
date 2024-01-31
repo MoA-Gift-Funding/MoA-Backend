@@ -27,6 +27,7 @@ public class FundingService {
         Member member = memberRepository.getById(command.memberId());
         Product product = productRepository.getById(command.productId());
         DeliveryAddress address = addressRepository.getById(command.deliveryAddressId());
+        address.validateOwner(member);
         Funding funding = command.toFunding(member, product, address);
         funding.create();
         fundingRepository.save(funding);
