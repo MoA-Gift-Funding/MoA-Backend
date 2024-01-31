@@ -1,12 +1,15 @@
 package moa.funding.domain;
 
 import static moa.fixture.FundingFixture.funding;
+import static moa.fixture.MemberFixture.member;
 import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.INVALID_END_DATE;
 import static moa.funding.exception.FundingExceptionType.MAXIMUM_AMOUNT_LESS_THAN_MINIMUM;
+import static moa.funding.exception.FundingExceptionType.OWNER_CANNOT_PARTICIPATE;
 import static moa.funding.exception.FundingExceptionType.PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.PRODUCT_PRICE_UNDER_MINIMUM_PRICE;
 import static moa.funding.exception.FundingExceptionType.UNDER_MINIMUM_AMOUNT;
+import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -141,6 +144,145 @@ class FundingTest {
 
             // then
             assertThat(fundingRate).isEqualTo(Long.valueOf(rate));
+        }
+    }
+
+    @Nested
+    class 펀딩_참여_시 {
+
+        @Test
+        void 펀딩_금액이_펀딩최소금액보다_낮으면_참여할_수_없다() {
+            // given
+            Funding funding = funding(
+                    mock(Member.class),
+                    new Product("", Price.from("10000")),
+                    "10000"
+            );
+
+            // when
+            MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
+                funding.participate(
+                        mock(Member.class),
+                        Price.from("1000"),
+                        "hi"
+                );
+            }).getExceptionType();
+            assertThat(exceptionType).isEqualTo(UNDER_MINIMUM_AMOUNT);
+        }
+
+        @Test
+        void 펀딩_금액이_펀딩최대금액보다_높으면_참여할_수_없다() {
+            // given
+            Funding funding = funding(
+                    mock(Member.class),
+                    new Product("", Price.from("100000")),
+                    "10000"
+            );
+
+            // when
+            MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
+                funding.participate(
+                        mock(Member.class),
+                        Price.from("10001"),
+                        "hi"
+                );
+            }).getExceptionType();
+            assertThat(exceptionType).isEqualTo(EXCEEDED_POSSIBLE_AMOUNT);
+        }
+
+        @Test
+        void 펀딩_금액이_남은_펀딩금액보다_높으면_참여할_수_없다() {
+            // given
+            Funding funding = funding(
+                    mock(Member.class),
+                    new Product("", Price.from("16000")),
+                    "10000"
+            );
+            funding.participate(
+                    mock(Member.class),
+                    Price.from("10000"),
+                    "hi"
+            );
+
+            // when
+            MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
+                funding.participate(
+                        mock(Member.class),
+                        Price.from("10000"),
+                        "hi"
+                );
+            }).getExceptionType();
+            assertThat(exceptionType).isEqualTo(EXCEEDED_POSSIBLE_AMOUNT);
+        }
+
+        @Test
+        void 펀딩의_남은_금액이_펀딩최소가능금액보다_적을_때_펀딩의_남은_금액과_동일하지_않으면_예외() {
+            // given
+            Funding funding = funding(
+                    mock(Member.class),
+                    new Product("", Price.from("14000")),
+                    "10000"
+            );
+            funding.participate(
+                    mock(Member.class),
+                    Price.from("10000"),
+                    "hi"
+            );
+
+            // when
+            MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
+                funding.participate(
+                        mock(Member.class),
+                        Price.from("3999"),
+                        "hi"
+                );
+            }).getExceptionType();
+            assertThat(exceptionType).isEqualTo(UNDER_MINIMUM_AMOUNT);
+        }
+
+        @Test
+        void 펀딩의_남은_금액이_펀딩최소가능금액보다_적을_때_펀딩의_남은_금액과_동일해야_펀딩할_수_있다() {
+            // given
+            Funding funding = funding(
+                    mock(Member.class),
+                    new Product("", Price.from("14000")),
+                    "10000"
+            );
+            funding.participate(
+                    mock(Member.class),
+                    Price.from("10000"),
+                    "hi"
+            );
+
+            // when
+            assertDoesNotThrow(() -> {
+                funding.participate(
+                        mock(Member.class),
+                        Price.from("4000"),
+                        "hi"
+                );
+            });
+        }
+
+        @Test
+        void 펀딩_개설자는_참여할_수_없다() {
+            // given
+            Member member = member(1L, "", "", SIGNED_UP);
+            Funding funding = funding(
+                    member,
+                    new Product("", Price.from("14000")),
+                    "10000"
+            );
+
+            // when
+            MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
+                funding.participate(
+                        member,
+                        Price.from("3999"),
+                        "hi"
+                );
+            }).getExceptionType();
+            assertThat(exceptionType).isEqualTo(OWNER_CANNOT_PARTICIPATE);
         }
     }
 }

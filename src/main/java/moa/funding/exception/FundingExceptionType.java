@@ -16,7 +16,10 @@ public enum FundingExceptionType implements MoaExceptionType {
     PRODUCT_PRICE_UNDER_MINIMUM_PRICE(BAD_REQUEST, "펀딩할 상품의 가격은 최소 금액 이상이어야 합니다."),
     PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT(BAD_REQUEST, "상품 금액이 펀딩 가능 최대 금액보다 작습니다."),
     CAN_NOT_VISIBLE_FUNDING(FORBIDDEN, "해당 펀딩을 조회할 수 없습니다."),
-    ;
+    ALREADY_PARTICIPATED(BAD_REQUEST, "이미 참여한 펀딩입니다."),
+    EXCEEDED_POSSIBLE_AMOUNT(BAD_REQUEST, "펀딩 가능한 최대 금액을 초과했습니다."),
+    UNDER_MINIMUM_AMOUNT(BAD_REQUEST, "최소 금액 이상 펀딩해주서야 합니다."),
+    OWNER_CANNOT_PARTICIPATE(BAD_REQUEST, "펀딩 주인은 자신의 펀딩에 참여할 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

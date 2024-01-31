@@ -40,4 +40,11 @@ public class FundingParticipant extends RootEntity<Long> {
 
     @Column(name = "message")
     private String message;
+
+    public FundingParticipant(Member member, Funding funding, Price amount, String message) {
+        this.member = member;
+        this.funding = funding;
+        this.amount = amount;
+        this.message = message;
+    }
 }

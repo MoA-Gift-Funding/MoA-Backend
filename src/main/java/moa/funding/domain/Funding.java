@@ -1,14 +1,19 @@
 package moa.funding.domain;
 
+import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 import static moa.funding.domain.FundingStatus.PROCESSING;
 import static moa.funding.domain.Price.ZERO;
+import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.INVALID_END_DATE;
-import static moa.funding.exception.FundingExceptionType.MAXIMUM_AMOUNT_GREATER_THAN_PRODUCT;
 import static moa.funding.exception.FundingExceptionType.MAXIMUM_AMOUNT_LESS_THAN_MINIMUM;
+import static moa.funding.exception.FundingExceptionType.OWNER_CANNOT_PARTICIPATE;
+import static moa.funding.exception.FundingExceptionType.PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT;
+import static moa.funding.exception.FundingExceptionType.PRODUCT_PRICE_UNDER_MINIMUM_PRICE;
+import static moa.funding.exception.FundingExceptionType.UNDER_MINIMUM_AMOUNT;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -84,7 +89,7 @@ public class Funding extends RootEntity<Long> {
     @Column
     private String deliveryRequestMessage;
 
-    @OneToMany(fetch = LAZY, mappedBy = "funding")
+    @OneToMany(fetch = LAZY, mappedBy = "funding", cascade = {PERSIST})
     private List<FundingParticipant> participants = new ArrayList<>();
 
     public Funding(
@@ -129,18 +134,20 @@ public class Funding extends RootEntity<Long> {
         }
     }
 
-    public Price getFundedAmount() {
-        return participants.stream()
-                .map(FundingParticipant::getAmount)
-                .reduce(ZERO, Price::add);
-    }
+    public void participate(Member member, Price amount, String message) {
+        if (this.member.equals(member)) {
+            throw new FundingException(OWNER_CANNOT_PARTICIPATE);
+        }
 
-    public int getFundingRate() {
-        Price fundedAmount = getFundedAmount();
-        return (int) (fundedAmount.divide(product.getPrice())
-                .value()
-                .doubleValue()
-                * 100);
+        if (possibleMaxAmount().isLessThan(amount)) {
+            throw new FundingException(EXCEEDED_POSSIBLE_AMOUNT);
+        }
+
+        if (amount.isLessThan(minimumAmount) && !amount.equals(remainAmount())) {
+            throw new FundingException(UNDER_MINIMUM_AMOUNT);
+        }
+        FundingParticipant fundingParticipant = new FundingParticipant(member, this, amount, message);
+        participants.add(fundingParticipant);
     }
 
     public Price possibleMaxAmount() {
@@ -153,5 +160,19 @@ public class Funding extends RootEntity<Long> {
 
     public Price remainAmount() {
         return product.getPrice().minus(getFundedAmount());
+    }
+
+    public Price getFundedAmount() {
+        return participants.stream()
+                .map(FundingParticipant::getAmount)
+                .reduce(ZERO, Price::add);
+    }
+
+    public int getFundingRate() {
+        Price fundedAmount = getFundedAmount();
+        return (int) (fundedAmount.divide(product.getPrice())
+                .value()
+                .doubleValue()
+                * 100);
     }
 }
