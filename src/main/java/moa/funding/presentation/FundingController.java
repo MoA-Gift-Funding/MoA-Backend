@@ -42,6 +42,16 @@ public class FundingController implements FundingApi {
         return ResponseEntity.created(URI.create("/fundings/" + fundingId)).build();
     }
 
+    @PostMapping("/{id}/participate")
+    public ResponseEntity<Void> participate(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            @PathVariable Long id,
+            @Valid @RequestBody FundingParticipateRequest request
+    ) {
+        fundingService.participate(request.toCommand(id, memberId));
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/my")
     public ResponseEntity<PageResponse<MyFundingDetail>> findMyFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
