@@ -131,11 +131,12 @@ public class Funding extends RootEntity<Long> {
                 .reduce(ZERO, Price::add);
     }
 
-    public Double getFundingRate() {
-        Price fundedAmount = participants.stream()
-                .map(FundingParticipant::getAmount)
-                .reduce(ZERO, Price::add);
-        return fundedAmount.divide(maximumAmount).value().doubleValue() * 100;
+    public int getFundingRate() {
+        Price fundedAmount = getFundedAmount();
+        return (int) (fundedAmount.divide(product.getPrice())
+                .value()
+                .doubleValue()
+                * 100);
     }
 
     public Price possibleMaxAmount() {

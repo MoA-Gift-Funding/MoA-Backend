@@ -1,5 +1,7 @@
 package moa.funding.domain;
 
+import static java.math.RoundingMode.HALF_EVEN;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.math.BigDecimal;
@@ -31,11 +33,11 @@ public record Price(
     }
 
     public Price minus(Price other) {
-        return new Price(this.value.min(other.value));
+        return new Price(this.value.subtract(other.value));
     }
 
     public Price divide(Price other) {
-        return new Price(this.value.divide(other.value));
+        return new Price(this.value.divide(other.value, 2, HALF_EVEN));
     }
 
     public long longValue() {

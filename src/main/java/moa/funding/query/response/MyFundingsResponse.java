@@ -19,8 +19,8 @@ public record MyFundingsResponse(
             @Schema(example = "2024-02-04")
             @JsonFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
 
-            @Schema(example = "56.1841")
-            Double fundingRate,
+            @Schema(example = "56")
+            int fundingRate,
 
             @Schema(description = "펀딩 상태 / 준비중, 진행중, 완료, 취소", example = "진행중")
             String fundingStatus,
