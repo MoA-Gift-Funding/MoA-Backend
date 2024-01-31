@@ -197,9 +197,6 @@ public class Funding extends RootEntity<Long> {
 
     public int getFundingRate() {
         Price fundedAmount = getFundedAmount();
-        return (int) (fundedAmount.divide(product.getPrice())
-                .value()
-                .doubleValue()
-                * 100);
+        return (int) (fundedAmount.divide(product.getPrice()) * 100);
     }
 }

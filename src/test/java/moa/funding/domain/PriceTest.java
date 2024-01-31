@@ -13,15 +13,15 @@ import org.junit.jupiter.api.Test;
 class PriceTest {
 
     @Test
-    void 나누기_시_반올림된다() {
+    void 나누기_시_소수점_둘째자리로_반올림된다() {
         // given
         Price from = Price.from("10000");
 
         // when
-        Price divide = from.divide(Price.from("6000"));
+        double divide = from.divide(Price.from("6000"));
 
         // then
-        assertThat(divide.longValue()).isEqualTo(2);
+        assertThat(divide).isEqualTo(1.67);
     }
 
     @Test
