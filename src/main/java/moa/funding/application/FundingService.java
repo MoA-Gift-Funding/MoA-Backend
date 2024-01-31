@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import moa.address.domain.DeliveryAddress;
 import moa.address.domain.DeliveryAddressRepository;
 import moa.funding.application.command.FundingCreateCommand;
+import moa.funding.application.command.FundingFinishCommand;
 import moa.funding.application.command.FundingParticipateCommand;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingRepository;
@@ -39,6 +40,14 @@ public class FundingService {
         Funding funding = fundingRepository.getById(command.fundingId());
         Member member = memberRepository.getById(command.memberId());
         funding.participate(member, command.amount(), command.message());
+        // TODO 결제 진행
+        fundingRepository.save(funding);
+    }
+
+    public void finish(FundingFinishCommand command) {
+        Funding funding = fundingRepository.getById(command.fundingId());
+        Member member = memberRepository.getById(command.memberId());
+        funding.finish(member, command.amount());
         // TODO 결제 진행
         fundingRepository.save(funding);
     }

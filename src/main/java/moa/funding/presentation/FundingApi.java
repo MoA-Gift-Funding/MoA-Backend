@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import moa.auth.Auth;
 import moa.funding.presentation.request.FundingCreateRequest;
+import moa.funding.presentation.request.FundingFinishRequest;
 import moa.funding.presentation.request.FundingParticipateRequest;
 import moa.funding.query.response.FundingDetailResponse;
 import moa.funding.query.response.FundingResponse;
@@ -77,6 +78,31 @@ public interface FundingApi {
 
             @Schema
             @Valid @RequestBody FundingParticipateRequest request
+    );
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "400"),
+                    @ApiResponse(responseCode = "401"),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "주인이 아닌 경우"
+                    ),
+                    @ApiResponse(responseCode = "404"),
+            }
+    )
+    @Operation(summary = "펀딩 끝내기")
+    @PostMapping("/{id}/finish")
+    ResponseEntity<Void> finish(
+            @Parameter(hidden = true)
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+
+            @Parameter(in = PATH, required = true, description = "펀딩 ID")
+            @PathVariable Long id,
+
+            @Schema
+            @Valid @RequestBody FundingFinishRequest request
     );
 
     @ApiResponses(

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import moa.auth.Auth;
 import moa.funding.application.FundingService;
 import moa.funding.presentation.request.FundingCreateRequest;
+import moa.funding.presentation.request.FundingFinishRequest;
 import moa.funding.presentation.request.FundingParticipateRequest;
 import moa.funding.query.FundingQueryService;
 import moa.funding.query.response.FundingDetailResponse;
@@ -49,6 +50,16 @@ public class FundingController implements FundingApi {
             @Valid @RequestBody FundingParticipateRequest request
     ) {
         fundingService.participate(request.toCommand(id, memberId));
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/finish")
+    public ResponseEntity<Void> finish(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            @PathVariable Long id,
+            @Valid @RequestBody FundingFinishRequest request
+    ) {
+        fundingService.finish(request.toCommand(id, memberId));
         return ResponseEntity.ok().build();
     }
 
