@@ -23,4 +23,14 @@ class PriceTest {
         // then
         assertThat(divide.longValue()).isEqualTo(2);
     }
+
+    @Test
+    void 가격이_같으면_동일하다() {
+        // given
+        Price from1 = Price.from("10000");
+        Price from2 = Price.from("10000");
+
+        // when && then
+        assertThat(from1).isEqualTo(from2);
+    }
 }

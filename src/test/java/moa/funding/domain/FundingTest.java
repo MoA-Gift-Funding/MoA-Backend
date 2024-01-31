@@ -284,5 +284,25 @@ class FundingTest {
             }).getExceptionType();
             assertThat(exceptionType).isEqualTo(OWNER_CANNOT_PARTICIPATE);
         }
+
+        @Test
+        void 펀딩_상품_가격을_모두_채우면_펀딩이_완료된다() {
+            Member member = member(1L, "", "", SIGNED_UP);
+            Funding funding = funding(
+                    member,
+                    new Product("", Price.from("10000")),
+                    "10000"
+            );
+
+            // when
+            funding.participate(
+                    mock(Member.class),
+                    Price.from("10000"),
+                    "end"
+            );
+
+            // then
+            assertThat(funding.getStatus()).isEqualTo(DELIVERY_WAITING);
+        }
     }
 }

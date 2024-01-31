@@ -117,37 +117,47 @@ public class Funding extends RootEntity<Long> {
     }
 
     public void create() {
-        if (product.getPrice().isLessThan(MINIMUM_AMOUNT)) {
+        if (product.getPrice().isLessThan(MINIMUM_AMOUNT)) {  // 상품 가격이 최소금액보다 작은 경우
             throw new FundingException(PRODUCT_PRICE_UNDER_MINIMUM_PRICE);
         }
 
-        if (maximumAmount.isLessThan(MINIMUM_AMOUNT)) {
+        if (maximumAmount.isLessThan(MINIMUM_AMOUNT)) {  // 펀딩 가능 최대금액이 최소금액보다 작은 경우
             throw new FundingException(MAXIMUM_AMOUNT_LESS_THAN_MINIMUM);
         }
 
-        if (product.getPrice().isLessThan(maximumAmount)) {
+        if (product.getPrice().isLessThan(maximumAmount)) {  // 상품 가격이 펀딩 가능 최대금액보다 작은 경우
             throw new FundingException(PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT);
         }
 
-        if (endDate.isBefore(LocalDate.now())) {
+        if (endDate.isBefore(LocalDate.now())) {  // 종료일이 과거인 경우
             throw new FundingException(INVALID_END_DATE);
         }
     }
 
     public void participate(Member member, Price amount, String message) {
-        if (this.member.equals(member)) {
+        if (status != PROCESSING) {  // 펀딩이 진행중이 아닌 경우
+            throw new FundingException(NOT_PROCESSING);
+        }
+
+        if (this.member.equals(member)) {  // 펀딩 개설자가 참여하려는 경우
             throw new FundingException(OWNER_CANNOT_PARTICIPATE);
         }
 
-        if (possibleMaxAmount().isLessThan(amount)) {
+        if (possibleMaxAmount().isLessThan(amount)) {  // 펀딩가능 최대금액보다 더 많이 펀딩한 경우
             throw new FundingException(EXCEEDED_POSSIBLE_AMOUNT);
         }
 
+        // 금액이 펀딩 최소금액보다 낮은 경우, 펀딩의 남은 가격과 일치하지 않으면 예외
         if (amount.isLessThan(minimumAmount) && !amount.equals(remainAmount())) {
             throw new FundingException(UNDER_MINIMUM_AMOUNT);
         }
+
         FundingParticipant fundingParticipant = new FundingParticipant(member, this, amount, message);
         participants.add(fundingParticipant);
+        if (product.getPrice().equals(getFundedAmount())) {
+            this.status = DELIVERY_WAITING;
+            registerEvent(new FundingFinishEvent(id));
+        }
     }
 
     public Price possibleMaxAmount() {

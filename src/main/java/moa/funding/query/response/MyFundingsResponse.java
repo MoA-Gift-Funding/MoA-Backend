@@ -22,7 +22,7 @@ public record MyFundingsResponse(
             @Schema(example = "56")
             int fundingRate,
 
-            @Schema(description = "펀딩 상태 / 준비중, 진행중, 완료, 취소", example = "진행중")
+            @Schema(description = "펀딩 상태", example = "진행중")
             String fundingStatus,
 
             @Schema(example = "50000")

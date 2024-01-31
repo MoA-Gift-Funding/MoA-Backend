@@ -20,7 +20,7 @@ public record FundingResponse(
         @Schema(example = "2024-02-21")
         @JsonFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
 
-        @Schema(description = "펀딩 상태 / 준비중, 진행중, 완료, 취소", example = "진행중")
+        @Schema(description = "펀딩 상태", example = "진행중")
         String status,
 
         // 펀딩 작성자 정보
