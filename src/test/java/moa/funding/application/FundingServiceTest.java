@@ -6,6 +6,8 @@ import static moa.funding.domain.FundingStatus.DELIVERY_WAITING;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import moa.friend.domain.Friend;
+import moa.friend.domain.FriendRepository;
 import moa.funding.application.command.FundingParticipateCommand;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingFinishEvent;
@@ -45,13 +47,18 @@ class FundingServiceTest {
     private ProductRepository productRepository;
 
     @Autowired
+    private FriendRepository friendRepository;
+
+    @Autowired
     private ApplicationEvents events;
 
     @Test
     void 펀딩_참여_테스트() {
         // given
-        Member owner = memberRepository.save(member(null, "1", "", SIGNED_UP));
-        Member part = memberRepository.save(member(null, "1", "", SIGNED_UP));
+        Member owner = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
+        Member part = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
+        friendRepository.save(new Friend(owner, part, "1"));
+        friendRepository.save(new Friend(part, owner, "1"));
         Funding funding = funding(
                 owner,
                 productRepository.save(new Product("", Price.from("10000"))),
