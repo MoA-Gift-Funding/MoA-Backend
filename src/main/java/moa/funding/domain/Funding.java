@@ -1,5 +1,6 @@
 package moa.funding.domain;
 
+import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
@@ -93,7 +94,7 @@ public class Funding extends RootEntity<Long> {
     @Column
     private String deliveryRequestMessage;
 
-    @OneToMany(fetch = LAZY, mappedBy = "funding", cascade = {PERSIST})
+    @OneToMany(fetch = LAZY, mappedBy = "funding", cascade = {PERSIST, MERGE})
     private List<FundingParticipant> participants = new ArrayList<>();
 
     public Funding(
