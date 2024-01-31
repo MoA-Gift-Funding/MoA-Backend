@@ -27,7 +27,7 @@ class PriceTest {
     @Test
     void 가격이_같으면_동일하다() {
         // given
-        Price from1 = Price.from("10000");
+        Price from1 = Price.from("10000.00");
         Price from2 = Price.from("10000");
 
         // when && then

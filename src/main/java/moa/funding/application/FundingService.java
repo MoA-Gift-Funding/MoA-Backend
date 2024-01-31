@@ -40,5 +40,6 @@ public class FundingService {
         Member member = memberRepository.getById(command.memberId());
         funding.participate(member, command.amount(), command.message());
         // TODO 결제 진행
+        fundingRepository.save(funding);
     }
 }

@@ -5,6 +5,7 @@ import static java.math.RoundingMode.HALF_EVEN;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Embeddable
 public record Price(
@@ -42,5 +43,21 @@ public record Price(
 
     public long longValue() {
         return this.value.longValue();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Price price)) {
+            return false;
+        }
+        return value.compareTo(price.value) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }

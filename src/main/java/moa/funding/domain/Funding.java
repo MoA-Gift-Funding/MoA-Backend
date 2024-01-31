@@ -192,6 +192,7 @@ public class Funding extends RootEntity<Long> {
         }
 
         this.status = DELIVERY_WAITING;
+        registerEvent(new FundingFinishEvent(id));
     }
 
     public int getFundingRate() {
