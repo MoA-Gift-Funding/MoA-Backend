@@ -2,28 +2,23 @@ package moa.pay;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 
-import lombok.Getter;
+import java.util.Objects;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 
-@Getter
 @RedisHash("tossPayment")
-public class OrderDetail {
+public record OrderDetail(
+        @Id
+        String orderId,
+        int amount,
+        long memberId,
 
-    @Id
-    String orderId;
-
-    int amount;
-    long memberId;
-
-    @TimeToLive(unit = MINUTES)
-    long expiredTime;
-
-    public OrderDetail(String orderId, int amount, long memberId, long expiredTime) {
-        this.orderId = orderId;
-        this.amount = amount;
-        this.memberId = memberId;
-        this.expiredTime = expiredTime;
+        @TimeToLive(unit = MINUTES)
+        long expiredTime
+) {
+    public boolean isValid(String orderId, int amount) {
+        return Objects.equals(this.orderId, orderId)
+                && this.amount == amount;
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.web.service.annotation.PostExchange;
 public interface TossClient {
 
     @PostExchange(url = "https://api.tosspayments.com/v1/payments/{paymentKey}", contentType = APPLICATION_JSON_VALUE)
-    TossPaymentObject confirmPayment(
+    TossPayment confirmPayment(
             @PathVariable("paymentKey") String paymentKey,
             @RequestHeader(AUTHORIZATION) String authorization,
             @RequestBody TossPaymentConfirmRequest request
