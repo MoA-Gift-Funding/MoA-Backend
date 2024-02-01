@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 
 @RedisHash("tossPayment")
-public record OrderDetail(
+public record TossPaymentConfirm(
         @Id
         String orderId,
         int amount,

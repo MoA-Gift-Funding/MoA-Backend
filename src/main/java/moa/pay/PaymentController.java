@@ -25,15 +25,16 @@ public class PaymentController {
 
     private final TossClient tossClient;
     private final PaymentProperty paymentProperty;
-    private final OrderDetailRedisRepository orderDetailRedisRepository;
+    private final TossPaymentConfirmRepository tossPaymentConfirmRepository;
 
     @PostMapping("/prepay")
     public ResponseEntity<Object> prepay(
             @Auth(permit = {SIGNED_UP}) Long memberId,
             @RequestBody PrepayRequest request
     ) {
-        OrderDetail orderDetail = new OrderDetail(request.orderId(), request.amount(), memberId, 10);
-        orderDetailRedisRepository.save(orderDetail);
+        TossPaymentConfirm tossPaymentConfirm = new TossPaymentConfirm(request.orderId(), request.amount(), memberId,
+                10);
+        tossPaymentConfirmRepository.save(tossPaymentConfirm);
         return ResponseEntity.ok(request);
     }
 
@@ -41,9 +42,9 @@ public class PaymentController {
     public ResponseEntity<Void> paymentResult(
             @ModelAttribute TossPaymentRequest request
     ) {
-        OrderDetail orderDetail = orderDetailRedisRepository.getById(request.orderId());
+        TossPaymentConfirm tossPaymentConfirm = tossPaymentConfirmRepository.getById(request.orderId());
 
-        if (orderDetail.isValid(request.orderId(), request.amount())) {
+        if (tossPaymentConfirm.isValid(request.orderId(), request.amount())) {
             TossPayment response = tossClient.confirmPayment(
                     request.paymentKey(),
                     "Basic " + Base64Util.parseToBase64(paymentProperty.secretKey()),
@@ -54,7 +55,7 @@ public class PaymentController {
             log.info("토스페이먼츠 결제 오류 {}", request);
             throw new TossPaymentException(PAYMENT_INVALID.withDetail("orderId:" + request.orderId()));
         }
-        orderDetailRedisRepository.delete(orderDetail);
+        tossPaymentConfirmRepository.delete(tossPaymentConfirm);
         return ResponseEntity.ok().build();
     }
 
