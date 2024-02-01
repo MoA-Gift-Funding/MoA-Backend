@@ -3,6 +3,7 @@ package moa.pay.controller;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.pay.exception.TossPaymentExceptionType.PAYMENT_INVALID;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moa.auth.Auth;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @Transactional
-@RestController
+@RestController("/payments/toss")
 @RequiredArgsConstructor
 public class PaymentController {
 
@@ -39,7 +40,7 @@ public class PaymentController {
     @PostMapping("/prepay")
     public ResponseEntity<Object> prepay(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @RequestBody PrepayRequest request
+            @Valid @RequestBody PrepayRequest request
     ) {
         var confirm = new TossPaymentConfirm(request.orderId(), request.amount(), memberId);
         tossPaymentConfirmRepository.save(confirm);
@@ -48,7 +49,7 @@ public class PaymentController {
 
     @GetMapping("/success")
     public ResponseEntity<Void> paymentResult(
-            @ModelAttribute TossPaymentRequest request
+            @Valid @ModelAttribute TossPaymentRequest request
     ) {
         var tossPaymentConfirm = tossPaymentConfirmRepository.getById(request.orderId());
         tossPaymentConfirm.check(request.orderId(), request.amount());
