@@ -59,3 +59,6 @@ aws:
     bucket: my-bucket
     image-path: images/
     presigned-url-expires-minutes: 10
+
+tosspayment:
+  secret-key: "...:"
