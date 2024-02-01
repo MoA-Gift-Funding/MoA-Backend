@@ -1,0 +1,75 @@
+package moa.pay.controller;
+
+import static moa.member.domain.MemberStatus.SIGNED_UP;
+import static moa.pay.exception.TossPaymentExceptionType.PAYMENT_INVALID;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import moa.auth.Auth;
+import moa.pay.client.PaymentProperty;
+import moa.pay.client.TossClient;
+import moa.pay.client.TossClient.TossPaymentConfirmRequest;
+import moa.pay.controller.request.PrepayRequest;
+import moa.pay.controller.request.TossPaymentRequest;
+import moa.pay.domain.TossPayment;
+import moa.pay.domain.TossPaymentConfirm;
+import moa.pay.domain.TossPaymentConfirmRepository;
+import moa.pay.domain.TossPaymentRepository;
+import moa.pay.exception.TossPaymentException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@Slf4j
+@Transactional
+@RestController("/payments/toss")
+@RequiredArgsConstructor
+public class PaymentController {
+
+    private final TossClient tossClient;
+    private final PaymentProperty paymentProperty;
+    private final TossPaymentRepository tossPaymentRepository;
+    private final TossPaymentConfirmRepository tossPaymentConfirmRepository;
+
+    @PostMapping("/prepay")
+    public ResponseEntity<Object> prepay(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            @Valid @RequestBody PrepayRequest request
+    ) {
+        var confirm = new TossPaymentConfirm(request.orderId(), request.amount(), memberId);
+        tossPaymentConfirmRepository.save(confirm);
+        return ResponseEntity.ok(request);
+    }
+
+    @GetMapping("/success")
+    public ResponseEntity<Void> paymentResult(
+            @Valid @ModelAttribute TossPaymentRequest request
+    ) {
+        var tossPaymentConfirm = tossPaymentConfirmRepository.getById(request.orderId());
+        tossPaymentConfirm.check(request.orderId(), request.amount());
+
+        var response = tossClient.confirmPayment(
+                request.paymentKey(),
+                paymentProperty.basicAuth(),
+                new TossPaymentConfirmRequest(request.orderId(), request.amount())
+        );
+        TossPayment payment = response.toPayment(tossPaymentConfirm.getMemberId());
+        tossPaymentRepository.save(payment);
+        tossPaymentConfirmRepository.delete(tossPaymentConfirm);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/fail")
+    public ResponseEntity<Void> paymentResult(
+            @RequestParam(value = "message") String message,
+            @RequestParam(value = "code") Integer code
+    ) {
+        throw new TossPaymentException(PAYMENT_INVALID.withDetail("message:" + message + ", code:" + code));
+    }
+}
