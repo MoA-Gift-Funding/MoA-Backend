@@ -1,4 +1,4 @@
-package moa.pay;
+package moa.pay.exception;
 
 import moa.global.exception.MoaException;
 import moa.global.exception.MoaExceptionType;

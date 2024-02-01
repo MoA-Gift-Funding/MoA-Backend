@@ -1,13 +1,21 @@
-package moa.pay;
+package moa.pay.controller;
 
 import static moa.member.domain.MemberStatus.SIGNED_UP;
-import static moa.pay.TossPaymentExceptionType.PAYMENT_INVALID;
+import static moa.pay.exception.TossPaymentExceptionType.PAYMENT_INVALID;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moa.auth.Auth;
-import moa.pay.TossClient.TossPaymentConfirmRequest;
-import moa.pay.util.Base64Util;
+import moa.pay.client.PaymentProperty;
+import moa.pay.client.TossClient;
+import moa.pay.client.TossClient.TossPaymentConfirmRequest;
+import moa.pay.controller.request.PrepayRequest;
+import moa.pay.controller.request.TossPaymentRequest;
+import moa.pay.domain.TossPayment;
+import moa.pay.domain.TossPaymentConfirm;
+import moa.pay.domain.TossPaymentConfirmRepository;
+import moa.pay.domain.TossPaymentRepository;
+import moa.pay.exception.TossPaymentException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +33,7 @@ public class PaymentController {
 
     private final TossClient tossClient;
     private final PaymentProperty paymentProperty;
+    private final TossPaymentRepository tossPaymentRepository;
     private final TossPaymentConfirmRepository tossPaymentConfirmRepository;
 
     @PostMapping("/prepay")
@@ -32,9 +41,8 @@ public class PaymentController {
             @Auth(permit = {SIGNED_UP}) Long memberId,
             @RequestBody PrepayRequest request
     ) {
-        TossPaymentConfirm tossPaymentConfirm = new TossPaymentConfirm(request.orderId(), request.amount(), memberId,
-                10);
-        tossPaymentConfirmRepository.save(tossPaymentConfirm);
+        var confirm = new TossPaymentConfirm(request.orderId(), request.amount(), memberId);
+        tossPaymentConfirmRepository.save(confirm);
         return ResponseEntity.ok(request);
     }
 
@@ -42,19 +50,16 @@ public class PaymentController {
     public ResponseEntity<Void> paymentResult(
             @ModelAttribute TossPaymentRequest request
     ) {
-        TossPaymentConfirm tossPaymentConfirm = tossPaymentConfirmRepository.getById(request.orderId());
+        var tossPaymentConfirm = tossPaymentConfirmRepository.getById(request.orderId());
+        tossPaymentConfirm.check(request.orderId(), request.amount());
 
-        if (tossPaymentConfirm.isValid(request.orderId(), request.amount())) {
-            TossPayment response = tossClient.confirmPayment(
-                    request.paymentKey(),
-                    "Basic " + Base64Util.parseToBase64(paymentProperty.secretKey()),
-                    new TossPaymentConfirmRequest(request.orderId(), request.amount())
-            );
-            // TODO: response save
-        } else {
-            log.info("토스페이먼츠 결제 오류 {}", request);
-            throw new TossPaymentException(PAYMENT_INVALID.withDetail("orderId:" + request.orderId()));
-        }
+        var response = tossClient.confirmPayment(
+                request.paymentKey(),
+                paymentProperty.basicAuth(),
+                new TossPaymentConfirmRequest(request.orderId(), request.amount())
+        );
+        TossPayment payment = response.toPayment(tossPaymentConfirm.getMemberId());
+        tossPaymentRepository.save(payment);
         tossPaymentConfirmRepository.delete(tossPaymentConfirm);
         return ResponseEntity.ok().build();
     }

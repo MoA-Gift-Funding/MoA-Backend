@@ -1,4 +1,4 @@
-package moa.pay;
+package moa.pay.exception;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
@@ -6,6 +6,7 @@ import moa.global.exception.MoaExceptionType;
 import org.springframework.http.HttpStatus;
 
 public enum TossPaymentExceptionType implements MoaExceptionType {
+    
     PAYMENT_ERROR(BAD_REQUEST, "결제 오류가 발생했습니다."),
     PAYMENT_INVALID(BAD_REQUEST, "유효하지 않은 결제정보입니다."),
     ;

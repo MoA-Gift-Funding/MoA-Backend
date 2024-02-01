@@ -1,4 +1,6 @@
-package moa.pay;
+package moa.pay.client;
+
+import static moa.pay.util.Base64Util.parseToBase64;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -6,4 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record PaymentProperty(
         String secretKey
 ) {
+    public String basicAuth() {
+        return "Basic " + parseToBase64(secretKey);
+    }
 }

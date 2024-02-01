@@ -1,7 +1,8 @@
-package moa.pay;
+package moa.pay.domain;
 
-import static moa.pay.TossPaymentExceptionType.PAYMENT_INVALID;
+import static moa.pay.exception.TossPaymentExceptionType.PAYMENT_INVALID;
 
+import moa.pay.exception.TossPaymentException;
 import org.springframework.data.repository.CrudRepository;
 
 public interface TossPaymentConfirmRepository extends CrudRepository<TossPaymentConfirm, String> {

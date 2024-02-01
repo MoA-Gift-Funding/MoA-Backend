@@ -1,4 +1,4 @@
-package moa.pay;
+package moa.pay.controller.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
