@@ -124,6 +124,14 @@ public class Member extends RootEntity<Long> {
         this.profileImageUrl = profileImageUrl;
     }
 
+    public void permitNotification(String deviceToken) {
+        getPhone().permitNotification(deviceToken);
+    }
+
+    public void rejectNotification() {
+        getPhone().rejectNotification();
+    }
+
     public String getPhoneNumber() {
         return getPhone().getPhoneNumber();
     }

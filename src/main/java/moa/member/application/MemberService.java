@@ -66,4 +66,14 @@ public class MemberService {
                 command.profileImageUrl()
         );
     }
+
+    public void permitNotification(Long memberId, String deviceToken) {
+        Member member = memberRepository.getById(memberId);
+        member.permitNotification(deviceToken);
+    }
+
+    public void rejectNotification(Long memberId) {
+        Member member = memberRepository.getById(memberId);
+        member.rejectNotification();
+    }
 }
