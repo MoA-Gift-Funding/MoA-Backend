@@ -3,16 +3,20 @@ package moa.member.presentation;
 import static moa.member.domain.MemberStatus.PRESIGNED_UP;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import moa.auth.Auth;
 import moa.member.application.MemberService;
 import moa.member.presentation.request.MemberUpdateRequest;
+import moa.member.presentation.request.NotificationPermitRequest;
 import moa.member.presentation.request.SendPhoneVerificationNumberRequest;
 import moa.member.presentation.request.SignupRequest;
 import moa.member.presentation.request.VerifyPhoneRequest;
 import moa.member.query.MemberQueryService;
 import moa.member.query.response.MemberResponse;
+import moa.member.query.response.NotificationStatusResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -60,6 +64,30 @@ public class MemberController implements MemberApi {
             @RequestBody SignupRequest request
     ) {
         memberService.signup(request.toCommand(memberId));
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/notification")
+    public ResponseEntity<NotificationStatusResponse> checkNotificationStatus(
+            @Auth(permit = {SIGNED_UP}) Long memberId
+    ) {
+        return ResponseEntity.ok(memberQueryService.checkNotification(memberId));
+    }
+
+    @PostMapping("/notification")
+    public ResponseEntity<Void> permitNotification(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            @RequestBody @Valid NotificationPermitRequest request
+    ) {
+        memberService.permitNotification(memberId, request.deviceToken());
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/notification")
+    public ResponseEntity<Void> rejectNotification(
+            @Auth(permit = {SIGNED_UP}) Long memberId
+    ) {
+        memberService.rejectNotification(memberId);
         return ResponseEntity.ok().build();
     }
 

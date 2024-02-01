@@ -11,13 +11,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import moa.auth.Auth;
 import moa.member.presentation.request.MemberUpdateRequest;
+import moa.member.presentation.request.NotificationPermitRequest;
 import moa.member.presentation.request.SendPhoneVerificationNumberRequest;
 import moa.member.presentation.request.SignupRequest;
 import moa.member.presentation.request.VerifyPhoneRequest;
 import moa.member.query.response.MemberResponse;
+import moa.member.query.response.NotificationStatusResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -106,6 +110,70 @@ public interface MemberApi {
 
             @Schema
             @RequestBody SignupRequest request
+    );
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
+                    @ApiResponse(
+                            responseCode = "400",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            content = @Content(schema = @Schema(hidden = true))
+                    ),
+            }
+    )
+    @Operation(summary = "푸쉬알림 동의 여부 조회")
+    @GetMapping("/notification")
+    ResponseEntity<NotificationStatusResponse> checkNotificationStatus(
+            @Parameter(hidden = true)
+            @Auth(permit = {SIGNED_UP}) Long memberId
+    );
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "400"),
+                    @ApiResponse(responseCode = "401"),
+                    @ApiResponse(responseCode = "403", description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)"),
+                    @ApiResponse(responseCode = "404"),
+            }
+    )
+    @Operation(summary = "푸쉬알림 동의")
+    @PostMapping("/notification")
+    ResponseEntity<Void> permitNotification(
+            @Parameter(hidden = true)
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+
+            @Schema
+            @RequestBody @Valid NotificationPermitRequest request
+    );
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "400"),
+                    @ApiResponse(responseCode = "401"),
+                    @ApiResponse(responseCode = "403", description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)"),
+                    @ApiResponse(responseCode = "404"),
+            }
+    )
+    @Operation(summary = "푸쉬알림 거절")
+    @DeleteMapping("/notification")
+    ResponseEntity<Void> rejectNotification(
+            @Parameter(hidden = true)
+            @Auth(permit = {SIGNED_UP}) Long memberId
     );
 
     @ApiResponses(

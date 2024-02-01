@@ -73,6 +73,7 @@ tasks.register('importConfigFromSubmodule', Copy) {
     from './MoA-Backend-Submodule'
     include "application*.yml"
     include "*.p8"
+    include "*.json"
     exclude "application-local.yml"
     into './src/main/resources'
 }

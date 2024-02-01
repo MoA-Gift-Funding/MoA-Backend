@@ -25,6 +25,9 @@ public class Phone {
     @Column(name = "verified_phone")
     private boolean verified;
 
+    @Column(nullable = true)
+    private String deviceToken;
+
     public Phone(Member member, String phoneNumber) {
         this.member = member;
         this.phoneNumber = phoneNumber;
@@ -50,5 +53,13 @@ public class Phone {
                         .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                         .toString()
         );
+    }
+
+    public void permitNotification(String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
+
+    public void rejectNotification() {
+        this.deviceToken = null;
     }
 }
