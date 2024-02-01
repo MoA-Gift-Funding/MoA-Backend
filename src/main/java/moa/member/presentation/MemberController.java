@@ -77,7 +77,7 @@ public class MemberController implements MemberApi {
     @PostMapping("/notification")
     public ResponseEntity<Void> permitNotification(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @RequestBody @Valid NotificationPermitRequest request
+            @Valid @RequestBody NotificationPermitRequest request
     ) {
         memberService.permitNotification(memberId, request.deviceToken());
         return ResponseEntity.ok().build();

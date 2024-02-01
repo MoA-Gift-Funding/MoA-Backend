@@ -157,7 +157,7 @@ public interface MemberApi {
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @Schema
-            @RequestBody @Valid NotificationPermitRequest request
+            @Valid @RequestBody NotificationPermitRequest request
     );
 
     @ApiResponses(
