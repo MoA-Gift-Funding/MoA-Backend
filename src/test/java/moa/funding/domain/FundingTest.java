@@ -2,6 +2,7 @@ package moa.funding.domain;
 
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
+import static moa.fixture.TossPaymentFixture.tossPayment;
 import static moa.funding.domain.FundingStatus.DELIVERY_WAITING;
 import static moa.funding.exception.FundingExceptionType.DIFFERENT_FROM_REMAIN_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_AMOUNT;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import moa.funding.exception.FundingException;
 import moa.global.exception.MoaExceptionType;
 import moa.member.domain.Member;
+import moa.pay.domain.TossPayment;
 import moa.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -135,12 +137,13 @@ class FundingTest {
         }, delimiterString = ", ")
         void 계산한다(String productPrice, String fundedAmount, String rate) {
             // given
+            TossPayment payment = tossPayment(fundedAmount, 1L);
             Funding funding = funding(
                     mock(Member.class),
                     new Product("", Price.from(productPrice)),
                     fundedAmount
             );
-            funding.participate(null, Price.from(fundedAmount), "");
+            funding.participate(null, payment, "");
 
             // when
             long fundingRate = funding.getFundingRate();
@@ -161,12 +164,13 @@ class FundingTest {
                     new Product("", Price.from("10000")),
                     "10000"
             );
+            TossPayment payment = tossPayment("1000", 1L);
 
             // when
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
                 funding.participate(
                         mock(Member.class),
-                        Price.from("1000"),
+                        payment,
                         "hi"
                 );
             }).getExceptionType();
@@ -181,12 +185,13 @@ class FundingTest {
                     new Product("", Price.from("100000")),
                     "10000"
             );
+            TossPayment payment = tossPayment("10001", 1L);
 
             // when
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
                 funding.participate(
                         mock(Member.class),
-                        Price.from("10001"),
+                        payment,
                         "hi"
                 );
             }).getExceptionType();
@@ -201,17 +206,19 @@ class FundingTest {
                     new Product("", Price.from("16000")),
                     "10000"
             );
+            TossPayment payment = tossPayment("10000", 1L);
             funding.participate(
                     mock(Member.class),
-                    Price.from("10000"),
+                    payment,
                     "hi"
             );
+            TossPayment payment2 = tossPayment("10000", 1L);
 
             // when
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
                 funding.participate(
                         mock(Member.class),
-                        Price.from("10000"),
+                        payment2,
                         "hi"
                 );
             }).getExceptionType();
@@ -226,17 +233,19 @@ class FundingTest {
                     new Product("", Price.from("14000")),
                     "10000"
             );
+            TossPayment payment = tossPayment("10000", 1L);
             funding.participate(
                     mock(Member.class),
-                    Price.from("10000"),
+                    payment,
                     "hi"
             );
+            TossPayment payment2 = tossPayment("3999", 1L);
 
             // when
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
                 funding.participate(
                         mock(Member.class),
-                        Price.from("3999"),
+                        payment2,
                         "hi"
                 );
             }).getExceptionType();
@@ -251,17 +260,19 @@ class FundingTest {
                     new Product("", Price.from("14000")),
                     "10000"
             );
+            TossPayment payment = tossPayment("10000", 1L);
             funding.participate(
                     mock(Member.class),
-                    Price.from("10000"),
+                    payment,
                     "hi"
             );
+            TossPayment payment2 = tossPayment("4000", 1L);
 
             // when
             assertDoesNotThrow(() -> {
                 funding.participate(
                         mock(Member.class),
-                        Price.from("4000"),
+                        payment2,
                         "hi"
                 );
             });
@@ -276,12 +287,13 @@ class FundingTest {
                     new Product("", Price.from("14000")),
                     "10000"
             );
+            TossPayment payment = tossPayment("3999", 1L);
 
             // when
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
                 funding.participate(
                         member,
-                        Price.from("3999"),
+                        payment,
                         "hi"
                 );
             }).getExceptionType();
@@ -296,11 +308,12 @@ class FundingTest {
                     new Product("", Price.from("10000")),
                     "10000"
             );
+            TossPayment payment = tossPayment("10000", 1L);
 
             // when
             funding.participate(
                     mock(Member.class),
-                    Price.from("10000"),
+                    payment,
                     "end"
             );
 

@@ -2,6 +2,7 @@ package moa.funding.query;
 
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
+import static moa.fixture.TossPaymentFixture.tossPayment;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -17,6 +18,7 @@ import moa.funding.domain.Price;
 import moa.funding.query.response.ParticipatedFundingResponse;
 import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
+import moa.pay.domain.TossPaymentRepository;
 import moa.product.domain.Product;
 import moa.product.domain.ProductRepository;
 import moa.support.ApplicationTest;
@@ -53,6 +55,9 @@ class FundingQueryServiceTest {
     @Autowired
     private FriendRepository friendRepository;
 
+    @Autowired
+    private TossPaymentRepository tossPaymentRepository;
+
     @Test
     void 내가_참여한_펀딩을_조회한다() {
         // given
@@ -77,18 +82,22 @@ class FundingQueryServiceTest {
         Funding member2Funding = fundingRepository.save(funding(member2, product, "5000"));
         Funding member3Funding = fundingRepository.save(funding(member3, product, "5000"));
         Funding member4Funding = fundingRepository.save(funding(member4, product, "5000"));
+        String orderId = tossPaymentRepository.save(tossPayment("5000", member3.getId())).getOrderId();
+        String orderId2 = tossPaymentRepository.save(tossPayment("5000", member3.getId())).getOrderId();
+        String orderId3 = tossPaymentRepository.save(tossPayment("5000", member3.getId())).getOrderId();
+        String orderId4 = tossPaymentRepository.save(tossPayment("5000", member4.getId())).getOrderId();
 
         fundingService.participate(
-                new FundingParticipateCommand(member1Funding.getId(), member3.getId(), "5000", "ㅊㅋ")
+                new FundingParticipateCommand(member1Funding.getId(), member3.getId(), orderId, "ㅊㅋ")
         );
         fundingService.participate(
-                new FundingParticipateCommand(member2Funding.getId(), member3.getId(), "5000", "ㅊㅋ")
+                new FundingParticipateCommand(member2Funding.getId(), member3.getId(), orderId2, "ㅊㅋ")
         );
         fundingService.participate(
-                new FundingParticipateCommand(member1Funding.getId(), member3.getId(), "5000", "ㅊㅋ")
+                new FundingParticipateCommand(member1Funding.getId(), member3.getId(), orderId3, "ㅊㅋ")
         );
         fundingService.participate(
-                new FundingParticipateCommand(member1Funding.getId(), member4.getId(), "5000", "ㅊㅋ")
+                new FundingParticipateCommand(member1Funding.getId(), member4.getId(), orderId4, "ㅊㅋ")
         );
 
         // when

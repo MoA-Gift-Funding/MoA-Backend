@@ -15,6 +15,8 @@ import moa.funding.domain.FundingRepository;
 import moa.funding.domain.Price;
 import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
+import moa.pay.domain.TossPayment;
+import moa.pay.domain.TossPaymentRepository;
 import moa.product.domain.Product;
 import moa.product.domain.ProductRepository;
 import moa.support.ApplicationTest;
@@ -50,10 +52,13 @@ class FundingServiceTest {
     private FriendRepository friendRepository;
 
     @Autowired
+    private TossPaymentRepository tossPaymentRepository;
+
+    @Autowired
     private ApplicationEvents events;
 
     @Test
-    void 펀딩_참여_테스트() {
+    void 펀딩_참여_테스트_펀딩_참여시_금액이_모두_충족되면_펀딩_완료_이벤트_발행() {
         // given
         Member owner = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
         Member part = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
@@ -65,7 +70,8 @@ class FundingServiceTest {
                 "10000"
         );
         fundingRepository.save(funding);
-        var command = new FundingParticipateCommand(funding.getId(), part.getId(), "10000", "hi");
+        tossPaymentRepository.save(new TossPayment("key", "1", "order", "10000", part.getId()));
+        var command = new FundingParticipateCommand(funding.getId(), part.getId(), "1", "hi");
 
         // when
         fundingService.participate(command);

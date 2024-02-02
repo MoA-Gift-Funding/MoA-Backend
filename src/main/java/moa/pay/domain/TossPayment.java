@@ -1,13 +1,19 @@
 package moa.pay.domain;
 
 import static lombok.AccessLevel.PROTECTED;
+import static moa.pay.exception.TossPaymentExceptionType.ALREADY_USED_PAYMENT;
+import static moa.pay.exception.TossPaymentExceptionType.NO_AUTHORITY_PAYMENT;
 
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import moa.funding.domain.Price;
+import moa.pay.exception.TossPaymentException;
 import org.springframework.data.annotation.CreatedDate;
 
 @Getter
@@ -23,10 +29,14 @@ public class TossPayment {
 
     private String orderName;
 
-    private String totalAmount;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "total_amount"))
+    private Price totalAmount;
 
     @Column
     private Long memberId;
+
+    private boolean used;
 
     @CreatedDate
     private LocalDateTime createdDate;
@@ -35,7 +45,17 @@ public class TossPayment {
         this.paymentKey = paymentKey;
         this.orderId = orderId;
         this.orderName = orderName;
-        this.totalAmount = totalAmount;
+        this.totalAmount = Price.from(totalAmount);
         this.memberId = memberId;
+    }
+
+    public void use(Long memberId) {
+        if (used) {
+            throw new TossPaymentException(ALREADY_USED_PAYMENT);
+        }
+        if (this.memberId != memberId) {
+            throw new TossPaymentException(NO_AUTHORITY_PAYMENT);
+        }
+        this.used = true;
     }
 }

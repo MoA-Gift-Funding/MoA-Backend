@@ -40,6 +40,7 @@ import moa.address.domain.DeliveryAddress;
 import moa.funding.exception.FundingException;
 import moa.global.domain.RootEntity;
 import moa.member.domain.Member;
+import moa.pay.domain.TossPayment;
 import moa.product.domain.Product;
 
 @Entity
@@ -139,7 +140,7 @@ public class Funding extends RootEntity<Long> {
         }
     }
 
-    public void participate(Member member, Price amount, String message) {
+    public void participate(Member member, TossPayment payment, String message) {
         if (status != PROCESSING) {  // 펀딩이 진행중이 아닌 경우
             throw new FundingException(NOT_PROCESSING);
         }
@@ -148,6 +149,7 @@ public class Funding extends RootEntity<Long> {
             throw new FundingException(OWNER_CANNOT_PARTICIPATE);
         }
 
+        Price amount = payment.getTotalAmount();
         if (possibleMaxAmount().isLessThan(amount)) {  // 펀딩가능 최대금액보다 더 많이 펀딩한 경우
             throw new FundingException(EXCEEDED_POSSIBLE_AMOUNT);
         }
@@ -157,7 +159,7 @@ public class Funding extends RootEntity<Long> {
             throw new FundingException(UNDER_MINIMUM_AMOUNT);
         }
 
-        FundingParticipant fundingParticipant = new FundingParticipant(member, this, amount, message);
+        FundingParticipant fundingParticipant = new FundingParticipant(member, this, payment, message);
         participants.add(fundingParticipant);
         if (product.getPrice().equals(getFundedAmount())) {
             this.status = DELIVERY_WAITING;

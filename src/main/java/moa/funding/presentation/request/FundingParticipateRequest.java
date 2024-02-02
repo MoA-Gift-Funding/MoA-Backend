@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import moa.funding.application.command.FundingParticipateCommand;
 
 public record FundingParticipateRequest(
-        @Schema(description = "펀딩할 금액", example = "5000")
-        @NotBlank String amount,
+        @Schema(description = "결재시 사용한 주문 Id")
+        @NotBlank String paymentOrderId,
 
         @Schema(example = "말랑아 생일축하해~")
         @NotBlank String message
@@ -15,7 +15,7 @@ public record FundingParticipateRequest(
         return new FundingParticipateCommand(
                 fundingId,
                 memberId,
-                amount,
+                paymentOrderId,
                 message
         );
     }

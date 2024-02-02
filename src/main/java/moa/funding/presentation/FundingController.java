@@ -68,8 +68,8 @@ public class FundingController implements FundingApi {
             @Auth(permit = {SIGNED_UP}) Long memberId,
             @PageableDefault(size = 10) Pageable pageable
     ) {
-        var result = PageResponse.from(fundingQueryService.findMyFundings(memberId, pageable));
-        return ResponseEntity.ok(result);
+        var result = fundingQueryService.findMyFundings(memberId, pageable);
+        return ResponseEntity.ok(PageResponse.from(result));
     }
 
     @GetMapping("/{id}")

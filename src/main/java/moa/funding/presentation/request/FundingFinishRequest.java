@@ -5,14 +5,14 @@ import jakarta.validation.constraints.NotBlank;
 import moa.funding.application.command.FundingFinishCommand;
 
 public record FundingFinishRequest(
-        @Schema(description = "남은 펀딩 금액", example = "5000")
-        @NotBlank String amount
+        @Schema(description = "결재시 사용한 주문 Id")
+        @NotBlank String paymentOrderId
 ) {
     public FundingFinishCommand toCommand(Long fundingId, Long memberId) {
         return new FundingFinishCommand(
                 fundingId,
                 memberId,
-                amount
+                paymentOrderId
         );
     }
 }
