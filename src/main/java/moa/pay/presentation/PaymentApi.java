@@ -1,4 +1,4 @@
-package moa.pay.controller;
+package moa.pay.presentation;
 
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 
@@ -11,8 +11,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import moa.auth.Auth;
-import moa.pay.controller.request.PrepayRequest;
-import moa.pay.controller.request.TossPaymentRequest;
+import moa.pay.presentation.request.PrepayRequest;
+import moa.pay.presentation.request.TossPaymentRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;

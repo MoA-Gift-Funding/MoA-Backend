@@ -1,4 +1,4 @@
-package moa.pay.controller;
+package moa.pay.presentation;
 
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.pay.exception.TossPaymentExceptionType.PAYMENT_INVALID;
@@ -10,13 +10,13 @@ import moa.auth.Auth;
 import moa.pay.client.PaymentProperty;
 import moa.pay.client.TossClient;
 import moa.pay.client.TossClient.TossPaymentConfirmRequest;
-import moa.pay.controller.request.PrepayRequest;
-import moa.pay.controller.request.TossPaymentRequest;
 import moa.pay.domain.TossPayment;
 import moa.pay.domain.TossPaymentConfirm;
 import moa.pay.domain.TossPaymentConfirmRepository;
 import moa.pay.domain.TossPaymentRepository;
 import moa.pay.exception.TossPaymentException;
+import moa.pay.presentation.request.PrepayRequest;
+import moa.pay.presentation.request.TossPaymentRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
