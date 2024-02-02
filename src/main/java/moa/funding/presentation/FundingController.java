@@ -5,9 +5,11 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import moa.auth.Auth;
 import moa.funding.application.FundingService;
+import moa.funding.domain.FundingStatus;
 import moa.funding.presentation.request.FundingCreateRequest;
 import moa.funding.presentation.request.FundingFinishRequest;
 import moa.funding.presentation.request.FundingParticipateRequest;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -84,9 +87,10 @@ public class FundingController implements FundingApi {
     @GetMapping
     public ResponseEntity<PageResponse<FundingResponse>> findFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
+            @RequestParam(value = "statuses", defaultValue = "PROCESSING") List<FundingStatus> statuses,
             @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
     ) {
-        var result = fundingQueryService.findFundings(memberId, pageable);
+        var result = fundingQueryService.findFundings(memberId, statuses, pageable);
         return ResponseEntity.ok(PageResponse.from(result));
     }
 }

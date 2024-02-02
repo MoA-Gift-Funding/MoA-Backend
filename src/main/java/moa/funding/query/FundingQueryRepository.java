@@ -2,7 +2,9 @@ package moa.funding.query;
 
 import static moa.funding.exception.FundingExceptionType.NOT_FOUND_FUNDING;
 
+import java.util.List;
 import moa.funding.domain.Funding;
+import moa.funding.domain.FundingStatus;
 import moa.funding.exception.FundingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +29,8 @@ public interface FundingQueryRepository extends JpaRepository<Funding, Long> {
                 AND friend.member.id = :memberId
                 AND friend.isBlocked = FALSE
 
-            WHERE 
-            f.status = 'PROCESSING' 
+            WHERE
+            f.status IN (:statuses)
             AND (
                 f.member.id = :memberId
                 OR (
@@ -42,5 +44,9 @@ public interface FundingQueryRepository extends JpaRepository<Funding, Long> {
                     )
                 ) 
             """)
-    Page<Funding> findByMembersFriend(@Param("memberId") Long memberId, Pageable pageable);
+    Page<Funding> findByMembersFriend(
+            @Param("memberId") Long memberId,
+            @Param("statuses") List<FundingStatus> statuses,
+            Pageable pageable
+    );
 }

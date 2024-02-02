@@ -1,6 +1,7 @@
 package moa.funding.presentation;
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,7 +13,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import moa.auth.Auth;
+import moa.funding.domain.FundingStatus;
 import moa.funding.presentation.request.FundingCreateRequest;
 import moa.funding.presentation.request.FundingFinishRequest;
 import moa.funding.presentation.request.FundingParticipateRequest;
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "펀딩 API", description = "펀딩 관련 API")
 @SecurityRequirement(name = "JWT")
@@ -178,6 +182,9 @@ public interface FundingApi {
     ResponseEntity<PageResponse<FundingResponse>> findFundings(
             @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
+
+            @Parameter(in = QUERY, description = "조회될 펀딩 상태들 (기본값 PROCESSING)", example = "PROCESSING,DELIVERY_WAITING")
+            @RequestParam(value = "statuses", defaultValue = "PROCESSING") List<FundingStatus> statuses,
 
             @ParameterObject
             @PageableDefault(size = 10) Pageable pageable
