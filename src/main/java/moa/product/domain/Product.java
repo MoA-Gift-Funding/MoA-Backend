@@ -10,7 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import moa.funding.domain.Price;
+import moa.global.domain.Price;
 import moa.global.domain.RootEntity;
 
 @Entity

@@ -1,4 +1,4 @@
-package moa.funding.domain;
+package moa.global.domain;
 
 import static java.math.RoundingMode.HALF_UP;
 

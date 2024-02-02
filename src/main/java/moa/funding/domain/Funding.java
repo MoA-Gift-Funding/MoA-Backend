@@ -8,7 +8,6 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 import static moa.funding.domain.FundingStatus.DELIVERY_WAITING;
 import static moa.funding.domain.FundingStatus.PROCESSING;
-import static moa.funding.domain.Price.ZERO;
 import static moa.funding.exception.FundingExceptionType.DIFFERENT_FROM_REMAIN_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.INVALID_END_DATE;
@@ -19,6 +18,7 @@ import static moa.funding.exception.FundingExceptionType.OWNER_CANNOT_PARTICIPAT
 import static moa.funding.exception.FundingExceptionType.PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.PRODUCT_PRICE_UNDER_MINIMUM_PRICE;
 import static moa.funding.exception.FundingExceptionType.UNDER_MINIMUM_AMOUNT;
+import static moa.global.domain.Price.ZERO;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -38,6 +38,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import moa.address.domain.DeliveryAddress;
 import moa.funding.exception.FundingException;
+import moa.global.domain.Price;
 import moa.global.domain.RootEntity;
 import moa.member.domain.Member;
 import moa.product.domain.Product;

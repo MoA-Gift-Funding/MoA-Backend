@@ -12,7 +12,7 @@ import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import moa.funding.domain.Price;
+import moa.global.domain.Price;
 import moa.pay.exception.TossPaymentException;
 import org.springframework.data.annotation.CreatedDate;
 

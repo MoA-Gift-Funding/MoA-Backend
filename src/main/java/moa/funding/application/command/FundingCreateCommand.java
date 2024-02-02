@@ -3,8 +3,8 @@ package moa.funding.application.command;
 import java.time.LocalDate;
 import moa.address.domain.DeliveryAddress;
 import moa.funding.domain.Funding;
-import moa.funding.domain.Price;
 import moa.funding.domain.Visibility;
+import moa.global.domain.Price;
 import moa.member.domain.Member;
 import moa.product.domain.Product;
 

@@ -12,7 +12,7 @@ import moa.funding.application.command.FundingParticipateCommand;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingFinishEvent;
 import moa.funding.domain.FundingRepository;
-import moa.funding.domain.Price;
+import moa.global.domain.Price;
 import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import moa.pay.domain.TossPayment;
