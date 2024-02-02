@@ -1,7 +1,7 @@
 package moa.funding.presentation;
 
 import static moa.member.domain.MemberStatus.SIGNED_UP;
-import static org.springframework.data.domain.Sort.Direction.ASC;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -66,7 +66,7 @@ public class FundingController implements FundingApi {
     @GetMapping("/my")
     public ResponseEntity<PageResponse<MyFundingDetail>> findMyFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
     ) {
         var result = fundingQueryService.findMyFundings(memberId, pageable);
         return ResponseEntity.ok(PageResponse.from(result));
@@ -84,7 +84,7 @@ public class FundingController implements FundingApi {
     @GetMapping
     public ResponseEntity<PageResponse<FundingResponse>> findFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @PageableDefault(size = 10, sort = "endDate", direction = ASC) Pageable pageable
+            @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
     ) {
         var result = fundingQueryService.findFundings(memberId, pageable);
         return ResponseEntity.ok(PageResponse.from(result));
