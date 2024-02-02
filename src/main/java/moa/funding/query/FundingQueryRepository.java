@@ -27,7 +27,9 @@ public interface FundingQueryRepository extends JpaRepository<Funding, Long> {
                 AND friend.member.id = :memberId
                 AND friend.isBlocked = FALSE
 
-            WHERE
+            WHERE 
+            f.status = 'PROCESSING' 
+            AND (
                 f.member.id = :memberId
                 OR (
                     f.member.id = friend.target.id
@@ -38,6 +40,7 @@ public interface FundingQueryRepository extends JpaRepository<Funding, Long> {
                             AND blockedFriend.target.id = :memberId
                             AND blockedFriend.isBlocked = TRUE)
                     )
+                ) 
             """)
     Page<Funding> findByMembersFriend(@Param("memberId") Long memberId, Pageable pageable);
 }
