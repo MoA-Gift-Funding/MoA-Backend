@@ -8,6 +8,7 @@ public class TossPaymentException extends MoaException {
     private final TossPaymentExceptionType tossPaymentExceptionType;
 
     public TossPaymentException(TossPaymentExceptionType tossPaymentExceptionType) {
+        super(tossPaymentExceptionType.name());
         this.tossPaymentExceptionType = tossPaymentExceptionType;
     }
 
