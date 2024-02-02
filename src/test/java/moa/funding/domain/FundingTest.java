@@ -143,7 +143,8 @@ class FundingTest {
                     new Product("", Price.from(productPrice)),
                     fundedAmount
             );
-            funding.participate(null, payment, "");
+            var participant = new FundingParticipant(mock(Member.class), funding, payment, "");
+            funding.participate(participant);
 
             // when
             long fundingRate = funding.getFundingRate();
@@ -165,14 +166,11 @@ class FundingTest {
                     "10000"
             );
             TossPayment payment = tossPayment("1000", 1L);
+            var participant = new FundingParticipant(mock(Member.class), funding, payment, "");
 
             // when
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
-                funding.participate(
-                        mock(Member.class),
-                        payment,
-                        "hi"
-                );
+                funding.participate(participant);
             }).getExceptionType();
             assertThat(exceptionType).isEqualTo(UNDER_MINIMUM_AMOUNT);
         }
@@ -186,14 +184,11 @@ class FundingTest {
                     "10000"
             );
             TossPayment payment = tossPayment("10001", 1L);
+            var participant = new FundingParticipant(mock(Member.class), funding, payment, "");
 
             // when
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
-                funding.participate(
-                        mock(Member.class),
-                        payment,
-                        "hi"
-                );
+                funding.participate(participant);
             }).getExceptionType();
             assertThat(exceptionType).isEqualTo(EXCEEDED_POSSIBLE_AMOUNT);
         }
@@ -207,20 +202,14 @@ class FundingTest {
                     "10000"
             );
             TossPayment payment = tossPayment("10000", 1L);
-            funding.participate(
-                    mock(Member.class),
-                    payment,
-                    "hi"
-            );
+            var participant = new FundingParticipant(mock(Member.class), funding, payment, "");
+            funding.participate(participant);
             TossPayment payment2 = tossPayment("10000", 1L);
+            var participant2 = new FundingParticipant(mock(Member.class), funding, payment2, "");
 
             // when
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
-                funding.participate(
-                        mock(Member.class),
-                        payment2,
-                        "hi"
-                );
+                funding.participate(participant2);
             }).getExceptionType();
             assertThat(exceptionType).isEqualTo(EXCEEDED_POSSIBLE_AMOUNT);
         }
@@ -234,20 +223,14 @@ class FundingTest {
                     "10000"
             );
             TossPayment payment = tossPayment("10000", 1L);
-            funding.participate(
-                    mock(Member.class),
-                    payment,
-                    "hi"
-            );
+            var participant = new FundingParticipant(mock(Member.class), funding, payment, "");
+            funding.participate(participant);
             TossPayment payment2 = tossPayment("3999", 1L);
+            var participant2 = new FundingParticipant(mock(Member.class), funding, payment2, "");
 
             // when
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
-                funding.participate(
-                        mock(Member.class),
-                        payment2,
-                        "hi"
-                );
+                funding.participate(participant2);
             }).getExceptionType();
             assertThat(exceptionType).isEqualTo(UNDER_MINIMUM_AMOUNT);
         }
@@ -261,20 +244,14 @@ class FundingTest {
                     "10000"
             );
             TossPayment payment = tossPayment("10000", 1L);
-            funding.participate(
-                    mock(Member.class),
-                    payment,
-                    "hi"
-            );
+            var participant = new FundingParticipant(mock(Member.class), funding, payment, "");
+            funding.participate(participant);
             TossPayment payment2 = tossPayment("4000", 1L);
+            var participant2 = new FundingParticipant(mock(Member.class), funding, payment2, "");
 
             // when
             assertDoesNotThrow(() -> {
-                funding.participate(
-                        mock(Member.class),
-                        payment2,
-                        "hi"
-                );
+                funding.participate(participant2);
             });
         }
 
@@ -287,15 +264,12 @@ class FundingTest {
                     new Product("", Price.from("14000")),
                     "10000"
             );
-            TossPayment payment = tossPayment("3999", 1L);
+            TossPayment payment = tossPayment("10000", 1L);
+            var participant = new FundingParticipant(member, funding, payment, "");
 
             // when
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
-                funding.participate(
-                        member,
-                        payment,
-                        "hi"
-                );
+                funding.participate(participant);
             }).getExceptionType();
             assertThat(exceptionType).isEqualTo(OWNER_CANNOT_PARTICIPATE);
         }
@@ -309,13 +283,10 @@ class FundingTest {
                     "10000"
             );
             TossPayment payment = tossPayment("10000", 1L);
+            var participant = new FundingParticipant(mock(Member.class), funding, payment, "");
 
             // when
-            funding.participate(
-                    mock(Member.class),
-                    payment,
-                    "end"
-            );
+            funding.participate(participant);
 
             // then
             assertThat(funding.getStatus()).isEqualTo(DELIVERY_WAITING);

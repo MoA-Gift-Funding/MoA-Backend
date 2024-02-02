@@ -8,6 +8,7 @@ import moa.funding.application.command.FundingCreateCommand;
 import moa.funding.application.command.FundingFinishCommand;
 import moa.funding.application.command.FundingParticipateCommand;
 import moa.funding.domain.Funding;
+import moa.funding.domain.FundingParticipant;
 import moa.funding.domain.FundingRepository;
 import moa.funding.domain.FundingValidator;
 import moa.member.domain.Member;
@@ -46,7 +47,8 @@ public class FundingService {
         fundingValidator.validateVisible(member, funding);
         TossPayment payment = tossPaymentRepository.getByOrderId(command.paymentOrderId());
         payment.use(member.getId());
-        funding.participate(member, payment, command.message());
+        FundingParticipant participant = new FundingParticipant(member, funding, payment, command.message());
+        funding.participate(participant);
         fundingRepository.save(funding);
     }
 
