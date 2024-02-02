@@ -6,7 +6,7 @@ import moa.global.exception.MoaExceptionType;
 import org.springframework.http.HttpStatus;
 
 public enum TossPaymentExceptionType implements MoaExceptionType {
-    
+
     PAYMENT_ERROR(BAD_REQUEST, "결제 오류가 발생했습니다."),
     PAYMENT_INVALID(BAD_REQUEST, "유효하지 않은 결제정보입니다."),
     ;
@@ -20,6 +20,7 @@ public enum TossPaymentExceptionType implements MoaExceptionType {
         this.message = message;
     }
 
+    @Override
     public TossPaymentExceptionType withDetail(String detailMessage) {
         this.detailMessage = detailMessage;
         return this;
@@ -32,6 +33,9 @@ public enum TossPaymentExceptionType implements MoaExceptionType {
 
     @Override
     public String getMessage() {
-        return String.format("%s %s", message, detailMessage).strip();
+        if (detailMessage == null) {
+            return message;
+        }
+        return MESSAGE_FORMAT.formatted(message, detailMessage).strip();
     }
 }

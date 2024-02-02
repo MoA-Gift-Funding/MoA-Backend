@@ -24,10 +24,17 @@ public enum MemberExceptionType implements MoaExceptionType {
 
     private final HttpStatus httpStatus;
     private final String message;
+    private String detailMessage;
 
     MemberExceptionType(HttpStatus httpStatus, String message) {
         this.httpStatus = httpStatus;
         this.message = message;
+    }
+
+    @Override
+    public MemberExceptionType withDetail(String detailMessage) {
+        this.detailMessage = detailMessage;
+        return this;
     }
 
     @Override
@@ -37,6 +44,9 @@ public enum MemberExceptionType implements MoaExceptionType {
 
     @Override
     public String getMessage() {
-        return message;
+        if (detailMessage == null) {
+            return message;
+        }
+        return MESSAGE_FORMAT.formatted(message, detailMessage).strip();
     }
 }
