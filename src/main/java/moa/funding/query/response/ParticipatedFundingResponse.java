@@ -12,7 +12,6 @@ import moa.funding.domain.Funding;
 import moa.funding.domain.FundingParticipant;
 
 public record ParticipatedFundingResponse(
-        // 펀딩정보
         @Schema(example = "3")
         Long fundingId,
 
@@ -25,7 +24,6 @@ public record ParticipatedFundingResponse(
         @Schema(description = "펀딩 상태", example = "진행중")
         String status,
 
-        // 펀딩 작성자 정보
         @Schema(example = "1")
         Long memberId,
 
@@ -35,14 +33,12 @@ public record ParticipatedFundingResponse(
         @Schema(example = "https://example.url")
         String profileImageUrl,
 
-        // 상품 정보
         @Schema(example = "1")
         Long productId,
 
         @Schema(example = "https://example.url")
         String productImageUrl,
 
-        // 참여정보
         @Schema(example = "2024-02-20")
         @JsonFormat(pattern = "yyyy-MM-dd HH-mm-ss") LocalDateTime participatedDate,
 

@@ -10,7 +10,6 @@ import moa.friend.domain.Friend;
 import moa.funding.domain.Funding;
 
 public record FundingResponse(
-        // 펀딩정보
         @Schema(example = "3")
         Long fundingId,
 
@@ -23,7 +22,6 @@ public record FundingResponse(
         @Schema(description = "펀딩 상태", example = "진행중")
         String status,
 
-        // 펀딩 작성자 정보
         @Schema(example = "1")
         Long memberId,
 
@@ -33,7 +31,6 @@ public record FundingResponse(
         @Schema(example = "https://example.url")
         String profileImageUrl,
 
-        // 상품 정보
         @Schema(example = "1")
         Long productId,
 
