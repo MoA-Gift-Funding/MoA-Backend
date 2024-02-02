@@ -13,10 +13,17 @@ public enum FriendExceptionType implements MoaExceptionType {
 
     private final HttpStatus httpStatus;
     private final String message;
+    private String detailMessage;
 
     FriendExceptionType(HttpStatus httpStatus, String message) {
         this.httpStatus = httpStatus;
         this.message = message;
+    }
+
+    @Override
+    public FriendExceptionType withDetail(String detailMessage) {
+        this.detailMessage = detailMessage;
+        return this;
     }
 
     @Override
@@ -26,6 +33,10 @@ public enum FriendExceptionType implements MoaExceptionType {
 
     @Override
     public String getMessage() {
-        return message;
+        if (detailMessage == null) {
+            return message;
+        }
+        return MESSAGE_FORMAT.formatted(message, detailMessage).strip();
     }
+
 }

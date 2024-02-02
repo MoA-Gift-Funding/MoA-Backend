@@ -1,8 +1,11 @@
-package moa.funding.domain;
+package moa.global.domain;
+
+import static java.math.RoundingMode.HALF_UP;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Embeddable
 public record Price(
@@ -31,14 +34,30 @@ public record Price(
     }
 
     public Price minus(Price other) {
-        return new Price(this.value.min(other.value));
+        return new Price(this.value.subtract(other.value));
     }
 
-    public Price divide(Price other) {
-        return new Price(this.value.divide(other.value));
+    public double divide(Price other) {
+        return this.value.divide(other.value, 2, HALF_UP).doubleValue();
     }
 
     public long longValue() {
         return this.value.longValue();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Price price)) {
+            return false;
+        }
+        return value.compareTo(price.value) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }

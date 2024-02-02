@@ -17,7 +17,7 @@ public record SignupRequest(
 
         @Schema(example = "0104")
         @NotNull String birthday,
-        
+
         String profileImageUrl
 ) {
     public SignupCommand toCommand(Long memberId) {

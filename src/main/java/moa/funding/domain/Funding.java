@@ -1,14 +1,24 @@
 package moa.funding.domain;
 
+import static jakarta.persistence.CascadeType.MERGE;
+import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
+import static moa.funding.domain.FundingStatus.DELIVERY_WAITING;
 import static moa.funding.domain.FundingStatus.PROCESSING;
-import static moa.funding.domain.Price.ZERO;
+import static moa.funding.exception.FundingExceptionType.DIFFERENT_FROM_REMAIN_AMOUNT;
+import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.INVALID_END_DATE;
-import static moa.funding.exception.FundingExceptionType.MAXIMUM_AMOUNT_GREATER_THAN_PRODUCT;
 import static moa.funding.exception.FundingExceptionType.MAXIMUM_AMOUNT_LESS_THAN_MINIMUM;
+import static moa.funding.exception.FundingExceptionType.NOT_PROCESSING;
+import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_FINISH;
+import static moa.funding.exception.FundingExceptionType.OWNER_CANNOT_PARTICIPATE;
+import static moa.funding.exception.FundingExceptionType.PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT;
+import static moa.funding.exception.FundingExceptionType.PRODUCT_PRICE_UNDER_MINIMUM_PRICE;
+import static moa.funding.exception.FundingExceptionType.UNDER_MINIMUM_AMOUNT;
+import static moa.global.domain.Price.ZERO;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -28,6 +38,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import moa.address.domain.DeliveryAddress;
 import moa.funding.exception.FundingException;
+import moa.global.domain.Price;
 import moa.global.domain.RootEntity;
 import moa.member.domain.Member;
 import moa.product.domain.Product;
@@ -84,7 +95,7 @@ public class Funding extends RootEntity<Long> {
     @Column
     private String deliveryRequestMessage;
 
-    @OneToMany(fetch = LAZY, mappedBy = "funding")
+    @OneToMany(fetch = LAZY, mappedBy = "funding", cascade = {PERSIST, MERGE})
     private List<FundingParticipant> participants = new ArrayList<>();
 
     public Funding(
@@ -112,30 +123,47 @@ public class Funding extends RootEntity<Long> {
     }
 
     public void create() {
-        if (maximumAmount.isLessThan(MINIMUM_AMOUNT)) {
+        if (product.getPrice().isLessThan(MINIMUM_AMOUNT)) {  // 상품 가격이 최소금액보다 작은 경우
+            throw new FundingException(PRODUCT_PRICE_UNDER_MINIMUM_PRICE);
+        }
+
+        if (maximumAmount.isLessThan(MINIMUM_AMOUNT)) {  // 펀딩 가능 최대금액이 최소금액보다 작은 경우
             throw new FundingException(MAXIMUM_AMOUNT_LESS_THAN_MINIMUM);
         }
 
-        if (maximumAmount.isGreaterThan(product.getPrice())) {
-            throw new FundingException(MAXIMUM_AMOUNT_GREATER_THAN_PRODUCT);
+        if (product.getPrice().isLessThan(maximumAmount)) {  // 상품 가격이 펀딩 가능 최대금액보다 작은 경우
+            throw new FundingException(PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT);
         }
 
-        if (endDate.isBefore(LocalDate.now())) {
+        if (endDate.isBefore(LocalDate.now())) {  // 종료일이 과거인 경우
             throw new FundingException(INVALID_END_DATE);
         }
     }
 
-    public Price getFundedAmount() {
-        return participants.stream()
-                .map(FundingParticipant::getAmount)
-                .reduce(ZERO, Price::add);
-    }
+    public void participate(FundingParticipant participant) {
+        if (status != PROCESSING) {  // 펀딩이 진행중이 아닌 경우
+            throw new FundingException(NOT_PROCESSING);
+        }
 
-    public Double getFundingRate() {
-        Price fundedAmount = participants.stream()
-                .map(FundingParticipant::getAmount)
-                .reduce(ZERO, Price::add);
-        return fundedAmount.divide(maximumAmount).value().doubleValue() * 100;
+        if (this.member.equals(participant.getMember())) {  // 펀딩 개설자가 참여하려는 경우
+            throw new FundingException(OWNER_CANNOT_PARTICIPATE);
+        }
+
+        Price amount = participant.getAmount();
+        if (possibleMaxAmount().isLessThan(amount)) {  // 펀딩가능 최대금액보다 더 많이 펀딩한 경우
+            throw new FundingException(EXCEEDED_POSSIBLE_AMOUNT);
+        }
+
+        // 금액이 펀딩 최소금액보다 낮은 경우, 펀딩의 남은 가격과 일치하지 않으면 예외
+        if (amount.isLessThan(minimumAmount) && !amount.equals(remainAmount())) {
+            throw new FundingException(UNDER_MINIMUM_AMOUNT);
+        }
+
+        participants.add(participant);
+        if (product.getPrice().equals(getFundedAmount())) {
+            this.status = DELIVERY_WAITING;
+            registerEvent(new FundingFinishEvent(id));
+        }
     }
 
     public Price possibleMaxAmount() {
@@ -148,5 +176,29 @@ public class Funding extends RootEntity<Long> {
 
     public Price remainAmount() {
         return product.getPrice().minus(getFundedAmount());
+    }
+
+    public Price getFundedAmount() {
+        return participants.stream()
+                .map(FundingParticipant::getAmount)
+                .reduce(ZERO, Price::add);
+    }
+
+    public void finish(Member member, Price price) {
+        if (!this.member.equals(member)) {
+            throw new FundingException(NO_AUTHORITY_FINISH);
+        }
+
+        if (!remainAmount().equals(price)) {
+            throw new FundingException(DIFFERENT_FROM_REMAIN_AMOUNT);
+        }
+
+        this.status = DELIVERY_WAITING;
+        registerEvent(new FundingFinishEvent(id));
+    }
+
+    public int getFundingRate() {
+        Price fundedAmount = getFundedAmount();
+        return (int) (fundedAmount.divide(product.getPrice()) * 100);
     }
 }

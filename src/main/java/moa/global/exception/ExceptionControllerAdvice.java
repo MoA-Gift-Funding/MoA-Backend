@@ -60,7 +60,6 @@ public class ExceptionControllerAdvice {
         try {
             // body 가 읽히지 않고 예외처리 되는 경우에 캐시하기 위함
             wrapper.getInputStream().readAllBytes();
-
             byte[] buf = wrapper.getContentAsByteArray();
             if (buf.length == 0) {
                 return " - ";

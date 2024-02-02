@@ -4,12 +4,14 @@ package moa.funding.query.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import moa.friend.domain.Friend;
 import moa.funding.domain.Funding;
+import moa.funding.domain.FundingParticipant;
 
-public record FundingResponse(
+public record ParticipatedFundingResponse(
         @Schema(example = "3")
         Long fundingId,
 
@@ -35,15 +37,22 @@ public record FundingResponse(
         Long productId,
 
         @Schema(example = "https://example.url")
-        String productImageUrl
+        String productImageUrl,
+
+        @Schema(example = "2024-02-20")
+        @JsonFormat(pattern = "yyyy-MM-dd HH-mm-ss") LocalDateTime participatedDate,
+
+        @Schema(description = "펀딩한 금액", example = "20000")
+        Long amount
 ) {
-    public static FundingResponse of(Funding funding, List<Friend> friends) {
+    public static ParticipatedFundingResponse of(FundingParticipant participant, List<Friend> friends) {
+        Funding funding = participant.getFunding();
         String fundingMemberNickname = friends.stream()
                 .filter(friend -> Objects.equals(friend.getTarget().getId(), funding.getMember().getId()))
                 .findAny()
                 .map(Friend::getNickname)
                 .orElseGet(() -> funding.getMember().getNickname());
-        return new FundingResponse(
+        return new ParticipatedFundingResponse(
                 funding.getId(),
                 funding.getTitle(),
                 funding.getEndDate(),
@@ -52,7 +61,9 @@ public record FundingResponse(
                 fundingMemberNickname,
                 funding.getMember().getProfileImageUrl(),
                 funding.getProduct().getId(),
-                funding.getProduct().getImageUrl()
+                funding.getProduct().getImageUrl(),
+                participant.getCreatedDate(),
+                participant.getAmount().longValue()
         );
     }
 }

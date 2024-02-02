@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import moa.funding.application.command.FundingCreateCommand;
-import moa.funding.domain.Price;
+import moa.global.domain.Price;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public record FundingCreateRequest(

@@ -15,10 +15,17 @@ public enum DeliveryAddressExceptionType implements MoaExceptionType {
 
     private final HttpStatus httpStatus;
     private final String message;
+    private String detailMessage;
 
     DeliveryAddressExceptionType(HttpStatus httpStatus, String message) {
         this.httpStatus = httpStatus;
         this.message = message;
+    }
+
+    @Override
+    public DeliveryAddressExceptionType withDetail(String detailMessage) {
+        this.detailMessage = detailMessage;
+        return this;
     }
 
     @Override
@@ -28,6 +35,9 @@ public enum DeliveryAddressExceptionType implements MoaExceptionType {
 
     @Override
     public String getMessage() {
-        return message;
+        if (detailMessage == null) {
+            return message;
+        }
+        return MESSAGE_FORMAT.formatted(message, detailMessage).strip();
     }
 }

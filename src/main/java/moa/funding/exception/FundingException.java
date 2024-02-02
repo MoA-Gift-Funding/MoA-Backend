@@ -8,6 +8,7 @@ public class FundingException extends MoaException {
     private final FundingExceptionType fundingExceptionType;
 
     public FundingException(FundingExceptionType fundingExceptionType) {
+        super(fundingExceptionType.name());
         this.fundingExceptionType = fundingExceptionType;
     }
 

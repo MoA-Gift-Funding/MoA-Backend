@@ -1,21 +1,23 @@
 package moa.funding.presentation;
 
 import static moa.member.domain.MemberStatus.SIGNED_UP;
-import static org.springframework.data.domain.Sort.Direction.ASC;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
-import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import moa.auth.Auth;
 import moa.funding.application.FundingService;
+import moa.funding.domain.FundingStatus;
 import moa.funding.presentation.request.FundingCreateRequest;
+import moa.funding.presentation.request.FundingFinishRequest;
+import moa.funding.presentation.request.FundingParticipateRequest;
 import moa.funding.query.FundingQueryService;
 import moa.funding.query.response.FundingDetailResponse;
 import moa.funding.query.response.FundingResponse;
 import moa.funding.query.response.MyFundingsResponse.MyFundingDetail;
 import moa.global.presentation.PageResponse;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -43,19 +46,39 @@ public class FundingController implements FundingApi {
         return ResponseEntity.created(URI.create("/fundings/" + fundingId)).build();
     }
 
+    @PostMapping("/{id}/participate")
+    public ResponseEntity<Void> participate(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            @PathVariable Long id,
+            @Valid @RequestBody FundingParticipateRequest request
+    ) {
+        fundingService.participate(request.toCommand(id, memberId));
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/finish")
+    public ResponseEntity<Void> finish(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            @PathVariable Long id,
+            @Valid @RequestBody FundingFinishRequest request
+    ) {
+        fundingService.finish(request.toCommand(id, memberId));
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/my")
     public ResponseEntity<PageResponse<MyFundingDetail>> findMyFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
     ) {
-        var result = PageResponse.from(fundingQueryService.findMyFundings(memberId, pageable));
-        return ResponseEntity.ok(result);
+        var result = fundingQueryService.findMyFundings(memberId, pageable);
+        return ResponseEntity.ok(PageResponse.from(result));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<FundingDetailResponse> findFundingDetail(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @Parameter(description = "펀딩 ID") @PathVariable Long id
+            @PathVariable Long id
     ) {
         var result = fundingQueryService.findFundingById(memberId, id);
         return ResponseEntity.ok(result);
@@ -64,9 +87,10 @@ public class FundingController implements FundingApi {
     @GetMapping
     public ResponseEntity<PageResponse<FundingResponse>> findFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @ParameterObject @PageableDefault(size = 10, sort = "endDate", direction = ASC) Pageable pageable
+            @RequestParam(value = "statuses", defaultValue = "PROCESSING") List<FundingStatus> statuses,
+            @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
     ) {
-        var result = fundingQueryService.findFundings(memberId, pageable);
+        var result = fundingQueryService.findFundings(memberId, statuses, pageable);
         return ResponseEntity.ok(PageResponse.from(result));
     }
 }

@@ -1,10 +1,8 @@
-package moa.s3;
+package moa.global.s3;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.testcontainers.containers.localstack.LocalStackContainer.Service.S3;
 
-import moa.global.s3.AwsS3Property;
-import moa.global.s3.PresignedUrlClient;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.localstack.LocalStackContainer;
