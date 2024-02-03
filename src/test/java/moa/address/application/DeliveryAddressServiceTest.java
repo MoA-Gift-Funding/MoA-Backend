@@ -1,6 +1,6 @@
 package moa.address.application;
 
-import static moa.address.exception.DeliveryAddressExceptionType.NO_AUTHORITY;
+import static moa.address.exception.DeliveryAddressExceptionType.NO_AUTHORITY_FOR_ADDRESS;
 import static moa.address.exception.DeliveryAddressExceptionType.REQUIRED_DEFAULT_ADDRESS;
 import static moa.fixture.MemberFixture.member;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
@@ -187,7 +187,7 @@ class DeliveryAddressServiceTest {
             MoaExceptionType exceptionType = assertThrows(DeliveryAddressException.class, () -> {
                 deliveryAddressService.update(command);
             }).getExceptionType();
-            assertThat(exceptionType).isEqualTo(NO_AUTHORITY);
+            assertThat(exceptionType).isEqualTo(NO_AUTHORITY_FOR_ADDRESS);
         }
 
         @Test

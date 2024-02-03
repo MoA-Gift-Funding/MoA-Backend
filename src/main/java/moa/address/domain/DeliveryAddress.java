@@ -3,7 +3,7 @@ package moa.address.domain;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
-import static moa.address.exception.DeliveryAddressExceptionType.NO_AUTHORITY;
+import static moa.address.exception.DeliveryAddressExceptionType.NO_AUTHORITY_FOR_ADDRESS;
 import static moa.address.exception.DeliveryAddressExceptionType.REQUIRED_DEFAULT_ADDRESS;
 
 import jakarta.persistence.Column;
@@ -65,7 +65,7 @@ public class DeliveryAddress extends RootEntity<Long> {
 
     public void validateOwner(Member member) {
         if (!this.member.equals(member)) {
-            throw new DeliveryAddressException(NO_AUTHORITY);
+            throw new DeliveryAddressException(NO_AUTHORITY_FOR_ADDRESS);
         }
     }
 

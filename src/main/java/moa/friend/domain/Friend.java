@@ -3,7 +3,7 @@ package moa.friend.domain;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
-import static moa.friend.exception.FriendExceptionType.NO_AUTHORITY;
+import static moa.friend.exception.FriendExceptionType.NO_AUTHORITY_FOR_FRIEND;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,7 +53,7 @@ public class Friend extends RootEntity<Long> {
 
     public void validateAuthority(Member member) {
         if (!this.member.equals(member)) {
-            throw new FriendException(NO_AUTHORITY);
+            throw new FriendException(NO_AUTHORITY_FOR_FRIEND);
         }
     }
 
