@@ -11,4 +11,6 @@ public interface MoaExceptionType {
     HttpStatus getHttpStatus();
 
     String getMessage();
+
+    String name();
 }

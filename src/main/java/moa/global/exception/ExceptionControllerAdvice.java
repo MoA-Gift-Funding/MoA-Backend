@@ -29,7 +29,7 @@ public class ExceptionControllerAdvice {
         log.info("[{}] request header: {}", MDC.get(REQUEST_ID), getHeaders(request));
         log.info("[{}] request body: {}", MDC.get(REQUEST_ID), getRequestBody(request));
         return ResponseEntity.status(type.getHttpStatus())
-                .body(new ExceptionResponse(type.getMessage()));
+                .body(new ExceptionResponse(type.name(), type.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
@@ -39,7 +39,7 @@ public class ExceptionControllerAdvice {
         log.info("[{}] request header: {}", MDC.get(REQUEST_ID), getHeaders(request));
         log.info("[{}] request body: {}", MDC.get(REQUEST_ID), getRequestBody(request));
         return ResponseEntity.internalServerError()
-                .body(new ExceptionResponse("알 수 없는 오류가 발생했습니다."));
+                .body(new ExceptionResponse("INTERNAL_EXCEPTION", "알 수 없는 오류가 발생했습니다."));
     }
 
     private Map<String, Object> getHeaders(HttpServletRequest request) {
