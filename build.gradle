@@ -47,6 +47,8 @@ dependencies {
     // Firebase
     implementation 'com.google.firebase:firebase-admin:9.2.0'
 
+    implementation 'org.reflections:reflections:0.10.2'
+
     compileOnly 'org.projectlombok:lombok'
 
     runtimeOnly 'com.h2database:h2'
@@ -77,3 +79,10 @@ tasks.register('importConfigFromSubmodule', Copy) {
     exclude "application-local.yml"
     into './src/main/resources'
 }
+
+tasks.register('generateExceptionDoc', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'moa.global.exception.ExceptionDocGenerator'
+}
+
+build.dependsOn('generateExceptionDoc')

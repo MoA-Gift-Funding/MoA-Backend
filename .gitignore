@@ -196,3 +196,4 @@ src/main/resources/application*.yml
 src/main/resources/*.p8
 src/main/resources/*.json
 !src/main/resources/application-local.yml
+src/main/resources/static/exception_doc.html
