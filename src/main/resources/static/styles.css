@@ -1,8 +1,10 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
+    font-family: -apple-system;
+    margin: auto;
+    margin-bottom: 150px;
     padding: 50px 140px;
-
+    max-width: 1120px;
+    position: relative;
 }
 
 h2 {
@@ -19,10 +21,17 @@ th, td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
+    height: 60px;
+    font-weight: normal;
+    padding: 20px;
 }
 
 th {
-    background-color: #f2f2f2;
+    background-color: #9B97EA;
+    height: 60px;
+    padding: 20px;
+    color: white;
+    font-weight: normal;
 }
 
 /* Adjust column widths */
@@ -41,6 +50,40 @@ td:nth-child(3) {
     width: 42.8571%; /* 3/7 */
 }
 
-tr:nth-child(even) {
-    background-color: #f9f9f9;
+.toc-absolute {
+    position: fixed;
+    top: 165px;
+}
+
+.toc-fixed {
+    position: fixed;
+    top: 165px;
+}
+
+.toc {
+    right: calc((100% - 1150px) / 2 - 300px);
+    width: 250px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.toc-list {
+    margin-top: 10px !important;
+    font-size: 0.9em;
+}
+
+.toc > .toc-list li {
+    margin-bottom: 10px;
+}
+
+.toc > .toc-list li:last-child {
+    margin-bottom: 0;
+}
+
+.toc > .toc-list li a {
+    text-decoration: none;
+}
+
+.is-active-link::before {
+    background-color: #9B97EA !important;
 }

@@ -54,10 +54,16 @@ public class ExceptionDocGenerator {
                         <head>
                             <meta charset='UTF-8'>
                             <link rel="stylesheet" type="text/css" href="./styles.css">
+                            <!-- tocbot -->
+                            	  <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.11.1/tocbot.min.js">	</script>
+                            	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.11.1/tocbot.css">
+                            <!-- tocbot -->
+                            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
                         </head>
                     <body>
                     """);
             for (Class<?> aClass : subTypesOf) {
+                writer.println("<div class=\"toc toc-fixed\" ></div>");
                 writer.println("<h2>" + aClass.getSimpleName() + "</h2>");
                 writer.println("""
                         <table>
@@ -86,7 +92,49 @@ public class ExceptionDocGenerator {
                 }
                 writer.println("</table>");
             }
-            writer.println("</body></html>");
+            writer.println("""
+                                 <!-- tocbot-->	
+                                	<script>
+                                		var content = document.querySelector('body')
+                                		var headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6, h7')
+                                		var headingMap = {}
+                                        
+                                		Array.prototype.forEach.call(headings, function (heading) {
+                                				var id = heading.id ? heading.id : heading.textContent.trim().toLowerCase()
+                                									 .split(' ').join('-').replace(/[\\!\\@\\#\\$\\%\\^\\&\\*\\(\\):]/ig, '')
+                                				headingMap[id] = !isNaN(headingMap[id]) ? ++headingMap[id] : 0
+                                				if (headingMap[id]) {
+                                					heading.id = id + '-' + headingMap[id]
+                                				} else {
+                                					heading.id = id
+                                				}
+                                			})
+                                        
+                                		tocbot.init({
+                                			tocSelector: '.toc',
+                                			contentSelector: 'body',
+                                			headingSelector:'h1, h2, h3',
+                                			hasInnerContainers: false
+                                		});
+                                       \s
+                                		$(document).ready(function(){
+                                			$('.toc').addClass('toc-absolute');
+                                        
+                                			var toc_top = $('.toc').offset().top - 165;
+                                			$(window).scroll(function() {
+                                				if ($(this).scrollTop() >= toc_top) {
+                                					$('.toc').addClass('toc-fixed');
+                                					$('.toc').removeClass('toc-absolute');
+                                				} else {
+                                					$('.toc').addClass('toc-absolute');
+                                					$('.toc').removeClass('toc-fixed');
+                                				}
+                                			});
+                                		});
+                                	</script>
+                                	<!-- tocbot-->
+                    </body></html>
+                    """);
         } catch (IOException e) {
             e.printStackTrace();
         }
