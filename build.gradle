@@ -77,3 +77,10 @@ tasks.register('importConfigFromSubmodule', Copy) {
     exclude "application-local.yml"
     into './src/main/resources'
 }
+
+tasks.register('generateExceptionDoc', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'moa.global.exception.ExceptionDocGenerator'
+}
+
+resolveMainClassName.dependsOn('generateExceptionDoc')
