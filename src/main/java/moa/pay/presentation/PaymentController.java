@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import moa.auth.Auth;
 import moa.pay.client.PaymentProperty;
 import moa.pay.client.TossClient;
-import moa.pay.client.TossClient.TossPaymentConfirmRequest;
+import moa.pay.client.dto.TossPaymentConfirmRequest;
 import moa.pay.domain.TossPayment;
 import moa.pay.domain.TossPaymentConfirm;
 import moa.pay.domain.TossPaymentConfirmRepository;
