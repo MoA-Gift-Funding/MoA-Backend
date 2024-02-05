@@ -92,11 +92,12 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         void 최대_금액이_펀딩_금액보다_낮으면_400() {
             // given
             var request = new FundingCreateRequest(
-                    상품.getId(),
+                    null,
                     "주노의 에어팟 장만",
                     "저에게 에어팟 맥스를 선물할 기회!!",
                     LocalDate.now().plusDays(5L).toString(),
                     "4000",
+                    상품.getId(),
                     배송_정보.getId(),
                     "택배함 옆에 놔주세요"
             );
@@ -112,11 +113,12 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         void 최대_금액이_상품_가격보다_높으면_400() {
             // given
             var request = new FundingCreateRequest(
-                    상품.getId(),
+                    null,
                     "주노의 에어팟 장만",
                     "저에게 에어팟 맥스를 선물할 기회!!",
                     LocalDate.now().plusDays(5L).toString(),
                     "800000",
+                    상품.getId(),
                     배송_정보.getId(),
                     "택배함 옆에 놔주세요"
             );
@@ -295,11 +297,12 @@ public class FundingAcceptanceTest extends AcceptanceTest {
 
     private FundingCreateRequest 펀딩_생성_요청_데이터() {
         return new FundingCreateRequest(
-                상품.getId(),
+                "",
                 "주노의 에어팟 장만",
                 "저에게 에어팟 맥스를 선물할 기회!!",
                 LocalDate.now().plusDays(5L).toString(),
                 "10000",
+                상품.getId(),
                 배송_정보.getId(),
                 "택배함 옆에 놔주세요"
         );

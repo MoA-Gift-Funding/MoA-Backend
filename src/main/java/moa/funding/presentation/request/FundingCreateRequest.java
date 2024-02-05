@@ -3,6 +3,7 @@ package moa.funding.presentation.request;
 import static moa.funding.domain.Visibility.PUBLIC;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -11,8 +12,8 @@ import moa.global.domain.Price;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public record FundingCreateRequest(
-        @Schema(example = "1")
-        @NotNull Long productId,
+        @Schema(description = "펀딩 이미지 URL")
+        @Nullable String imageUrl,
 
         @Schema(example = "주노에게 주는 소박한 선물")
         @NotBlank String title,
@@ -26,6 +27,9 @@ public record FundingCreateRequest(
         @Schema(description = "최대 펀딩 가능 금액", example = "5500")
         @NotBlank String maximumAmount,
 
+        @Schema(example = "1")
+        @NotNull Long productId,
+
         @Schema(description = "배송지 ID", example = "1")
         Long deliveryAddressId,
 
@@ -35,6 +39,7 @@ public record FundingCreateRequest(
     public FundingCreateCommand toCommand(Long memberId) {
         return new FundingCreateCommand(
                 memberId,
+                imageUrl,
                 title,
                 description,
                 LocalDate.parse(endDate),

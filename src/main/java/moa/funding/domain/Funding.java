@@ -55,22 +55,19 @@ public class Funding extends RootEntity<Long> {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    private String imageUrl;
+
     @Size(max = 25)
-    @Column(name = "title")
     private String title;
 
-    @Column(name = "description")
     private String description;
 
-    @Column(name = "end_date")
     private LocalDate endDate;
 
     @Enumerated(STRING)
-    @Column(name = "visible")
     private Visibility visible;
 
     @Enumerated(STRING)
-    @Column(name = "status")
     private FundingStatus status;
 
     @Embedded
@@ -100,6 +97,7 @@ public class Funding extends RootEntity<Long> {
     private List<FundingParticipant> participants = new ArrayList<>();
 
     public Funding(
+            String imageUrl,
             String title,
             String description,
             LocalDate endDate,
@@ -110,6 +108,7 @@ public class Funding extends RootEntity<Long> {
             DeliveryAddress address,
             String deliveryRequestMessage
     ) {
+        this.imageUrl = imageUrl;
         this.title = title;
         this.description = description;
         this.endDate = endDate;
