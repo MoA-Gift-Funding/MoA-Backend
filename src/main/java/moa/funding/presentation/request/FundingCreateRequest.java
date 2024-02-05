@@ -20,7 +20,7 @@ public record FundingCreateRequest(
         @Schema(example = "에어팟 맥스를 원합니다!!!")
         @NotBlank String description,
 
-        @Schema(description = "펀딩 종료일 (한 달을 초과해서는 안된다.)", example = "2023-12-25")
+        @Schema(description = "펀딩 종료일 (4주를 초과해서는 안된다.)", example = "2023-12-25")
         @NotBlank @DateTimeFormat(pattern = "yyyy-MM-dd") String endDate,
 
         @Schema(description = "최대 펀딩 가능 금액", example = "5500")

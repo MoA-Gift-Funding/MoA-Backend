@@ -140,7 +140,7 @@ public class Funding extends RootEntity<Long> {
             throw new FundingException(INVALID_FUNDING_END_DATE);
         }
 
-        if (endDate.isAfter(LocalDate.now().plusMonths(1))) {
+        if (endDate.isAfter(LocalDate.now().plusWeeks(4))) {
             throw new FundingException(EXCEED_FUNDING_MAX_PERIOD);
         }
     }
