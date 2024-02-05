@@ -11,6 +11,7 @@ public enum FundingExceptionType implements MoaExceptionType {
 
     NOT_FOUND_FUNDING(NOT_FOUND, "펀딩을 찾을 수 없습니다."),
     INVALID_FUNDING_END_DATE(BAD_REQUEST, "종료일이 현재 날짜보다 이전입니다."),
+    EXCEED_FUNDING_MAX_PERIOD(BAD_REQUEST, "펀딩의 최대 기간은 한달입니다."),
     INVALID_FUNDING_STATUS(BAD_REQUEST, "펀딩 상태가 유효하지 않습니다."),
     FUNDING_MAXIMUM_AMOUNT_LESS_THAN_MINIMUM(BAD_REQUEST, "최대 펀딩 금액이 기준 금액보다 작습니다."),
     FUNDING_PRODUCT_PRICE_UNDER_MINIMUM_PRICE(BAD_REQUEST, "펀딩할 상품의 가격은 최소 금액 이상이어야 합니다."),

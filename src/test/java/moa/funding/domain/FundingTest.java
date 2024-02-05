@@ -6,6 +6,7 @@ import static moa.fixture.TossPaymentFixture.tossPayment;
 import static moa.funding.domain.FundingStatus.DELIVERY_WAITING;
 import static moa.funding.exception.FundingExceptionType.DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_FUNDING_AMOUNT;
+import static moa.funding.exception.FundingExceptionType.EXCEED_FUNDING_MAX_PERIOD;
 import static moa.funding.exception.FundingExceptionType.FUNDING_MAXIMUM_AMOUNT_LESS_THAN_MINIMUM;
 import static moa.funding.exception.FundingExceptionType.FUNDING_PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.FUNDING_PRODUCT_PRICE_UNDER_MINIMUM_PRICE;
@@ -110,6 +111,28 @@ class FundingTest {
                 funding.create();
             }).getExceptionType();
             assertThat(exceptionType).isEqualTo(INVALID_FUNDING_END_DATE);
+        }
+
+        @Test
+        void 펀딩_종료일이_오늘로부터_한달을_초과하면_예외() {
+            // given
+            Funding funding = new Funding(
+                    "",
+                    "",
+                    LocalDate.now().plusMonths(1).plusDays(1),
+                    Visibility.PUBLIC,
+                    Price.from("15000"),
+                    mock(Member.class),
+                    new Product("", Price.from("15000")),
+                    null,
+                    ""
+            );
+
+            // when & then
+            MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
+                funding.create();
+            }).getExceptionType();
+            assertThat(exceptionType).isEqualTo(EXCEED_FUNDING_MAX_PERIOD);
         }
 
         @Test

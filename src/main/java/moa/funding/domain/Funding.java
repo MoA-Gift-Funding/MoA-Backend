@@ -10,6 +10,7 @@ import static moa.funding.domain.FundingStatus.DELIVERY_WAITING;
 import static moa.funding.domain.FundingStatus.PROCESSING;
 import static moa.funding.exception.FundingExceptionType.DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_FUNDING_AMOUNT;
+import static moa.funding.exception.FundingExceptionType.EXCEED_FUNDING_MAX_PERIOD;
 import static moa.funding.exception.FundingExceptionType.FUNDING_MAXIMUM_AMOUNT_LESS_THAN_MINIMUM;
 import static moa.funding.exception.FundingExceptionType.FUNDING_PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.FUNDING_PRODUCT_PRICE_UNDER_MINIMUM_PRICE;
@@ -137,6 +138,10 @@ public class Funding extends RootEntity<Long> {
 
         if (endDate.isBefore(LocalDate.now())) {  // 종료일이 과거인 경우
             throw new FundingException(INVALID_FUNDING_END_DATE);
+        }
+
+        if (endDate.isAfter(LocalDate.now().plusMonths(1))) {
+            throw new FundingException(EXCEED_FUNDING_MAX_PERIOD);
         }
     }
 
