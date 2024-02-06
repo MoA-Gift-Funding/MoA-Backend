@@ -27,7 +27,7 @@ public class TossPaymentCancel {
     private Long id;
 
     @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "toss_payment_key")  // TODO Id 로 변경
+    @JoinColumn(name = "toss_payment_id")
     private TossPayment tossPayment;
 
     @Column(unique = true)

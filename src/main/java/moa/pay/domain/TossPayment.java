@@ -1,6 +1,7 @@
 package moa.pay.domain;
 
 import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 import static moa.pay.domain.TossPaymentStatus.CANCELED;
 import static moa.pay.domain.TossPaymentStatus.UNUSED;
@@ -14,6 +15,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -27,9 +29,11 @@ import org.springframework.data.annotation.CreatedDate;
 @NoArgsConstructor(access = PROTECTED)
 public class TossPayment {
 
-    // TODO ID를 Long 에 auto Generated로 변경
-
     @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
     private String paymentKey;
 
     @Column(nullable = false, unique = true)

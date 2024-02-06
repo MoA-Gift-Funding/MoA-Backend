@@ -6,7 +6,7 @@ import java.util.Optional;
 import moa.pay.exception.TossPaymentException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TossPaymentRepository extends JpaRepository<TossPayment, String> {
+public interface TossPaymentRepository extends JpaRepository<TossPayment, Long> {
 
     default TossPayment getByOrderId(String orderId) {
         return findByOrderId(orderId).orElseThrow(() ->
