@@ -9,6 +9,7 @@ import moa.funding.application.command.FundingFinishCommand;
 import moa.funding.application.command.FundingParticipateCommand;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingParticipant;
+import moa.funding.domain.FundingParticipateRepository;
 import moa.funding.domain.FundingRepository;
 import moa.funding.domain.FundingValidator;
 import moa.member.domain.Member;
@@ -29,6 +30,7 @@ public class FundingService {
     private final FundingRepository fundingRepository;
     private final DeliveryAddressRepository addressRepository;
     private final TossPaymentRepository tossPaymentRepository;
+    private final FundingParticipateRepository fundingParticipateRepository;
     private final FundingValidator fundingValidator;
 
     public Long create(FundingCreateCommand command) {
@@ -62,6 +64,13 @@ public class FundingService {
         funding.validateOwner(member);
         funding.finish(payment.getTotalAmount());
         fundingRepository.save(funding);
+    }
+
+    public void participateCancel(Long fundingId, Long memberId) {
+        Funding funding = fundingRepository.getById(fundingId);
+        Member member = memberRepository.getById(memberId);
+        FundingParticipant participant = fundingParticipateRepository.getByFundingAndMember(funding, member);
+        participant.cancel();
     }
 
     public void cancel(Long fundingId, Long memberId) {

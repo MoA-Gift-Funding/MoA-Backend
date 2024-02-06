@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 public enum FundingExceptionType implements MoaExceptionType {
 
     NOT_FOUND_FUNDING(NOT_FOUND, "펀딩을 찾을 수 없습니다."),
+    NOT_PARTICIPATING_FUNDING(BAD_REQUEST, "해당 펀딩에 참여하지 않았습니다."),
     INVALID_FUNDING_END_DATE(BAD_REQUEST, "종료일이 현재 날짜보다 이전입니다."),
     EXCEED_FUNDING_MAX_PERIOD(BAD_REQUEST, "펀딩의 최대 기간은 한달입니다."),
     INVALID_FUNDING_STATUS(BAD_REQUEST, "펀딩 상태가 유효하지 않습니다."),
@@ -25,7 +26,7 @@ public enum FundingExceptionType implements MoaExceptionType {
     NO_AUTHORITY_FOR_FUNDING(FORBIDDEN, "펀딩 주인만 가능한 요청입니다."),
     DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT(BAD_REQUEST, "펀딩의 남은 금액과 결제하려는 금액이 다릅니다."),
     ONLY_PROCESSING_FUNDING_CAN_BE_CANCELLED(BAD_REQUEST, "진행중인 펀딩만 취소 가능합니다."),
-    ;
+    ALREADY_CANCEL_PARTICIPATING(BAD_REQUEST, "이미 참여 취소한 펀딩입니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
