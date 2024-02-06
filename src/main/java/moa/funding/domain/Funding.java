@@ -161,12 +161,13 @@ public class Funding extends RootEntity<Long> {
         }
 
         // 금액이 펀딩 최소금액보다 낮은 경우, 펀딩의 남은 가격과 일치하지 않으면 예외
-        if (amount.isLessThan(minimumAmount) && !amount.equals(remainAmount())) {
+        Price remainAmount = remainAmount();
+        if (amount.isLessThan(minimumAmount) && !amount.equals(remainAmount)) {
             throw new FundingException(MUST_FUNDING_MORE_THNA_MINIMUM_AMOUNT);
         }
 
         participants.add(participant);
-        if (product.getPrice().equals(getFundedAmount())) {
+        if (participant.getAmount().equals(remainAmount)) {
             this.status = DELIVERY_WAITING;
             registerEvent(new FundingFinishEvent(id));
         }

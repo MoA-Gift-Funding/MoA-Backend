@@ -28,8 +28,8 @@ public class FundingService {
     private final ProductRepository productRepository;
     private final FundingRepository fundingRepository;
     private final DeliveryAddressRepository addressRepository;
-    private final FundingValidator fundingValidator;
     private final TossPaymentRepository tossPaymentRepository;
+    private final FundingValidator fundingValidator;
 
     public Long create(FundingCreateCommand command) {
         Member member = memberRepository.getById(command.memberId());
