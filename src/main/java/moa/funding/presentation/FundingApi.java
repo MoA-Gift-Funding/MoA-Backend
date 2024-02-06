@@ -109,6 +109,15 @@ public interface FundingApi {
             @Valid @RequestBody FundingFinishRequest request
     );
 
+    @PostMapping("/{id}/cancel")
+    ResponseEntity<Void> cancel(
+            @Parameter(hidden = true)
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+
+            @Parameter(in = PATH, required = true, description = "펀딩 ID")
+            @PathVariable Long id
+    );
+
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200"),
@@ -132,7 +141,7 @@ public interface FundingApi {
             }
     )
     @Operation(summary = "내가 개설한 펀딩 조회")
-    @GetMapping
+    @GetMapping("/my")
     ResponseEntity<PageResponse<MyFundingDetail>> findMyFundings(
             @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
