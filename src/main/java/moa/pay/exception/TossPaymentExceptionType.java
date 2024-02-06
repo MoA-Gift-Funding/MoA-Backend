@@ -13,7 +13,9 @@ public enum TossPaymentExceptionType implements MoaExceptionType {
     TOSS_API_ERROR(BAD_REQUEST, "토스 API 사용 중 오류가 발생했습니다."),
     PAYMENT_INVALID(BAD_REQUEST, "유효하지 않은 결제 정보입니다."),
     NO_AUTHORITY_PAYMENT(FORBIDDEN, "결제 정보에 대한 권한이 없습니다."),
-    ALREADY_USED_PAYMENT(BAD_REQUEST, "이미 사용된 결제 정보입니다.");
+    UNAVAILABLE_PAYMENT(BAD_REQUEST, "사용할 수 없는 결제 정보입니다."),
+    ALREADY_CANCELED_PAYMENT(BAD_REQUEST, "이미 취소된 결제입니다."),
+    ;
 
     private final HttpStatus httpStatus;
     private final String message;

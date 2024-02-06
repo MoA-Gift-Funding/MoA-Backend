@@ -1,13 +1,19 @@
 package moa.pay.domain;
 
+import static jakarta.persistence.EnumType.STRING;
 import static lombok.AccessLevel.PROTECTED;
-import static moa.pay.exception.TossPaymentExceptionType.ALREADY_USED_PAYMENT;
+import static moa.pay.domain.TossPaymentStatus.CANCELED;
+import static moa.pay.domain.TossPaymentStatus.UNUSED;
+import static moa.pay.domain.TossPaymentStatus.USED;
+import static moa.pay.exception.TossPaymentExceptionType.ALREADY_CANCELED_PAYMENT;
 import static moa.pay.exception.TossPaymentExceptionType.NO_AUTHORITY_PAYMENT;
+import static moa.pay.exception.TossPaymentExceptionType.UNAVAILABLE_PAYMENT;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -20,6 +26,8 @@ import org.springframework.data.annotation.CreatedDate;
 @Entity
 @NoArgsConstructor(access = PROTECTED)
 public class TossPayment {
+
+    // TODO ID를 Long 에 auto Generated로 변경
 
     @Id
     private String paymentKey;
@@ -36,7 +44,8 @@ public class TossPayment {
     @Column
     private Long memberId;
 
-    private boolean used;
+    @Enumerated(STRING)
+    private TossPaymentStatus status;
 
     @CreatedDate
     private LocalDateTime createdDate;
@@ -47,15 +56,24 @@ public class TossPayment {
         this.orderName = orderName;
         this.totalAmount = Price.from(totalAmount);
         this.memberId = memberId;
+        this.status = UNUSED;
     }
 
     public void use(Long memberId) {
-        if (used) {
-            throw new TossPaymentException(ALREADY_USED_PAYMENT);
+        if (status != UNUSED) {
+            throw new TossPaymentException(UNAVAILABLE_PAYMENT
+                    .withDetail("이미 사용되었거나 취소된 결제 정보입니다."));
         }
         if (this.memberId != memberId) {
             throw new TossPaymentException(NO_AUTHORITY_PAYMENT);
         }
-        this.used = true;
+        this.status = USED;
+    }
+
+    public void cancel() {
+        if (status == CANCELED) {
+            throw new TossPaymentException(ALREADY_CANCELED_PAYMENT);
+        }
+        this.status = CANCELED;
     }
 }

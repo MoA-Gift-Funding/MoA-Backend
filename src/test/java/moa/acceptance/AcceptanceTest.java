@@ -7,6 +7,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import io.restassured.RestAssured;
 import java.util.List;
 import java.util.UUID;
+import moa.config.TestPaymentConfig;
 import moa.friend.domain.FriendRepository;
 import moa.global.jwt.JwtService;
 import moa.member.domain.Member;
@@ -20,8 +21,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.util.ReflectionTestUtils;
 
+@Import(TestPaymentConfig.class)
 @ExtendWith(DataClearExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @DisplayNameGeneration(ReplaceUnderscores.class)

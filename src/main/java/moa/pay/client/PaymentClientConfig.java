@@ -9,11 +9,13 @@ import moa.global.http.HttpInterfaceUtil;
 import moa.pay.exception.TossPaymentException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.client.RestClient;
 
 @Slf4j
 @Configuration
+@Profile("!test")
 @RequiredArgsConstructor
 public class PaymentClientConfig {
 

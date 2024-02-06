@@ -6,6 +6,7 @@ import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
+import static moa.funding.domain.FundingStatus.CANCELLED;
 import static moa.funding.domain.FundingStatus.DELIVERY_WAITING;
 import static moa.funding.domain.FundingStatus.PROCESSING;
 import static moa.funding.exception.FundingExceptionType.DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT;
@@ -17,7 +18,8 @@ import static moa.funding.exception.FundingExceptionType.FUNDING_PRODUCT_PRICE_U
 import static moa.funding.exception.FundingExceptionType.INVALID_FUNDING_END_DATE;
 import static moa.funding.exception.FundingExceptionType.MUST_FUNDING_MORE_THNA_MINIMUM_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.NOT_PROCESSING_FUNDING;
-import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_FOR_FINISH_FUNDING;
+import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_FOR_FUNDING;
+import static moa.funding.exception.FundingExceptionType.ONLY_PROCESSING_FUNDING_CAN_BE_CANCELLED;
 import static moa.funding.exception.FundingExceptionType.OWNER_CANNOT_PARTICIPATE_FUNDING;
 import static moa.global.domain.Price.ZERO;
 
@@ -188,17 +190,26 @@ public class Funding extends RootEntity<Long> {
                 .reduce(ZERO, Price::add);
     }
 
-    public void finish(Member member, Price price) {
+    public void validateOwner(Member member) {
         if (!this.member.equals(member)) {
-            throw new FundingException(NO_AUTHORITY_FOR_FINISH_FUNDING);
+            throw new FundingException(NO_AUTHORITY_FOR_FUNDING);
         }
+    }
 
+    public void finish(Price price) {
         if (!remainAmount().equals(price)) {
             throw new FundingException(DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT);
         }
-
         this.status = DELIVERY_WAITING;
         registerEvent(new FundingFinishEvent(id));
+    }
+
+    public void cancel() {
+        if (status != PROCESSING) {
+            throw new FundingException(ONLY_PROCESSING_FUNDING_CAN_BE_CANCELLED);
+        }
+        this.status = CANCELLED;
+        registerEvent(new FundingCancelEvent(id));
     }
 
     public int getFundingRate() {

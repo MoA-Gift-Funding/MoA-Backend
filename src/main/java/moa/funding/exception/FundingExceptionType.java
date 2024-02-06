@@ -22,8 +22,10 @@ public enum FundingExceptionType implements MoaExceptionType {
     MUST_FUNDING_MORE_THNA_MINIMUM_AMOUNT(BAD_REQUEST, "최소 금액 이상 펀딩해주서야 합니다."),
     NOT_PROCESSING_FUNDING(BAD_REQUEST, "진행중인 펀딩이 아닙니다."),
     OWNER_CANNOT_PARTICIPATE_FUNDING(BAD_REQUEST, "펀딩 주인은 자신의 펀딩에 참여할 수 없습니다."),
-    NO_AUTHORITY_FOR_FINISH_FUNDING(FORBIDDEN, "펀딩 주인만 펀딩을 끝낼 수 있습니다."),
-    DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT(BAD_REQUEST, "펀딩의 남은 금액과 결제하려는 금액이 다릅니다.");
+    NO_AUTHORITY_FOR_FUNDING(FORBIDDEN, "펀딩 주인만 가능한 요청입니다."),
+    DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT(BAD_REQUEST, "펀딩의 남은 금액과 결제하려는 금액이 다릅니다."),
+    ONLY_PROCESSING_FUNDING_CAN_BE_CANCELLED(BAD_REQUEST, "진행중인 펀딩만 취소 가능합니다."),
+    ;
 
     private final HttpStatus httpStatus;
     private final String message;
