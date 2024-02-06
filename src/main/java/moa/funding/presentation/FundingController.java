@@ -75,6 +75,15 @@ public class FundingController implements FundingApi {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/{id}/participate/cancel")
+    public ResponseEntity<Void> participateCancel(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            @PathVariable Long id
+    ) {
+        fundingService.participateCancel(id, memberId);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/my")
     public ResponseEntity<PageResponse<MyFundingDetail>> findMyFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
