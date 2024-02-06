@@ -3,7 +3,7 @@ package moa.pay.client.dto;
 import java.util.List;
 import moa.pay.domain.TossPayment;
 
-public record TossPaymentConfirmResponse(
+public record TossPaymentResponse(
         String version,
         String paymentKey,
         String type,
