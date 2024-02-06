@@ -11,8 +11,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import moa.auth.Auth;
+import moa.pay.client.dto.TossPaymentConfirmRequest;
 import moa.pay.presentation.request.PrepayRequest;
-import moa.pay.presentation.request.TossPaymentRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -68,7 +68,7 @@ public interface PaymentApi {
     @Operation(summary = "결제 성공 후 처리")
     @GetMapping("/success")
     ResponseEntity<Void> paymentResult(
-            @Valid @ModelAttribute TossPaymentRequest request
+            @Valid @ModelAttribute TossPaymentConfirmRequest request
     );
 
     @ApiResponses(

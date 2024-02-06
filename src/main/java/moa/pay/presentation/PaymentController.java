@@ -16,7 +16,6 @@ import moa.pay.domain.TossPaymentConfirmRepository;
 import moa.pay.domain.TossPaymentRepository;
 import moa.pay.exception.TossPaymentException;
 import moa.pay.presentation.request.PrepayRequest;
-import moa.pay.presentation.request.TossPaymentRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -47,14 +46,13 @@ public class PaymentController {
 
     @GetMapping("/success")
     public ResponseEntity<Void> paymentResult(
-            @Valid @ModelAttribute TossPaymentRequest request
+            @Valid @ModelAttribute TossPaymentConfirmRequest request
     ) {
         var tossPaymentConfirm = tossPaymentConfirmRepository.getById(request.orderId());
         tossPaymentConfirm.check(request.orderId(), request.amount());
         var response = tossClient.confirmPayment(
-                request.paymentKey(),
                 paymentProperty.basicAuth(),
-                new TossPaymentConfirmRequest(request.orderId(), request.amount())
+                request
         );
         TossPayment payment = response.toPayment(tossPaymentConfirm.getMemberId());
         tossPaymentRepository.save(payment);
