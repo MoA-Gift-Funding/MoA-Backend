@@ -30,6 +30,7 @@ public class TossPaymentCancel {
     @JoinColumn(name = "toss_payment_id")
     private TossPayment tossPayment;
 
+    // TODO 멱등키 유효기간이 15일임, 15일 지나면 자동으로 멱등키 재생성하는 배치 작업 추가해야 함.
     @Column(unique = true)
     private String idempotencyKey;  // 멱등키
 

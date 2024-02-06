@@ -4,10 +4,13 @@ import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 import static moa.pay.domain.TossPaymentStatus.CANCELED;
+import static moa.pay.domain.TossPaymentStatus.PENDING_CANCEL;
 import static moa.pay.domain.TossPaymentStatus.UNUSED;
 import static moa.pay.domain.TossPaymentStatus.USED;
 import static moa.pay.exception.TossPaymentExceptionType.ALREADY_CANCELED_PAYMENT;
+import static moa.pay.exception.TossPaymentExceptionType.ALREADY_PENDING_CANCEL_PAYMENT;
 import static moa.pay.exception.TossPaymentExceptionType.NO_AUTHORITY_PAYMENT;
+import static moa.pay.exception.TossPaymentExceptionType.ONLY_CANCEL_PENDING_PAYMENT;
 import static moa.pay.exception.TossPaymentExceptionType.UNAVAILABLE_PAYMENT;
 
 import jakarta.persistence.AttributeOverride;
@@ -74,9 +77,20 @@ public class TossPayment {
         this.status = USED;
     }
 
-    public void cancel() {
+    // TODO 배치 작업으로 WAIT_CANCEL 상태의 결제를 환불해야 함
+    public void pendingCancel() {
+        if (status == PENDING_CANCEL) {
+            throw new TossPaymentException(ALREADY_PENDING_CANCEL_PAYMENT);
+        }
         if (status == CANCELED) {
             throw new TossPaymentException(ALREADY_CANCELED_PAYMENT);
+        }
+        this.status = PENDING_CANCEL;
+    }
+
+    public void cancel() {
+        if (status != PENDING_CANCEL) {
+            throw new TossPaymentException(ONLY_CANCEL_PENDING_PAYMENT);
         }
         this.status = CANCELED;
     }

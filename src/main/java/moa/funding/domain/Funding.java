@@ -44,6 +44,7 @@ import moa.funding.exception.FundingException;
 import moa.global.domain.Price;
 import moa.global.domain.RootEntity;
 import moa.member.domain.Member;
+import moa.pay.domain.TossPayment;
 import moa.product.domain.Product;
 
 @Entity
@@ -210,7 +211,10 @@ public class Funding extends RootEntity<Long> {
             throw new FundingException(ONLY_PROCESSING_FUNDING_CAN_BE_CANCELLED);
         }
         this.status = CANCELLED;
-        registerEvent(new FundingCancelEvent(id));
+        for (FundingParticipant participant : participants) {
+            TossPayment tossPayment = participant.getTossPayment();
+            tossPayment.pendingCancel();
+        }
     }
 
     public int getFundingRate() {

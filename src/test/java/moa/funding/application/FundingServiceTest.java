@@ -2,9 +2,11 @@ package moa.funding.application;
 
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
+import static moa.funding.domain.FundingStatus.CANCELLED;
 import static moa.funding.domain.FundingStatus.DELIVERY_WAITING;
 import static moa.funding.exception.FundingExceptionType.ONLY_PROCESSING_FUNDING_CAN_BE_CANCELLED;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
+import static moa.pay.domain.TossPaymentStatus.PENDING_CANCEL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -14,7 +16,6 @@ import moa.friend.domain.Friend;
 import moa.friend.domain.FriendRepository;
 import moa.funding.application.command.FundingParticipateCommand;
 import moa.funding.domain.Funding;
-import moa.funding.domain.FundingCancelEvent;
 import moa.funding.domain.FundingFinishEvent;
 import moa.funding.domain.FundingRepository;
 import moa.funding.exception.FundingException;
@@ -129,7 +130,7 @@ class FundingServiceTest {
     }
 
     @Test
-    void 펀딩_취소_시_펀딩_취소_이벤트가_등록된다() {
+    void 펀딩_취소_시_참여자들의_결제_정보는_결제_취소_대기_상태가_된다() {
         // given
         Member owner = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
         Member part1 = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
@@ -151,7 +152,7 @@ class FundingServiceTest {
         // then
         Funding after = fundingRepository.getById(funding.getId());
         assertThat(after.getStatus()).isEqualTo(CANCELLED);
-        assertThat(events.stream(FundingCancelEvent.class).count()).isEqualTo(1);
+        assertThat(tossPaymentRepository.getByOrderId("1").getStatus()).isEqualTo(PENDING_CANCEL);
     }
 
     @Test
