@@ -109,6 +109,16 @@ public interface FundingApi {
             @Valid @RequestBody FundingFinishRequest request
     );
 
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "400"),
+                    @ApiResponse(responseCode = "401"),
+                    @ApiResponse(responseCode = "403"),
+                    @ApiResponse(responseCode = "404"),
+            }
+    )
+    @Operation(summary = "펀딩 취소")
     @PostMapping("/{id}/cancel")
     ResponseEntity<Void> cancel(
             @Parameter(hidden = true)
