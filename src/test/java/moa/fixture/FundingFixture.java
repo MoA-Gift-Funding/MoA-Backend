@@ -15,6 +15,7 @@ public class FundingFixture {
             String maximumAmount
     ) {
         return new Funding(
+                null,
                 "",
                 "",
                 LocalDate.now().plusMonths(1),

@@ -10,6 +10,7 @@ import moa.product.domain.Product;
 
 public record FundingCreateCommand(
         Long memberId,
+        String imageUrl,
         String title,
         String description,
         LocalDate endDate,
@@ -21,6 +22,7 @@ public record FundingCreateCommand(
 ) {
     public Funding toFunding(Member member, Product product, DeliveryAddress deliveryAddress) {
         return new Funding(
+                imageUrl,
                 title,
                 description,
                 endDate,

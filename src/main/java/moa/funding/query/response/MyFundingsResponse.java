@@ -13,6 +13,9 @@ public record MyFundingsResponse(
             @Schema(example = "1")
             Long id,
 
+            @Schema(example = "https://펀딩-이미지-URL.com")
+            String fundingImageUrl,
+
             @Schema(example = "나의 에어팟 펀딩")
             String title,
 
@@ -37,6 +40,7 @@ public record MyFundingsResponse(
         public static MyFundingDetail from(Funding funding) {
             return new MyFundingDetail(
                     funding.getId(),
+                    funding.getImageUrl(),
                     funding.getTitle(),
                     funding.getEndDate(),
                     funding.getFundingRate(),

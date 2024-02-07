@@ -13,6 +13,9 @@ public record FundingResponse(
         @Schema(example = "3")
         Long fundingId,
 
+        @Schema(example = "https://펀딩-이미지-URL.com")
+        String fundingImageUrl,
+
         @Schema(example = "주노 하와이 보내주기")
         String title,
 
@@ -45,6 +48,7 @@ public record FundingResponse(
                 .orElseGet(() -> funding.getMember().getNickname());
         return new FundingResponse(
                 funding.getId(),
+                funding.getImageUrl(),
                 funding.getTitle(),
                 funding.getEndDate(),
                 funding.getStatus().getDescription(),

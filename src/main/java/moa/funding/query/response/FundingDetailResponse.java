@@ -20,6 +20,9 @@ public record FundingDetailResponse(
         @Schema(example = "1")
         Long memberId,
 
+        @Schema(example = "https://펀딩-이미지-URL.com")
+        String fundingImageUrl,
+
         @Schema(example = "나의 에어팟 펀딩")
         String title,
 
@@ -86,6 +89,7 @@ public record FundingDetailResponse(
         return new FundingDetailResponse(
                 funding.getId(),
                 member.getId(),
+                funding.getImageUrl(),
                 funding.getTitle(),
                 funding.getDescription(),
                 funding.getEndDate(),
