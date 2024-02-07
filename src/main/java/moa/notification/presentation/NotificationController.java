@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/notifications")
-public class NotificationController {
+public class NotificationController implements NotificationApi {
 
     private final NotificationQueryService notificationQueryService;
 
