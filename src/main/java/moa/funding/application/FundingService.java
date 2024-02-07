@@ -42,8 +42,8 @@ public class FundingService {
     }
 
     public void participate(FundingParticipateCommand command) {
+        Funding funding = fundingRepository.getWithLockById(command.fundingId());
         Member member = memberRepository.getById(command.memberId());
-        Funding funding = fundingRepository.getById(command.fundingId());
         fundingValidator.validateVisible(member, funding);
         TossPayment payment = tossPaymentRepository.getByOrderId(command.paymentOrderId());
         payment.use(member.getId());
@@ -53,7 +53,7 @@ public class FundingService {
     }
 
     public void finish(FundingFinishCommand command) {
-        Funding funding = fundingRepository.getById(command.fundingId());
+        Funding funding = fundingRepository.getWithLockById(command.fundingId());
         Member member = memberRepository.getById(command.memberId());
         TossPayment payment = tossPaymentRepository.getByOrderId(command.paymentOrderId());
         payment.use(member.getId());

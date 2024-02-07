@@ -6,6 +6,8 @@ import static moa.funding.domain.FundingStatus.DELIVERY_WAITING;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import moa.friend.domain.Friend;
 import moa.friend.domain.FriendRepository;
 import moa.funding.application.command.FundingParticipateCommand;
@@ -27,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
+import org.springframework.transaction.support.TransactionTemplate;
 
 
 @ApplicationTest
@@ -57,6 +60,9 @@ class FundingServiceTest {
     @Autowired
     private ApplicationEvents events;
 
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
     @Test
     void 펀딩_참여_테스트_펀딩_참여시_금액이_모두_충족되면_펀딩_완료_이벤트_발행() {
         // given
@@ -80,5 +86,40 @@ class FundingServiceTest {
         Funding after = fundingRepository.getById(funding.getId());
         assertThat(after.getStatus()).isEqualTo(DELIVERY_WAITING);
         assertThat(events.stream(FundingFinishEvent.class).count()).isEqualTo(1);
+    }
+
+    @Test
+    void 펀딩_참여를_동시에_수행하는_경우_동시성_문제가_발생하지_않는다() throws InterruptedException {
+        // given
+        Member owner = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
+        Member part1 = memberRepository.save(member(null, "2", "010-1111-1112", SIGNED_UP));
+        Member part2 = memberRepository.save(member(null, "3", "010-1111-1113", SIGNED_UP));
+        friendRepository.save(new Friend(owner, part1, "1"));
+        friendRepository.save(new Friend(part1, owner, "1"));
+        friendRepository.save(new Friend(owner, part2, "1"));
+        friendRepository.save(new Friend(part2, owner, "1"));
+        Funding funding = funding(
+                owner,
+                productRepository.save(new Product("", Price.from("10000"))),
+                "10000"
+        );
+        fundingRepository.save(funding);
+        tossPaymentRepository.save(new TossPayment("key", "1", "order", "10000", part1.getId()));
+        tossPaymentRepository.save(new TossPayment("key2", "2", "order", "10000", part2.getId()));
+        var command1 = new FundingParticipateCommand(funding.getId(), part1.getId(), "1", "hi");
+        var command2 = new FundingParticipateCommand(funding.getId(), part2.getId(), "2", "hi");
+
+        // when
+        ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
+        executorService.submit(() -> fundingService.participate(command1));
+        executorService.submit(() -> fundingService.participate(command2));
+
+        // then
+        Thread.sleep(100);
+        transactionTemplate.executeWithoutResult((status -> {
+            Funding updated = fundingRepository.getById(funding.getId());
+            assertThat(updated.getFundedAmount().longValue()).isEqualTo(10000);
+            assertThat(updated.getParticipants()).hasSize(1);
+        }));
     }
 }
