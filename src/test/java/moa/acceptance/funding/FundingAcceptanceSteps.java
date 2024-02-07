@@ -27,12 +27,21 @@ public class FundingAcceptanceSteps {
         return given(회원_토큰)
                 .get("/fundings/{fundingId}", fundingId)
                 .then()
+                .log().all()
                 .extract();
     }
 
     public static ExtractableResponse<Response> 펀딩_목록_조회_요청(String 회원_토큰) {
         return given(회원_토큰)
                 .get("/fundings")
+                .then()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 펀딩_참여_요청(String 회원_토큰, Long fundingId, Object request) {
+        return given(회원_토큰)
+                .body(request)
+                .post("/fundings/{fundingId}/participate", fundingId)
                 .then()
                 .extract();
     }

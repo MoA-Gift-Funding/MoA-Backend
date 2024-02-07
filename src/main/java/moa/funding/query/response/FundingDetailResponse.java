@@ -72,7 +72,20 @@ public record FundingDetailResponse(
             @Schema(description = "참여 작성 시간", example = "2024-11-02 12:00:01")
             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime createAt
     ) {
-        private static Participant of(FundingParticipant participant, List<Friend> friends) {
+        private static Participant of(FundingParticipant participant, List<Friend> friends, boolean isOwner) {
+            if (!isOwner && !participant.getFundingMessage().isVisible()) {
+                return new Participant(
+                        null,
+                        null,
+                        null,
+                        null,
+                        participant.getCreatedDate()
+                );
+            }
+            return getParticipant(participant, friends);
+        }
+
+        private static Participant getParticipant(FundingParticipant participant, List<Friend> friends) {
             String nickName = friends.stream()
                     .filter(friend -> Objects.equals(friend.getTarget().getId(), participant.getMember().getId()))
                     .findAny()
@@ -104,14 +117,15 @@ public record FundingDetailResponse(
                 funding.getFundedAmount().longValue(),
                 funding.getParticipants().size(),
                 product.getImageUrl(),
-                getMessages(funding, friends)
+                getMessages(funding, member, friends)
         );
     }
 
-    private static List<Participant> getMessages(Funding funding, List<Friend> friends) {
+    private static List<Participant> getMessages(Funding funding, Member member, List<Friend> friends) {
+        boolean isOwner = Objects.equals(funding.getMember().getId(), member.getId());
         return funding.getParticipants()
                 .stream()
-                .map(participant -> Participant.of(participant, friends))
+                .map(participant -> Participant.of(participant, friends, isOwner))
                 .toList();
     }
 }
