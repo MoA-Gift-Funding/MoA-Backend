@@ -16,7 +16,7 @@ import static moa.funding.exception.FundingExceptionType.FUNDING_MAXIMUM_AMOUNT_
 import static moa.funding.exception.FundingExceptionType.FUNDING_PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.FUNDING_PRODUCT_PRICE_UNDER_MINIMUM_PRICE;
 import static moa.funding.exception.FundingExceptionType.INVALID_FUNDING_END_DATE;
-import static moa.funding.exception.FundingExceptionType.MUST_FUNDING_MORE_THNA_MINIMUM_AMOUNT;
+import static moa.funding.exception.FundingExceptionType.MUST_FUNDING_MORE_THAN_MINIMUM_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.NOT_PROCESSING_FUNDING;
 import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_FOR_FUNDING;
 import static moa.funding.exception.FundingExceptionType.ONLY_PROCESSING_FUNDING_CAN_BE_CANCELLED;
@@ -164,7 +164,7 @@ public class Funding extends RootEntity<Long> {
         // 금액이 펀딩 최소금액보다 낮은 경우, 펀딩의 남은 가격과 일치하지 않으면 예외
         Price remainAmount = remainAmount();
         if (amount.isLessThan(minimumAmount) && !amount.equals(remainAmount)) {
-            throw new FundingException(MUST_FUNDING_MORE_THNA_MINIMUM_AMOUNT);
+            throw new FundingException(MUST_FUNDING_MORE_THAN_MINIMUM_AMOUNT);
         }
 
         participants.add(participant);

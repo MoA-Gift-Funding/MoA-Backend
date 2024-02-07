@@ -11,7 +11,7 @@ import static moa.funding.exception.FundingExceptionType.FUNDING_MAXIMUM_AMOUNT_
 import static moa.funding.exception.FundingExceptionType.FUNDING_PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.FUNDING_PRODUCT_PRICE_UNDER_MINIMUM_PRICE;
 import static moa.funding.exception.FundingExceptionType.INVALID_FUNDING_END_DATE;
-import static moa.funding.exception.FundingExceptionType.MUST_FUNDING_MORE_THNA_MINIMUM_AMOUNT;
+import static moa.funding.exception.FundingExceptionType.MUST_FUNDING_MORE_THAN_MINIMUM_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.OWNER_CANNOT_PARTICIPATE_FUNDING;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -196,7 +196,7 @@ class FundingTest {
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
                 funding.participate(participant);
             }).getExceptionType();
-            assertThat(exceptionType).isEqualTo(MUST_FUNDING_MORE_THNA_MINIMUM_AMOUNT);
+            assertThat(exceptionType).isEqualTo(MUST_FUNDING_MORE_THAN_MINIMUM_AMOUNT);
         }
 
         @Test
@@ -256,7 +256,7 @@ class FundingTest {
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
                 funding.participate(participant2);
             }).getExceptionType();
-            assertThat(exceptionType).isEqualTo(MUST_FUNDING_MORE_THNA_MINIMUM_AMOUNT);
+            assertThat(exceptionType).isEqualTo(MUST_FUNDING_MORE_THAN_MINIMUM_AMOUNT);
         }
 
         @Test

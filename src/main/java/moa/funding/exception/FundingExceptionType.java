@@ -19,7 +19,7 @@ public enum FundingExceptionType implements MoaExceptionType {
     CAN_NOT_VISIBLE_FUNDING(FORBIDDEN, "해당 펀딩을 조회할 수 없습니다."),
     ALREADY_PARTICIPATED_FUNDING(BAD_REQUEST, "이미 참여한 펀딩입니다."),
     EXCEEDED_POSSIBLE_FUNDING_AMOUNT(BAD_REQUEST, "펀딩 가능한 최대 금액을 초과했습니다."),
-    MUST_FUNDING_MORE_THNA_MINIMUM_AMOUNT(BAD_REQUEST, "최소 금액 이상 펀딩해주서야 합니다."),
+    MUST_FUNDING_MORE_THAN_MINIMUM_AMOUNT(BAD_REQUEST, "최소 금액 이상 펀딩해주서야 합니다."),
     NOT_PROCESSING_FUNDING(BAD_REQUEST, "진행중인 펀딩이 아닙니다."),
     OWNER_CANNOT_PARTICIPATE_FUNDING(BAD_REQUEST, "펀딩 주인은 자신의 펀딩에 참여할 수 없습니다."),
     NO_AUTHORITY_FOR_FUNDING(FORBIDDEN, "펀딩 주인만 가능한 요청입니다."),
