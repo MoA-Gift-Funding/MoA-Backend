@@ -26,11 +26,11 @@ public class FundingMessage extends RootEntity<Long> {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_from_id")
-    private Member from;
+    private Member sender;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_to_id")
-    private Member to;
+    private Member receiver;
 
     @Column
     private String content;
@@ -38,9 +38,9 @@ public class FundingMessage extends RootEntity<Long> {
     @Column
     private boolean visible;
 
-    public FundingMessage(Member from, Member to, String content, boolean visible) {
-        this.from = from;
-        this.to = to;
+    public FundingMessage(Member sender, Member receiver, String content, boolean visible) {
+        this.sender = sender;
+        this.receiver = receiver;
         this.content = content;
         this.visible = visible;
     }

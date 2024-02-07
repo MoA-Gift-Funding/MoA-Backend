@@ -27,7 +27,6 @@ public class FundingAcceptanceSteps {
         return given(회원_토큰)
                 .get("/fundings/{fundingId}", fundingId)
                 .then()
-                .log().all()
                 .extract();
     }
 
