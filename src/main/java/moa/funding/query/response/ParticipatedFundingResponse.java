@@ -10,6 +10,7 @@ import java.util.Objects;
 import moa.friend.domain.Friend;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingParticipant;
+import moa.funding.domain.ParticipantStatus;
 
 public record ParticipatedFundingResponse(
         @Schema(example = "3")
@@ -46,7 +47,10 @@ public record ParticipatedFundingResponse(
         @JsonFormat(pattern = "yyyy-MM-dd HH-mm-ss") LocalDateTime participatedDate,
 
         @Schema(description = "펀딩한 금액", example = "20000")
-        Long amount
+        Long amount,
+
+        @Schema(description = "참여 상태", example = "PARTICIPATING")
+        ParticipantStatus participateStatus
 ) {
     public static ParticipatedFundingResponse of(FundingParticipant participant, List<Friend> friends) {
         Funding funding = participant.getFunding();
@@ -67,7 +71,8 @@ public record ParticipatedFundingResponse(
                 funding.getProduct().getId(),
                 funding.getProduct().getImageUrl(),
                 participant.getCreatedDate(),
-                participant.getAmount().longValue()
+                participant.getAmount().longValue(),
+                participant.getStatus()
         );
     }
 }

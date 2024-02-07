@@ -119,6 +119,7 @@ class FundingTest {
             Funding funding = new Funding(
                     "",
                     "",
+                    "",
                     LocalDate.now().plusMonths(1).plusDays(1),
                     Visibility.PUBLIC,
                     Price.from("15000"),

@@ -53,29 +53,33 @@ public record FundingDetailResponse(
         @Schema(description = "상품 이미지", example = "https://imageurl.example")
         String productImageUrl,
 
-        @Schema(description = "메시지")
-        List<Message> message
+        @Schema(description = "참여자 정보")
+        List<Participant> participants
 ) {
-    public record Message(
-            @Schema(description = "메시지 작성자 닉네임", example = "주노")
+    public record Participant(
+            @Schema(description = "참여한 회원 ID", example = "1L")
+            Long memberId,
+
+            @Schema(description = "내가 등록한 친구 닉네임, 친구가 아니라면 해당 사람이 등록한 이름", example = "주노")
             String nickName,
 
-            @Schema(description = "메시지 작성자 프로필 사진 Url", example = "https://example.com")
+            @Schema(description = "참여자 프로필 사진 Url", example = "https://example.com")
             String profileImageUrl,
 
             @Schema(description = "메시지 내용", example = "형님이 보태준다")
             String message,
 
-            @Schema(description = "메시지 작성 시간", example = "2024-11-02 12:00:01")
+            @Schema(description = "참여 작성 시간", example = "2024-11-02 12:00:01")
             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime createAt
     ) {
-        private static Message of(FundingParticipant participant, List<Friend> friends) {
+        private static Participant of(FundingParticipant participant, List<Friend> friends) {
             String nickName = friends.stream()
                     .filter(friend -> Objects.equals(friend.getTarget().getId(), participant.getMember().getId()))
                     .findAny()
                     .map(Friend::getNickname)
                     .orElseGet(() -> participant.getMember().getNickname());
-            return new Message(
+            return new Participant(
+                    participant.getMember().getId(),
                     nickName,
                     participant.getMember().getProfileImageUrl(),
                     participant.getMessage(),
@@ -104,10 +108,10 @@ public record FundingDetailResponse(
         );
     }
 
-    private static List<Message> getMessages(Funding funding, List<Friend> friends) {
+    private static List<Participant> getMessages(Funding funding, List<Friend> friends) {
         return funding.getParticipants()
                 .stream()
-                .map(participant -> Message.of(participant, friends))
+                .map(participant -> Participant.of(participant, friends))
                 .toList();
     }
 }

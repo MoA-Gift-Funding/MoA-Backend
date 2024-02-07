@@ -131,6 +131,25 @@ public interface FundingApi {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "400"),
+                    @ApiResponse(responseCode = "401"),
+                    @ApiResponse(responseCode = "403"),
+                    @ApiResponse(responseCode = "404"),
+            }
+    )
+    @Operation(summary = "펀딩 참여 취소")
+    @PostMapping("/{id}/participate/cancel")
+    ResponseEntity<Void> participateCancel(
+            @Parameter(hidden = true)
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            
+            @Parameter(in = PATH, required = true, description = "펀딩 ID")
+            @PathVariable Long id
+    );
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
                     @ApiResponse(
                             responseCode = "400",
                             content = @Content(schema = @Schema(hidden = true))
