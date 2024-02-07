@@ -1,5 +1,7 @@
 package moa.funding.domain;
 
+import static jakarta.persistence.CascadeType.MERGE;
+import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -51,14 +53,20 @@ public class FundingParticipant extends RootEntity<Long> {
     @AttributeOverride(name = "value", column = @Column(name = "amount"))
     private Price amount;
 
-    @OneToOne(mappedBy = "id")
-    @JoinColumn(name = "message_id")
+    @OneToOne(cascade = {PERSIST, MERGE})
+    @JoinColumn(name = "funding_message_id")
     private FundingMessage fundingMessage;
 
     @Enumerated(STRING)
     private ParticipantStatus status;
 
-    public FundingParticipant(Member member, Funding funding, TossPayment payment, String message, boolean messageVisible) {
+    public FundingParticipant(
+            Member member,
+            Funding funding,
+            TossPayment payment,
+            String message,
+            boolean messageVisible
+    ) {
         this.member = member;
         this.funding = funding;
         this.tossPayment = payment;

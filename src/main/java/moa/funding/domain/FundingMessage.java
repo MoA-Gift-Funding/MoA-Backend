@@ -12,12 +12,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import moa.global.domain.RootEntity;
 import moa.member.domain.Member;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class FundingMessage {
+public class FundingMessage extends RootEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
