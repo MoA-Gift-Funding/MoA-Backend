@@ -11,8 +11,7 @@ import static moa.funding.exception.FundingExceptionType.FUNDING_MAXIMUM_AMOUNT_
 import static moa.funding.exception.FundingExceptionType.FUNDING_PRODUCT_PRICE_LESS_THAN_MAXIMUM_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.FUNDING_PRODUCT_PRICE_UNDER_MINIMUM_PRICE;
 import static moa.funding.exception.FundingExceptionType.INVALID_FUNDING_END_DATE;
-import static moa.funding.exception.FundingExceptionType.MUST_FUNDING_MORE_THNA_MINIMUM_AMOUNT;
-import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_FOR_FINISH_FUNDING;
+import static moa.funding.exception.FundingExceptionType.MUST_FUNDING_MORE_THAN_MINIMUM_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.OWNER_CANNOT_PARTICIPATE_FUNDING;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -197,7 +196,7 @@ class FundingTest {
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
                 funding.participate(participant);
             }).getExceptionType();
-            assertThat(exceptionType).isEqualTo(MUST_FUNDING_MORE_THNA_MINIMUM_AMOUNT);
+            assertThat(exceptionType).isEqualTo(MUST_FUNDING_MORE_THAN_MINIMUM_AMOUNT);
         }
 
         @Test
@@ -257,7 +256,7 @@ class FundingTest {
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
                 funding.participate(participant2);
             }).getExceptionType();
-            assertThat(exceptionType).isEqualTo(MUST_FUNDING_MORE_THNA_MINIMUM_AMOUNT);
+            assertThat(exceptionType).isEqualTo(MUST_FUNDING_MORE_THAN_MINIMUM_AMOUNT);
         }
 
         @Test
@@ -322,23 +321,6 @@ class FundingTest {
     class 펀딩_끝내기_시 {
 
         @Test
-        void 주인이_아닌_다른_사람은_펀딩을_끝낼_수_없다() {
-            // given
-            Member member = member(1L, "", "", SIGNED_UP);
-            Funding funding = funding(
-                    member,
-                    new Product("", Price.from("10000")),
-                    "10000"
-            );
-
-            // when & then
-            MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
-                funding.finish(mock(Member.class), Price.from("10000"));
-            }).getExceptionType();
-            assertThat(exceptionType).isEqualTo(NO_AUTHORITY_FOR_FINISH_FUNDING);
-        }
-
-        @Test
         void 추가할_금액이_남은_금액과_일치하지_않으면_예외() {
             // given
             Member member = member(1L, "", "", SIGNED_UP);
@@ -350,7 +332,7 @@ class FundingTest {
 
             // when & then
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
-                funding.finish(member, Price.from("10001"));
+                funding.finish(Price.from("10001"));
             }).getExceptionType();
             assertThat(exceptionType).isEqualTo(DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT);
         }
@@ -367,7 +349,7 @@ class FundingTest {
 
             // when & then
             assertDoesNotThrow(() -> {
-                funding.finish(member, Price.from("10000"));
+                funding.finish(Price.from("10000"));
             });
             assertThat(funding.getStatus()).isEqualTo(DELIVERY_WAITING);
         }

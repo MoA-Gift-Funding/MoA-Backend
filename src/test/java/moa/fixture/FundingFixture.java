@@ -18,7 +18,7 @@ public class FundingFixture {
                 null,
                 "",
                 "",
-                LocalDate.now().plusMonths(1),
+                LocalDate.now().plusWeeks(4),
                 Visibility.PUBLIC,
                 Price.from(maximumAmount),
                 owner,

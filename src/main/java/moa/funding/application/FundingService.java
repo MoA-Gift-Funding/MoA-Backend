@@ -28,8 +28,8 @@ public class FundingService {
     private final ProductRepository productRepository;
     private final FundingRepository fundingRepository;
     private final DeliveryAddressRepository addressRepository;
-    private final FundingValidator fundingValidator;
     private final TossPaymentRepository tossPaymentRepository;
+    private final FundingValidator fundingValidator;
 
     public Long create(FundingCreateCommand command) {
         Member member = memberRepository.getById(command.memberId());
@@ -41,6 +41,7 @@ public class FundingService {
         return fundingRepository.save(funding).getId();
     }
 
+    // TODO 락 걸어서 동시 접근 제한, 예외 발생 시 결제 취소
     public void participate(FundingParticipateCommand command) {
         Funding funding = fundingRepository.getWithLockById(command.fundingId());
         Member member = memberRepository.getById(command.memberId());
@@ -52,12 +53,22 @@ public class FundingService {
         fundingRepository.save(funding);
     }
 
+    // TODO 락 걸어서 동시 접근 제한, 예외 발생 시 결제 취소
     public void finish(FundingFinishCommand command) {
         Funding funding = fundingRepository.getWithLockById(command.fundingId());
         Member member = memberRepository.getById(command.memberId());
         TossPayment payment = tossPaymentRepository.getByOrderId(command.paymentOrderId());
         payment.use(member.getId());
-        funding.finish(member, payment.getTotalAmount());
+        funding.validateOwner(member);
+        funding.finish(payment.getTotalAmount());
+        fundingRepository.save(funding);
+    }
+
+    public void cancel(Long fundingId, Long memberId) {
+        Funding funding = fundingRepository.getById(fundingId);
+        Member member = memberRepository.getById(memberId);
+        funding.validateOwner(member);
+        funding.cancel();
         fundingRepository.save(funding);
     }
 }

@@ -1,11 +1,11 @@
-package moa.pay.presentation.request;
+package moa.pay.client.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 
-public record TossPaymentRequest(
+public record TossPaymentConfirmRequest(
+        @NotBlank String paymentKey,
         @NotBlank String orderId,
-        @Positive int amount,
-        @NotBlank String paymentKey
+        @Positive int amount
 ) {
 }
