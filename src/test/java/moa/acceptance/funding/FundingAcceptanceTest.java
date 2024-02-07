@@ -5,6 +5,7 @@ import static moa.acceptance.AcceptanceSupport.assertStatus;
 import static moa.acceptance.freind.FriendAcceptanceSteps.연락처_동기화;
 import static moa.acceptance.freind.FriendAcceptanceSteps.친구_차단_요청;
 import static moa.acceptance.funding.FundingAcceptanceSteps.나의_펀딩목록_조회_요청;
+import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_메시지_조회_요청;
 import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_목록_조회_요청;
 import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_상세_조회_요청;
 import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_생성_요청;
@@ -449,6 +450,76 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             assertStatus(response, OK);
             var result = response.as(PageResponse.class);
             assertThat(result.content()).hasSize(1);
+        }
+    }
+
+    @Nested
+    class 펀딩_메시지_조회_API {
+
+        @Test
+        void 펀딩_메시지_목록을_조회한다() {
+            // given
+            연락처_동기화(준호_token, new SyncContactRequest(
+                    new ContactRequest("신동훈 (모아)", "010-1234-5678")
+            ));
+            var createFundingRequest = 펀딩_생성_요청_데이터();
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, createFundingRequest));
+            var participateRequest = new FundingParticipateRequest(
+                    "orderId",
+                    "잘~ 먹고갑니다!",
+                    PUBLIC
+            );
+            tossPaymentRepository.save(
+                    new TossPayment(
+                            "temp",
+                            participateRequest.paymentOrderId(),
+                            "에어팟",
+                            "10000",
+                            말랑.getId()
+                    )
+            );
+            펀딩_참여_요청(말랑_token, fundingId, participateRequest);
+
+            // when
+            var response = 펀딩_메시지_조회_요청(준호_token);
+
+            // then
+            assertStatus(response, OK);
+            var result = response.as(PageResponse.class);
+            Assertions.assertThat(result.content()).hasSize(1);
+        }
+
+        @Test
+        void 펀딩_메시지_목록을_조회한다_비공개처리여도_개설자가_조회하면_보인다() {
+            // given
+            연락처_동기화(준호_token, new SyncContactRequest(
+                    new ContactRequest("신동훈 (모아)", "010-1234-5678")
+            ));
+            var createFundingRequest = 펀딩_생성_요청_데이터();
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, createFundingRequest));
+            var requestWithInvisibleMessage = new FundingParticipateRequest(
+                    "orderId",
+                    "잘~ 먹고갑니다!",
+                    PRIVATE
+            );
+            tossPaymentRepository.save(
+                    new TossPayment(
+                            "temp",
+                            requestWithInvisibleMessage.paymentOrderId(),
+                            "에어팟",
+                            "10000",
+                            말랑.getId()
+                    )
+            );
+            펀딩_참여_요청(말랑_token, fundingId, requestWithInvisibleMessage);
+
+            // when
+            var response = 펀딩_메시지_조회_요청(준호_token);
+
+            // then
+            assertStatus(response, OK);
+            var result = response.as(PageResponse.class);
+            Assertions.assertThat(result.content()).hasSize(1);
         }
     }
 

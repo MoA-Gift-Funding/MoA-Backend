@@ -72,7 +72,8 @@ public record FundingDetailResponse(
             String message,
 
             @Schema(description = "참여 작성 시간", example = "2024-11-02 12:00:01")
-            @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime createAt
+            @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+            LocalDateTime createAt
     ) {
         private static Participant of(Funding funding, FundingParticipant participant, Member member,
                                       List<Friend> friends) {

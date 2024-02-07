@@ -15,6 +15,7 @@ import moa.funding.presentation.request.FundingFinishRequest;
 import moa.funding.presentation.request.FundingParticipateRequest;
 import moa.funding.query.FundingQueryService;
 import moa.funding.query.response.FundingDetailResponse;
+import moa.funding.query.response.FundingMessageResponse;
 import moa.funding.query.response.FundingResponse;
 import moa.funding.query.response.MyFundingsResponse.MyFundingDetail;
 import moa.global.presentation.PageResponse;
@@ -109,6 +110,15 @@ public class FundingController implements FundingApi {
             @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
     ) {
         var result = fundingQueryService.findFundings(memberId, statuses, pageable);
+        return ResponseEntity.ok(PageResponse.from(result));
+    }
+
+    @GetMapping("/messages")
+    public ResponseEntity<PageResponse<FundingMessageResponse>> findFundings(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
+    ) {
+        var result = fundingQueryService.findMessages(memberId, pageable);
         return ResponseEntity.ok(PageResponse.from(result));
     }
 }

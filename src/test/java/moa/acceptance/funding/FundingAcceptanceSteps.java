@@ -44,4 +44,11 @@ public class FundingAcceptanceSteps {
                 .then()
                 .extract();
     }
+
+    public static ExtractableResponse<Response> 펀딩_메시지_조회_요청(String 회원_토큰) {
+        return given(회원_토큰)
+                .get("/fundings/messages")
+                .then()
+                .extract();
+    }
 }
