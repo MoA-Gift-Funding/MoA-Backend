@@ -83,7 +83,7 @@ class FundingServiceTest {
         );
         fundingRepository.save(funding);
         tossPaymentRepository.save(new TossPayment("key", "1", "order", "10000", part.getId()));
-        var command = new FundingParticipateCommand(funding.getId(), part.getId(), "1", "hi");
+        var command = new FundingParticipateCommand(funding.getId(), part.getId(), "1", "hi", true);
 
         // when
         fundingService.participate(command);
@@ -112,8 +112,8 @@ class FundingServiceTest {
         fundingRepository.save(funding);
         tossPaymentRepository.save(new TossPayment("key", "1", "order", "10000", part1.getId()));
         tossPaymentRepository.save(new TossPayment("key2", "2", "order", "10000", part2.getId()));
-        var command1 = new FundingParticipateCommand(funding.getId(), part1.getId(), "1", "hi");
-        var command2 = new FundingParticipateCommand(funding.getId(), part2.getId(), "2", "hi");
+        var command1 = new FundingParticipateCommand(funding.getId(), part1.getId(), "1", "hi", true);
+        var command2 = new FundingParticipateCommand(funding.getId(), part2.getId(), "2", "hi", true);
 
         // when
         ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
@@ -143,7 +143,7 @@ class FundingServiceTest {
         );
         fundingRepository.save(funding);
         tossPaymentRepository.save(new TossPayment("key1", "1", "order", "10000", part1.getId()));
-        var command = new FundingParticipateCommand(funding.getId(), part1.getId(), "1", "hi");
+        var command = new FundingParticipateCommand(funding.getId(), part1.getId(), "1", "hi", true);
         fundingService.participate(command);
 
         // when
@@ -169,7 +169,7 @@ class FundingServiceTest {
         );
         fundingRepository.save(funding);
         tossPaymentRepository.save(new TossPayment("key", "1", "order", "10000", part.getId()));
-        var command = new FundingParticipateCommand(funding.getId(), part.getId(), "1", "hi");
+        var command = new FundingParticipateCommand(funding.getId(), part.getId(), "1", "hi", true);
         fundingService.participate(command);  // 펀딩 완료 상태
 
         // when & then

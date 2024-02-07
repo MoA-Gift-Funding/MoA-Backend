@@ -82,7 +82,7 @@ public record FundingDetailResponse(
                     participant.getMember().getId(),
                     nickName,
                     participant.getMember().getProfileImageUrl(),
-                    participant.getMessage(),
+                    participant.getFundingMessage().getContent(),
                     participant.getCreatedDate()
             );
         }

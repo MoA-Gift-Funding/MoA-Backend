@@ -88,16 +88,16 @@ class FundingQueryServiceTest {
         String orderId4 = tossPaymentRepository.save(tossPayment("5000", member4.getId())).getOrderId();
 
         fundingService.participate(
-                new FundingParticipateCommand(member1Funding.getId(), member3.getId(), orderId, "ㅊㅋ")
+                new FundingParticipateCommand(member1Funding.getId(), member3.getId(), orderId, "ㅊㅋ", true)
         );
         fundingService.participate(
-                new FundingParticipateCommand(member2Funding.getId(), member3.getId(), orderId2, "ㅊㅋ")
+                new FundingParticipateCommand(member2Funding.getId(), member3.getId(), orderId2, "ㅊㅋ", true)
         );
         fundingService.participate(
-                new FundingParticipateCommand(member1Funding.getId(), member3.getId(), orderId3, "ㅊㅋ")
+                new FundingParticipateCommand(member1Funding.getId(), member3.getId(), orderId3, "ㅊㅋ", true)
         );
         fundingService.participate(
-                new FundingParticipateCommand(member1Funding.getId(), member4.getId(), orderId4, "ㅊㅋ")
+                new FundingParticipateCommand(member1Funding.getId(), member4.getId(), orderId4, "ㅊㅋ", true)
         );
 
         // when

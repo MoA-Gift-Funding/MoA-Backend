@@ -9,14 +9,18 @@ public record FundingParticipateRequest(
         @NotBlank String paymentOrderId,
 
         @Schema(example = "말랑아 생일축하해~")
-        @NotBlank String message
+        @NotBlank String message,
+
+        @Schema(example = "메시지 공개 여부")
+        boolean visible
 ) {
     public FundingParticipateCommand toCommand(Long fundingId, Long memberId) {
         return new FundingParticipateCommand(
                 fundingId,
                 memberId,
                 paymentOrderId,
-                message
+                message,
+                visible
         );
     }
 }

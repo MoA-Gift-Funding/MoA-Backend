@@ -17,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import moa.funding.exception.FundingException;
@@ -50,18 +51,19 @@ public class FundingParticipant extends RootEntity<Long> {
     @AttributeOverride(name = "value", column = @Column(name = "amount"))
     private Price amount;
 
-    @Column(name = "message")
-    private String message;
+    @OneToOne(mappedBy = "id")
+    @JoinColumn(name = "message_id")
+    private FundingMessage fundingMessage;
 
     @Enumerated(STRING)
     private ParticipantStatus status;
 
-    public FundingParticipant(Member member, Funding funding, TossPayment payment, String message) {
+    public FundingParticipant(Member member, Funding funding, TossPayment payment, String message, boolean messageVisible) {
         this.member = member;
         this.funding = funding;
         this.tossPayment = payment;
         this.amount = payment.getTotalAmount();
-        this.message = message;
+        this.fundingMessage = new FundingMessage(member, funding.getMember(), message, messageVisible);
         this.status = PARTICIPATING;
     }
 
