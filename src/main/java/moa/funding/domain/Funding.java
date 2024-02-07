@@ -68,7 +68,7 @@ public class Funding extends RootEntity<Long> {
     private LocalDate endDate;
 
     @Enumerated(STRING)
-    private Visibility visible;
+    private FundingVisibility visible;
 
     @Enumerated(STRING)
     private FundingStatus status;
@@ -104,7 +104,7 @@ public class Funding extends RootEntity<Long> {
             String title,
             String description,
             LocalDate endDate,
-            Visibility visible,
+            FundingVisibility visible,
             Price maximumAmount,
             Member member,
             Product product,

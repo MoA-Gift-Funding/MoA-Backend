@@ -1,11 +1,13 @@
 package moa.funding.domain;
 
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -36,9 +38,10 @@ public class FundingMessage extends RootEntity<Long> {
     private String content;
 
     @Column
-    private boolean visible;
+    @Enumerated(STRING)
+    private MessageVisibility visible;
 
-    public FundingMessage(Member sender, Member receiver, String content, boolean visible) {
+    public FundingMessage(Member sender, Member receiver, String content, MessageVisibility visible) {
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;

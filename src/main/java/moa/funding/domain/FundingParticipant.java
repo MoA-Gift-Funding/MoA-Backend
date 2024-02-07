@@ -65,7 +65,7 @@ public class FundingParticipant extends RootEntity<Long> {
             Funding funding,
             TossPayment payment,
             String message,
-            boolean messageVisible
+            MessageVisibility messageVisible
     ) {
         this.member = member;
         this.funding = funding;
