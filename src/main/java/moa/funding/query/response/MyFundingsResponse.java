@@ -26,7 +26,7 @@ public record MyFundingsResponse(
             int fundingRate,
 
             @Schema(description = "펀딩 상태", example = "진행중")
-            String fundingStatus,
+            String status,
 
             @Schema(example = "50000")
             Long fundedAmount,
