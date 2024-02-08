@@ -8,7 +8,11 @@ import static moa.acceptance.funding.FundingAcceptanceSteps.나의_펀딩목록_
 import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_목록_조회_요청;
 import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_상세_조회_요청;
 import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_생성_요청;
+import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_참여_요청;
+import static moa.funding.domain.MessageVisibility.PRIVATE;
+import static moa.funding.domain.MessageVisibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -22,11 +26,16 @@ import moa.address.domain.DeliveryAddressRepository;
 import moa.friend.presentation.request.SyncContactRequest;
 import moa.friend.presentation.request.SyncContactRequest.ContactRequest;
 import moa.funding.presentation.request.FundingCreateRequest;
+import moa.funding.presentation.request.FundingParticipateRequest;
+import moa.funding.query.response.FundingDetailResponse;
 import moa.global.domain.Price;
 import moa.global.presentation.PageResponse;
 import moa.member.domain.Member;
+import moa.pay.domain.TossPayment;
+import moa.pay.domain.TossPaymentRepository;
 import moa.product.domain.Product;
 import moa.product.domain.ProductRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -42,6 +51,9 @@ public class FundingAcceptanceTest extends AcceptanceTest {
 
     @Autowired
     private DeliveryAddressRepository deliveryRepository;
+
+    @Autowired
+    private TossPaymentRepository tossPaymentRepository;
 
     private Member 준호;
     private Member 말랑;
@@ -163,6 +175,151 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             assertStatus(response, OK);
         }
 
+        @Test
+        void 펀딩_상세_정보를_조회한다_참여한_인원의_메시지를_포함한다() {
+            // given
+            연락처_동기화(준호_token, new SyncContactRequest(
+                    new ContactRequest("신동훈 (모아)", "010-1234-5678")
+            ));
+            var createFundingRequest = 펀딩_생성_요청_데이터();
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, createFundingRequest));
+            var participateRequest = new FundingParticipateRequest(
+                    "orderId",
+                    "잘~ 먹고갑니다!",
+                    PUBLIC
+            );
+            tossPaymentRepository.save(
+                    new TossPayment(
+                            "temp",
+                            participateRequest.paymentOrderId(),
+                            "에어팟",
+                            "10000",
+                            말랑.getId()
+                    )
+            );
+            펀딩_참여_요청(말랑_token, fundingId, participateRequest);
+
+            // when
+            var response = 펀딩_상세_조회_요청(준호_token, fundingId);
+
+            // then
+            assertStatus(response, OK);
+            var detailResponse = response.as(FundingDetailResponse.class);
+            Assertions.assertThat(detailResponse.participants().get(0).message())
+                    .isEqualTo(participateRequest.message());
+        }
+
+        @Test
+        void 펀딩_상세_정보를_조회한다_참여한_인원의_메시지를_포함한다_비공개처리_시_null을_반환한다() {
+            // given
+            Member 루마 = signup("루마", "010-3333-3333");
+            String 루마_token = login(루마);
+            연락처_동기화(준호_token, new SyncContactRequest(
+                    new ContactRequest("신동훈 (모아)", "010-1234-5678"),
+                    new ContactRequest("루마", "010-3333-3333")
+            ));
+            var createFundingRequest = 펀딩_생성_요청_데이터();
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, createFundingRequest));
+            var requestWithInvisibleMessage = new FundingParticipateRequest(
+                    "orderId",
+                    "잘~ 먹고갑니다!",
+                    PRIVATE
+            );
+            tossPaymentRepository.save(
+                    new TossPayment(
+                            "temp",
+                            requestWithInvisibleMessage.paymentOrderId(),
+                            "에어팟",
+                            "10000",
+                            말랑.getId()
+                    )
+            );
+            펀딩_참여_요청(말랑_token, fundingId, requestWithInvisibleMessage);
+
+            // when
+            var response = 펀딩_상세_조회_요청(루마_token, fundingId);
+
+            // then
+            assertStatus(response, OK);
+            var detailResponse = response.as(FundingDetailResponse.class);
+            assertSoftly(
+                    softly -> {
+                        softly.assertThat(detailResponse.participants().get(0).memberId()).isNull();
+                        softly.assertThat(detailResponse.participants().get(0).message()).isNull();
+                        softly.assertThat(detailResponse.participants().get(0).nickName()).isNull();
+                        softly.assertThat(detailResponse.participants().get(0).profileImageUrl()).isNull();
+                        softly.assertThat(detailResponse.participants().get(0).createAt()).isNotNull();
+                    }
+            );
+        }
+
+        @Test
+        void 펀딩_상세_정보를_조회한다_참여한_인원의_메시지를_포함한다_비공개처리여도_개설자가_조회하면_보인다() {
+            // given
+            연락처_동기화(준호_token, new SyncContactRequest(
+                    new ContactRequest("신동훈 (모아)", "010-1234-5678")
+            ));
+            var createFundingRequest = 펀딩_생성_요청_데이터();
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, createFundingRequest));
+            var requestWithInvisibleMessage = new FundingParticipateRequest(
+                    "orderId",
+                    "잘~ 먹고갑니다!",
+                    PRIVATE
+            );
+            tossPaymentRepository.save(
+                    new TossPayment(
+                            "temp",
+                            requestWithInvisibleMessage.paymentOrderId(),
+                            "에어팟",
+                            "10000",
+                            말랑.getId()
+                    )
+            );
+            펀딩_참여_요청(말랑_token, fundingId, requestWithInvisibleMessage);
+
+            // when
+            var response = 펀딩_상세_조회_요청(준호_token, fundingId);
+
+            // then
+            assertStatus(response, OK);
+            var detailResponse = response.as(FundingDetailResponse.class);
+            Assertions.assertThat(detailResponse.participants().get(0).message())
+                    .isEqualTo(requestWithInvisibleMessage.message());
+        }
+
+        @Test
+        void 펀딩_상세_정보를_조회한다_참여한_인원의_메시지를_포함한다_비공개처리여도_작성자가_조회하면_보인다() {
+            // given
+            연락처_동기화(준호_token, new SyncContactRequest(
+                    new ContactRequest("신동훈 (모아)", "010-1234-5678")
+            ));
+            var createFundingRequest = 펀딩_생성_요청_데이터();
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, createFundingRequest));
+            var requestWithInvisibleMessage = new FundingParticipateRequest(
+                    "orderId",
+                    "잘~ 먹고갑니다!",
+                    PRIVATE
+            );
+            tossPaymentRepository.save(
+                    new TossPayment(
+                            "temp",
+                            requestWithInvisibleMessage.paymentOrderId(),
+                            "에어팟",
+                            "10000",
+                            말랑.getId()
+                    )
+            );
+            펀딩_참여_요청(말랑_token, fundingId, requestWithInvisibleMessage);
+
+            // when
+            var response = 펀딩_상세_조회_요청(말랑_token, fundingId);
+
+            // then
+            assertStatus(response, OK);
+            var detailResponse = response.as(FundingDetailResponse.class);
+            Assertions.assertThat(detailResponse.participants().get(0).message())
+                    .isEqualTo(requestWithInvisibleMessage.message());
+        }
 
         @Test
         void 펀딩_상세_정보를_조회한다_차단되었을_시_조회할_수_없다() {

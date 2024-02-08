@@ -3,7 +3,7 @@ package moa.funding.application.command;
 import java.time.LocalDate;
 import moa.address.domain.DeliveryAddress;
 import moa.funding.domain.Funding;
-import moa.funding.domain.Visibility;
+import moa.funding.domain.FundingVisibility;
 import moa.global.domain.Price;
 import moa.member.domain.Member;
 import moa.product.domain.Product;
@@ -14,7 +14,7 @@ public record FundingCreateCommand(
         String title,
         String description,
         LocalDate endDate,
-        Visibility visible,
+        FundingVisibility visible,
         Price maximumAmount,
         Long productId,
         Long deliveryAddressId,

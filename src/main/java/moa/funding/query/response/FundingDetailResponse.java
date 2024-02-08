@@ -1,6 +1,8 @@
 package moa.funding.query.response;
 
 
+import static moa.funding.domain.MessageVisibility.PRIVATE;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
@@ -72,7 +74,22 @@ public record FundingDetailResponse(
             @Schema(description = "참여 작성 시간", example = "2024-11-02 12:00:01")
             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime createAt
     ) {
-        private static Participant of(FundingParticipant participant, List<Friend> friends) {
+        private static Participant of(Funding funding, FundingParticipant participant, Member member,
+                                      List<Friend> friends) {
+            if (participant.getFundingMessage().getVisible() == PRIVATE
+                    && !isFundingOwner(funding, member) && !isMessageOwner(participant, member)) {
+                return new Participant(
+                        null,
+                        null,
+                        null,
+                        null,
+                        participant.getCreatedDate()
+                );
+            }
+            return getParticipant(participant, friends);
+        }
+
+        private static Participant getParticipant(FundingParticipant participant, List<Friend> friends) {
             String nickName = friends.stream()
                     .filter(friend -> Objects.equals(friend.getTarget().getId(), participant.getMember().getId()))
                     .findAny()
@@ -82,7 +99,7 @@ public record FundingDetailResponse(
                     participant.getMember().getId(),
                     nickName,
                     participant.getMember().getProfileImageUrl(),
-                    participant.getMessage(),
+                    participant.getFundingMessage().getContent(),
                     participant.getCreatedDate()
             );
         }
@@ -104,14 +121,22 @@ public record FundingDetailResponse(
                 funding.getFundedAmount().longValue(),
                 funding.getParticipants().size(),
                 product.getImageUrl(),
-                getMessages(funding, friends)
+                getMessages(funding, member, friends)
         );
     }
 
-    private static List<Participant> getMessages(Funding funding, List<Friend> friends) {
+    private static List<Participant> getMessages(Funding funding, Member member, List<Friend> friends) {
         return funding.getParticipants()
                 .stream()
-                .map(participant -> Participant.of(participant, friends))
+                .map(participant -> Participant.of(funding, participant, member, friends))
                 .toList();
+    }
+
+    private static boolean isFundingOwner(Funding funding, Member member) {
+        return Objects.equals(funding.getMember().getId(), member.getId());
+    }
+
+    private static boolean isMessageOwner(FundingParticipant participant, Member member) {
+        return Objects.equals(participant.getMember().getId(), member.getId());
     }
 }

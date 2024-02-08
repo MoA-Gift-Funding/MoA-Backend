@@ -4,6 +4,7 @@ import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
 import static moa.funding.domain.FundingStatus.CANCELLED;
 import static moa.funding.domain.FundingStatus.DELIVERY_WAITING;
+import static moa.funding.domain.MessageVisibility.PUBLIC;
 import static moa.funding.exception.FundingExceptionType.ONLY_PROCESSING_FUNDING_CAN_BE_CANCELLED;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.pay.domain.TossPaymentStatus.PENDING_CANCEL;
@@ -83,7 +84,7 @@ class FundingServiceTest {
         );
         fundingRepository.save(funding);
         tossPaymentRepository.save(new TossPayment("key", "1", "order", "10000", part.getId()));
-        var command = new FundingParticipateCommand(funding.getId(), part.getId(), "1", "hi");
+        var command = new FundingParticipateCommand(funding.getId(), part.getId(), "1", "hi", PUBLIC);
 
         // when
         fundingService.participate(command);
@@ -112,8 +113,8 @@ class FundingServiceTest {
         fundingRepository.save(funding);
         tossPaymentRepository.save(new TossPayment("key", "1", "order", "10000", part1.getId()));
         tossPaymentRepository.save(new TossPayment("key2", "2", "order", "10000", part2.getId()));
-        var command1 = new FundingParticipateCommand(funding.getId(), part1.getId(), "1", "hi");
-        var command2 = new FundingParticipateCommand(funding.getId(), part2.getId(), "2", "hi");
+        var command1 = new FundingParticipateCommand(funding.getId(), part1.getId(), "1", "hi", PUBLIC);
+        var command2 = new FundingParticipateCommand(funding.getId(), part2.getId(), "2", "hi", PUBLIC);
 
         // when
         ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
@@ -143,7 +144,7 @@ class FundingServiceTest {
         );
         fundingRepository.save(funding);
         tossPaymentRepository.save(new TossPayment("key1", "1", "order", "10000", part1.getId()));
-        var command = new FundingParticipateCommand(funding.getId(), part1.getId(), "1", "hi");
+        var command = new FundingParticipateCommand(funding.getId(), part1.getId(), "1", "hi", PUBLIC);
         fundingService.participate(command);
 
         // when
@@ -169,7 +170,7 @@ class FundingServiceTest {
         );
         fundingRepository.save(funding);
         tossPaymentRepository.save(new TossPayment("key", "1", "order", "10000", part.getId()));
-        var command = new FundingParticipateCommand(funding.getId(), part.getId(), "1", "hi");
+        var command = new FundingParticipateCommand(funding.getId(), part.getId(), "1", "hi", PUBLIC);
         fundingService.participate(command);  // 펀딩 완료 상태
 
         // when & then

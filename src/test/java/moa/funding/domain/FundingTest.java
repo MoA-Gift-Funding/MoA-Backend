@@ -4,6 +4,7 @@ import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
 import static moa.fixture.TossPaymentFixture.tossPayment;
 import static moa.funding.domain.FundingStatus.DELIVERY_WAITING;
+import static moa.funding.domain.MessageVisibility.PUBLIC;
 import static moa.funding.exception.FundingExceptionType.DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_FUNDING_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.EXCEED_FUNDING_MAX_PERIOD;
@@ -98,7 +99,7 @@ class FundingTest {
                     "",
                     "",
                     LocalDate.now().minusDays(1),
-                    Visibility.PUBLIC,
+                    FundingVisibility.PUBLIC,
                     Price.from("15000"),
                     mock(Member.class),
                     new Product("", Price.from("15000")),
@@ -121,7 +122,7 @@ class FundingTest {
                     "",
                     "",
                     LocalDate.now().plusMonths(1).plusDays(1),
-                    Visibility.PUBLIC,
+                    FundingVisibility.PUBLIC,
                     Price.from("15000"),
                     mock(Member.class),
                     new Product("", Price.from("15000")),
@@ -168,7 +169,8 @@ class FundingTest {
                     new Product("", Price.from(productPrice)),
                     fundedAmount
             );
-            var participant = new FundingParticipant(mock(Member.class), funding, payment, "");
+            var participant = new FundingParticipant(mock(Member.class), funding, payment, "",
+                    MessageVisibility.PUBLIC);
             funding.participate(participant);
 
             // when
@@ -191,7 +193,7 @@ class FundingTest {
                     "10000"
             );
             TossPayment payment = tossPayment("1000", 1L);
-            var participant = new FundingParticipant(mock(Member.class), funding, payment, "");
+            var participant = new FundingParticipant(mock(Member.class), funding, payment, "", PUBLIC);
 
             // when
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
@@ -209,7 +211,7 @@ class FundingTest {
                     "10000"
             );
             TossPayment payment = tossPayment("10001", 1L);
-            var participant = new FundingParticipant(mock(Member.class), funding, payment, "");
+            var participant = new FundingParticipant(mock(Member.class), funding, payment, "", PUBLIC);
 
             // when
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
@@ -227,10 +229,10 @@ class FundingTest {
                     "10000"
             );
             TossPayment payment = tossPayment("10000", 1L);
-            var participant = new FundingParticipant(mock(Member.class), funding, payment, "");
+            var participant = new FundingParticipant(mock(Member.class), funding, payment, "", PUBLIC);
             funding.participate(participant);
             TossPayment payment2 = tossPayment("10000", 1L);
-            var participant2 = new FundingParticipant(mock(Member.class), funding, payment2, "");
+            var participant2 = new FundingParticipant(mock(Member.class), funding, payment2, "", PUBLIC);
 
             // when
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
@@ -248,10 +250,10 @@ class FundingTest {
                     "10000"
             );
             TossPayment payment = tossPayment("10000", 1L);
-            var participant = new FundingParticipant(mock(Member.class), funding, payment, "");
+            var participant = new FundingParticipant(mock(Member.class), funding, payment, "", PUBLIC);
             funding.participate(participant);
             TossPayment payment2 = tossPayment("3999", 1L);
-            var participant2 = new FundingParticipant(mock(Member.class), funding, payment2, "");
+            var participant2 = new FundingParticipant(mock(Member.class), funding, payment2, "", PUBLIC);
 
             // when
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
@@ -269,10 +271,10 @@ class FundingTest {
                     "10000"
             );
             TossPayment payment = tossPayment("10000", 1L);
-            var participant = new FundingParticipant(mock(Member.class), funding, payment, "");
+            var participant = new FundingParticipant(mock(Member.class), funding, payment, "", PUBLIC);
             funding.participate(participant);
             TossPayment payment2 = tossPayment("4000", 1L);
-            var participant2 = new FundingParticipant(mock(Member.class), funding, payment2, "");
+            var participant2 = new FundingParticipant(mock(Member.class), funding, payment2, "", PUBLIC);
 
             // when
             assertDoesNotThrow(() -> {
@@ -290,7 +292,7 @@ class FundingTest {
                     "10000"
             );
             TossPayment payment = tossPayment("10000", 1L);
-            var participant = new FundingParticipant(member, funding, payment, "");
+            var participant = new FundingParticipant(member, funding, payment, "", PUBLIC);
 
             // when
             MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
@@ -308,7 +310,7 @@ class FundingTest {
                     "10000"
             );
             TossPayment payment = tossPayment("10000", 1L);
-            var participant = new FundingParticipant(mock(Member.class), funding, payment, "");
+            var participant = new FundingParticipant(mock(Member.class), funding, payment, "", PUBLIC);
 
             // when
             funding.participate(participant);

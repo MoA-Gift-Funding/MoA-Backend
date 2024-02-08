@@ -3,6 +3,7 @@ package moa.funding.query;
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
 import static moa.fixture.TossPaymentFixture.tossPayment;
+import static moa.funding.domain.MessageVisibility.PUBLIC;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -88,16 +89,16 @@ class FundingQueryServiceTest {
         String orderId4 = tossPaymentRepository.save(tossPayment("5000", member4.getId())).getOrderId();
 
         fundingService.participate(
-                new FundingParticipateCommand(member1Funding.getId(), member3.getId(), orderId, "ㅊㅋ")
+                new FundingParticipateCommand(member1Funding.getId(), member3.getId(), orderId, "ㅊㅋ", PUBLIC)
         );
         fundingService.participate(
-                new FundingParticipateCommand(member2Funding.getId(), member3.getId(), orderId2, "ㅊㅋ")
+                new FundingParticipateCommand(member2Funding.getId(), member3.getId(), orderId2, "ㅊㅋ", PUBLIC)
         );
         fundingService.participate(
-                new FundingParticipateCommand(member1Funding.getId(), member3.getId(), orderId3, "ㅊㅋ")
+                new FundingParticipateCommand(member1Funding.getId(), member3.getId(), orderId3, "ㅊㅋ", PUBLIC)
         );
         fundingService.participate(
-                new FundingParticipateCommand(member1Funding.getId(), member4.getId(), orderId4, "ㅊㅋ")
+                new FundingParticipateCommand(member1Funding.getId(), member4.getId(), orderId4, "ㅊㅋ", PUBLIC)
         );
 
         // when

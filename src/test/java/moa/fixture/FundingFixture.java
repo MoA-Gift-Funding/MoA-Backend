@@ -1,8 +1,9 @@
 package moa.fixture;
 
+import static moa.funding.domain.FundingVisibility.PUBLIC;
+
 import java.time.LocalDate;
 import moa.funding.domain.Funding;
-import moa.funding.domain.Visibility;
 import moa.global.domain.Price;
 import moa.member.domain.Member;
 import moa.product.domain.Product;
@@ -19,7 +20,7 @@ public class FundingFixture {
                 "",
                 "",
                 LocalDate.now().plusWeeks(4),
-                Visibility.PUBLIC,
+                PUBLIC,
                 Price.from(maximumAmount),
                 owner,
                 product,
