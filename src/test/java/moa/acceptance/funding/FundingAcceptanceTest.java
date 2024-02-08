@@ -359,7 +359,59 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
-        void 펀딩_목록을_조회한다_나는_내_펀딩을_볼_수_있다() {
+        void 펀딩_목록을_조회한다_남은_기간이_짧은_순서로_보여진다() {
+            // given
+            연락처_동기화(말랑_token, new SyncContactRequest(
+                    new ContactRequest("최준호 (모아)", "010-2222-2222")
+            ));
+            var request = 펀딩_생성_요청_데이터();
+            펀딩_생성_요청(준호_token, new FundingCreateRequest(
+                    "",
+                    "15일 남은 펀딩",
+                    "저에게 에어팟 맥스를 선물할 기회!!",
+                    LocalDate.now().plusDays(15L).toString(),
+                    "10000",
+                    상품.getId(),
+                    배송_정보.getId(),
+                    "택배함 옆에 놔주세요"
+            ));
+            펀딩_생성_요청(준호_token, new FundingCreateRequest(
+                    "",
+                    "10일 남은 펀딩",
+                    "저에게 맥북을 선물할 기회!!",
+                    LocalDate.now().plusDays(10L).toString(),
+                    "10000",
+                    상품.getId(),
+                    배송_정보.getId(),
+                    "택배함 옆에 놔주세요"
+            ));
+            펀딩_생성_요청(준호_token, new FundingCreateRequest(
+                    "",
+                    "20일 남은 펀딩",
+                    "저에게 맥북을 선물할 기회!!",
+                    LocalDate.now().plusDays(20L).toString(),
+                    "10000",
+                    상품.getId(),
+                    배송_정보.getId(),
+                    "택배함 옆에 놔주세요"
+            ));
+
+            // when
+            var response = 펀딩_목록_조회_요청(말랑_token);
+
+            // then
+            assertStatus(response, OK);
+            assertSoftly(
+                    softly -> {
+                        softly.assertThat(response.jsonPath().getList("content")).hasSize(3);
+                        softly.assertThat(response.jsonPath().getString("content[0].title")).isEqualTo("10일 남은 펀딩");
+                        softly.assertThat(response.jsonPath().getString("content[2].title")).isEqualTo("20일 남은 펀딩");
+                    }
+            );
+        }
+
+        @Test
+        void 펀딩_목록을_조회한다_내_펀딩은_보이지_않는다() {
             // given
             var request = 펀딩_생성_요청_데이터();
             펀딩_생성_요청(준호_token, request);
@@ -370,9 +422,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             // then
             assertStatus(response, OK);
             var result = response.as(PageResponse.class);
-            assertThat(result.content()).hasSize(1);
+            assertThat(result.content()).isEmpty();
         }
-
 
         @Test
         void 펀딩_목록을_조회한다_친구가_아닌사람의_펀딩은_조회되지_않는다() {
@@ -529,6 +580,19 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                 "주노의 에어팟 장만",
                 "저에게 에어팟 맥스를 선물할 기회!!",
                 LocalDate.now().plusDays(5L).toString(),
+                "10000",
+                상품.getId(),
+                배송_정보.getId(),
+                "택배함 옆에 놔주세요"
+        );
+    }
+
+    private FundingCreateRequest 펀딩_생성_요청_데이터(LocalDate endDate) {
+        return new FundingCreateRequest(
+                "",
+                "주노의 에어팟 장만",
+                "저에게 에어팟 맥스를 선물할 기회!!",
+                endDate.toString(),
                 "10000",
                 상품.getId(),
                 배송_정보.getId(),

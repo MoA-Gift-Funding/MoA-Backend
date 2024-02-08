@@ -1,6 +1,7 @@
 package moa.funding.presentation;
 
 import static moa.member.domain.MemberStatus.SIGNED_UP;
+import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import jakarta.validation.Valid;
@@ -107,7 +108,7 @@ public class FundingController implements FundingApi {
     public ResponseEntity<PageResponse<FundingResponse>> findFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
             @RequestParam(value = "statuses", defaultValue = "PROCESSING") List<FundingStatus> statuses,
-            @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
+            @PageableDefault(size = 10, sort = "endDate", direction = ASC) Pageable pageable
     ) {
         var result = fundingQueryService.findFundings(memberId, statuses, pageable);
         return ResponseEntity.ok(PageResponse.from(result));
