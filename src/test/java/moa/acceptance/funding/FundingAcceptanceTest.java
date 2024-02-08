@@ -59,7 +59,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
     private Member 준호;
     private Member 말랑;
     private Product 상품;
-    private DeliveryAddress 배송_정보;
+    private DeliveryAddress 준호_배송_정보;
     private String 준호_token;
     private String 말랑_token;
 
@@ -71,7 +71,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         준호_token = login(준호);
         말랑_token = login(말랑);
         상품 = productRepository.save(new Product("에어팟 맥스", Price.from(700000L)));
-        배송_정보 = deliveryRepository.save(new DeliveryAddress(
+        준호_배송_정보 = deliveryRepository.save(new DeliveryAddress(
                 준호,
                 "준호집",
                 "최준호",
@@ -92,7 +92,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         @Test
         void 새로운_펀딩을_생성한다() {
             // given
-            var request = 펀딩_생성_요청_데이터();
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
 
             // when
             var response = 펀딩_생성_요청(준호_token, request);
@@ -111,7 +111,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     LocalDate.now().plusDays(5L).toString(),
                     "4000",
                     상품.getId(),
-                    배송_정보.getId(),
+                    준호_배송_정보.getId(),
                     "택배함 옆에 놔주세요"
             );
 
@@ -132,7 +132,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     LocalDate.now().plusDays(5L).toString(),
                     "800000",
                     상품.getId(),
-                    배송_정보.getId(),
+                    준호_배송_정보.getId(),
                     "택배함 옆에 놔주세요"
             );
 
@@ -150,7 +150,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         @Test
         void 사용자의_펀딩_목록을_조회한다() {
             // given
-            var request = 펀딩_생성_요청_데이터();
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
             펀딩_생성_요청(준호_token, request);
             펀딩_생성_요청(준호_token, request);
 
@@ -166,7 +166,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         @Test
         void 펀딩_상세_정보를_조회한다() {
             // given
-            var request = 펀딩_생성_요청_데이터();
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
             Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
 
             // when
@@ -182,8 +182,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             연락처_동기화(준호_token, new SyncContactRequest(
                     new ContactRequest("신동훈 (모아)", "010-1234-5678")
             ));
-            var createFundingRequest = 펀딩_생성_요청_데이터();
-            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, createFundingRequest));
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
             var participateRequest = new FundingParticipateRequest(
                     "orderId",
                     "잘~ 먹고갑니다!",
@@ -219,8 +219,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     new ContactRequest("신동훈 (모아)", "010-1234-5678"),
                     new ContactRequest("루마", "010-3333-3333")
             ));
-            var createFundingRequest = 펀딩_생성_요청_데이터();
-            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, createFundingRequest));
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
             var requestWithInvisibleMessage = new FundingParticipateRequest(
                     "orderId",
                     "잘~ 먹고갑니다!",
@@ -260,8 +260,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             연락처_동기화(준호_token, new SyncContactRequest(
                     new ContactRequest("신동훈 (모아)", "010-1234-5678")
             ));
-            var createFundingRequest = 펀딩_생성_요청_데이터();
-            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, createFundingRequest));
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
             var requestWithInvisibleMessage = new FundingParticipateRequest(
                     "orderId",
                     "잘~ 먹고갑니다!",
@@ -294,8 +294,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             연락처_동기화(준호_token, new SyncContactRequest(
                     new ContactRequest("신동훈 (모아)", "010-1234-5678")
             ));
-            var createFundingRequest = 펀딩_생성_요청_데이터();
-            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, createFundingRequest));
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
             var requestWithInvisibleMessage = new FundingParticipateRequest(
                     "orderId",
                     "잘~ 먹고갑니다!",
@@ -330,7 +330,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             ));
             Long 준호의_말랑_친구_ID = getFriendId(준호, 말랑);
             친구_차단_요청(준호_token, 준호의_말랑_친구_ID);
-            var request = 펀딩_생성_요청_데이터();
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
             Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
 
             // when
@@ -346,7 +346,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             연락처_동기화(말랑_token, new SyncContactRequest(
                     new ContactRequest("최준호 (모아)", "010-2222-2222")
             ));
-            var request = 펀딩_생성_요청_데이터();
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
             펀딩_생성_요청(준호_token, request);
 
             // when
@@ -364,7 +364,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             연락처_동기화(말랑_token, new SyncContactRequest(
                     new ContactRequest("최준호 (모아)", "010-2222-2222")
             ));
-            var request = 펀딩_생성_요청_데이터();
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
             펀딩_생성_요청(준호_token, new FundingCreateRequest(
                     "",
                     "15일 남은 펀딩",
@@ -372,7 +372,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     LocalDate.now().plusDays(15L).toString(),
                     "10000",
                     상품.getId(),
-                    배송_정보.getId(),
+                    준호_배송_정보.getId(),
                     "택배함 옆에 놔주세요"
             ));
             펀딩_생성_요청(준호_token, new FundingCreateRequest(
@@ -382,7 +382,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     LocalDate.now().plusDays(10L).toString(),
                     "10000",
                     상품.getId(),
-                    배송_정보.getId(),
+                    준호_배송_정보.getId(),
                     "택배함 옆에 놔주세요"
             ));
             펀딩_생성_요청(준호_token, new FundingCreateRequest(
@@ -392,7 +392,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     LocalDate.now().plusDays(20L).toString(),
                     "10000",
                     상품.getId(),
-                    배송_정보.getId(),
+                    준호_배송_정보.getId(),
                     "택배함 옆에 놔주세요"
             ));
 
@@ -413,7 +413,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         @Test
         void 펀딩_목록을_조회한다_내_펀딩은_보이지_않는다() {
             // given
-            var request = 펀딩_생성_요청_데이터();
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
             펀딩_생성_요청(준호_token, request);
 
             // when
@@ -428,7 +428,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         @Test
         void 펀딩_목록을_조회한다_친구가_아닌사람의_펀딩은_조회되지_않는다() {
             // given
-            var request = 펀딩_생성_요청_데이터();
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
             펀딩_생성_요청(말랑_token, request);
 
             // when
@@ -448,7 +448,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             ));
             Long 말랑의_준호_친구_ID = getFriendId(말랑, 준호);
             친구_차단_요청(말랑_token, 말랑의_준호_친구_ID);
-            var request = 펀딩_생성_요청_데이터();
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
             펀딩_생성_요청(말랑_token, request);
 
             // when
@@ -468,7 +468,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             ));
             Long 준호의_말랑_친구_ID = getFriendId(준호, 말랑);
             친구_차단_요청(준호_token, 준호의_말랑_친구_ID);
-            var request = 펀딩_생성_요청_데이터();
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
             펀딩_생성_요청(말랑_token, request);
 
             // when
@@ -491,7 +491,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             ));
             Long 루마의_주노_친구 = getFriendId(루마, 준호);
             친구_차단_요청(루마_token, 루마의_주노_친구);
-            var request = 펀딩_생성_요청_데이터();
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
             펀딩_생성_요청(준호_token, request);
 
             // when
@@ -513,8 +513,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             연락처_동기화(준호_token, new SyncContactRequest(
                     new ContactRequest("신동훈 (모아)", "010-1234-5678")
             ));
-            var createFundingRequest = 펀딩_생성_요청_데이터();
-            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, createFundingRequest));
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
             var participateRequest = new FundingParticipateRequest(
                     "orderId",
                     "잘~ 먹고갑니다!",
@@ -546,8 +546,8 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             연락처_동기화(준호_token, new SyncContactRequest(
                     new ContactRequest("신동훈 (모아)", "010-1234-5678")
             ));
-            var createFundingRequest = 펀딩_생성_요청_데이터();
-            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, createFundingRequest));
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
             var requestWithInvisibleMessage = new FundingParticipateRequest(
                     "orderId",
                     "잘~ 먹고갑니다!",
@@ -574,20 +574,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         }
     }
 
-    private FundingCreateRequest 펀딩_생성_요청_데이터() {
-        return new FundingCreateRequest(
-                "",
-                "주노의 에어팟 장만",
-                "저에게 에어팟 맥스를 선물할 기회!!",
-                LocalDate.now().plusDays(5L).toString(),
-                "10000",
-                상품.getId(),
-                배송_정보.getId(),
-                "택배함 옆에 놔주세요"
-        );
-    }
-
-    private FundingCreateRequest 펀딩_생성_요청_데이터(LocalDate endDate) {
+    private FundingCreateRequest 펀딩_생성_요청_데이터(LocalDate endDate, Long deliveryId) {
         return new FundingCreateRequest(
                 "",
                 "주노의 에어팟 장만",
@@ -595,7 +582,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                 endDate.toString(),
                 "10000",
                 상품.getId(),
-                배송_정보.getId(),
+                deliveryId,
                 "택배함 옆에 놔주세요"
         );
     }
