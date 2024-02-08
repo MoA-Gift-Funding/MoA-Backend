@@ -71,8 +71,9 @@ public record FundingDetailResponse(
             @Schema(description = "메시지 내용", example = "형님이 보태준다")
             String message,
 
-            @Schema(description = "참여 작성 시간", example = "2024-11-02 12:00:01")
-            @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime createAt
+            @Schema(description = "메시지 작성 시간", example = "2024-11-02 12:00:01")
+            @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+            LocalDateTime createAt
     ) {
         private static Participant of(Funding funding, FundingParticipant participant, Member member,
                                       List<Friend> friends) {
@@ -91,7 +92,7 @@ public record FundingDetailResponse(
 
         private static Participant getParticipant(FundingParticipant participant, List<Friend> friends) {
             String nickName = friends.stream()
-                    .filter(friend -> Objects.equals(friend.getTarget().getId(), participant.getMember().getId()))
+                    .filter(friend -> friend.getTarget().equals(participant.getMember()))
                     .findAny()
                     .map(Friend::getNickname)
                     .orElseGet(() -> participant.getMember().getNickname());
