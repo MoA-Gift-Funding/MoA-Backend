@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import moa.friend.domain.Friend;
 import moa.funding.domain.FundingMessage;
 import moa.member.domain.Member;
@@ -29,7 +28,7 @@ public record FundingMessageResponse(
     public static FundingMessageResponse of(FundingMessage message, List<Friend> friends) {
         Member sender = message.getSender();
         String nickName = friends.stream()
-                .filter(friend -> Objects.equals(friend.getTarget().getId(), message.getSender().getId()))
+                .filter(friend -> friend.getTarget().equals(message.getSender()))
                 .findAny()
                 .map(Friend::getNickname)
                 .orElseGet(sender::getNickname);
