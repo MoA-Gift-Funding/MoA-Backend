@@ -192,8 +192,9 @@ gradle-app.setting
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,gradle,java,git,intellij+all
 
-src/main/resources/application*.yml
-src/main/resources/*.p8
-src/main/resources/*.json
-!src/main/resources/application-local.yml
-src/main/resources/static/exception_doc.html
+**/src/main/resources/application*.yml
+**/src/main/resources/*.p8
+**/src/main/resources/*.json
+!**/src/main/resources/application-local.yml
+!**/src/main/resources/application-test.yml
+**/src/main/resources/static/exception_doc.html

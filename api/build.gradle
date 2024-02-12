@@ -1,0 +1,20 @@
+dependencies {
+    implementation project(':core')
+    testImplementation testFixtures(project(":core"))
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+
+    testImplementation 'io.rest-assured:rest-assured'
+
+}
+
+tasks.register('generateExceptionDoc', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'moa.global.exception.ExceptionDocGenerator'
+}
+
+resolveMainClassName.dependsOn('generateExceptionDoc')
