@@ -48,7 +48,6 @@ public interface DeliveryAddressApi {
     @Operation(summary = "배송지 생성")
     @PostMapping
     ResponseEntity<Void> create(
-            @Parameter(hidden = true)
             @Auth(permit = SIGNED_UP) Long memberId,
 
             @Schema
@@ -67,7 +66,6 @@ public interface DeliveryAddressApi {
     @Operation(summary = "배송지 수정")
     @PutMapping("/{id}")
     ResponseEntity<Void> update(
-            @Parameter(hidden = true)
             @Auth(permit = SIGNED_UP) Long memberId,
 
             @Parameter(description = "배송지 id", in = PATH, required = true)
@@ -89,7 +87,6 @@ public interface DeliveryAddressApi {
     @Operation(summary = "배송지 제거")
     @DeleteMapping("/{id}")
     ResponseEntity<Void> delete(
-            @Parameter(hidden = true)
             @Auth(permit = SIGNED_UP) Long memberId,
 
             @Parameter(description = "배송지 id", in = PATH, required = true)
@@ -121,7 +118,6 @@ public interface DeliveryAddressApi {
     @Operation(summary = "내 배송지 목록 조회")
     @GetMapping
     ResponseEntity<List<AddressResponse>> findMy(
-            @Parameter(hidden = true)
             @Auth(permit = SIGNED_UP) Long memberId
     );
 }

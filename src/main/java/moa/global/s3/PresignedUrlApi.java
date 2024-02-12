@@ -5,7 +5,6 @@ import static moa.member.domain.MemberStatus.PRESIGNED_UP;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,7 +31,7 @@ public interface PresignedUrlApi {
     @Operation(summary = "Presigned Url API")
     @PostMapping
     ResponseEntity<CreatePresignedUrlResponse> createPresignedUrl(
-            @Parameter(hidden = true) @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId,
+            @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId,
             @Valid @RequestBody CreatePresignedUrlRequest request
     );
 }

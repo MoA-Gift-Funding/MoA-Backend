@@ -7,8 +7,8 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@RequiredArgsConstructor
 @Configuration
+@RequiredArgsConstructor
 public class AuthConfig implements WebMvcConfigurer {
 
     private final ExtractAuthenticationInterceptor extractAuthenticationInterceptor;
