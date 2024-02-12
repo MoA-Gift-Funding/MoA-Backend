@@ -39,7 +39,6 @@ public interface FriendApi {
     @Operation(summary = "연락처 동기화")
     @PostMapping("/sync-contact")
     ResponseEntity<Void> syncContact(
-            @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @Schema
@@ -58,7 +57,6 @@ public interface FriendApi {
     @Operation(summary = "친구 정보 수정")
     @PutMapping("/{id}")
     ResponseEntity<Void> update(
-            @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @Parameter(description = "친구 id (친구의 회원 id가 아니라 '친구' id)", in = PATH, required = true)
@@ -80,7 +78,6 @@ public interface FriendApi {
     @Operation(summary = "친구 차단")
     @PostMapping("/block/{id}")
     ResponseEntity<Void> block(
-            @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @Parameter(description = "친구 id (친구의 회원 id가 아니라 '친구' id)", in = PATH, required = true)
@@ -99,7 +96,6 @@ public interface FriendApi {
     @Operation(summary = "친구 차단 해제")
     @PostMapping("/unblock/{id}")
     ResponseEntity<Void> unblock(
-            @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @Parameter(description = "친구 id (친구의 회원 id가 아니라 '친구' id)", in = PATH, required = true)
@@ -118,7 +114,6 @@ public interface FriendApi {
     @Operation(summary = "내 친구 목록 조회")
     @GetMapping
     ResponseEntity<List<FriendResponse>> findMyFriends(
-            @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId
     );
 }

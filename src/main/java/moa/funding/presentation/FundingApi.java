@@ -52,7 +52,6 @@ public interface FundingApi {
     @Operation(summary = "펀딩 생성")
     @PostMapping
     ResponseEntity<Void> createFunding(
-            @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @Schema
@@ -74,7 +73,6 @@ public interface FundingApi {
     @Operation(summary = "펀딩 참여")
     @PostMapping("/{id}/participate")
     ResponseEntity<Void> participate(
-            @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @Parameter(in = PATH, required = true, description = "펀딩 ID")
@@ -99,7 +97,6 @@ public interface FundingApi {
     @Operation(summary = "펀딩 끝내기")
     @PostMapping("/{id}/finish")
     ResponseEntity<Void> finish(
-            @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @Parameter(in = PATH, required = true, description = "펀딩 ID")
@@ -121,7 +118,6 @@ public interface FundingApi {
     @Operation(summary = "펀딩 취소")
     @PostMapping("/{id}/cancel")
     ResponseEntity<Void> cancel(
-            @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @Parameter(in = PATH, required = true, description = "펀딩 ID")
@@ -140,7 +136,6 @@ public interface FundingApi {
     @Operation(summary = "펀딩 참여 취소")
     @PostMapping("/{id}/participate/cancel")
     ResponseEntity<Void> participateCancel(
-            @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
             
             @Parameter(in = PATH, required = true, description = "펀딩 ID")
@@ -172,7 +167,6 @@ public interface FundingApi {
     @Operation(summary = "내가 개설한 펀딩 조회")
     @GetMapping("/my")
     ResponseEntity<PageResponse<MyFundingDetail>> findMyFundings(
-            @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @ParameterObject
@@ -195,7 +189,6 @@ public interface FundingApi {
     @Operation(summary = "펀딩 상세 조회")
     @GetMapping("/{fundingId}")
     ResponseEntity<FundingDetailResponse> findFundingDetail(
-            @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @Parameter(in = PATH, required = true, description = "펀딩 ID")
@@ -218,7 +211,6 @@ public interface FundingApi {
     @Operation(summary = "펀딩 목록 조회")
     @GetMapping
     ResponseEntity<PageResponse<FundingResponse>> findFundings(
-            @Parameter(hidden = true)
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @Parameter(in = QUERY, description = "조회될 펀딩 상태들 (기본값 PROCESSING)", example = "PROCESSING,DELIVERY_WAITING")
