@@ -4,7 +4,6 @@ import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
-import static moa.order.domain.OrderStatus.BEFORE_RECEIVING;
 import static moa.order.domain.OrderStatus.RECEIVED;
 
 import jakarta.persistence.Entity;
@@ -56,15 +55,7 @@ public class Order extends RootEntity<Long> {
         this.product = funding.getProduct();
         this.address = funding.getAddress();
         this.member = funding.getMember();
-        this.status = BEFORE_RECEIVING;
-    }
-
-    public void place() {
-        this.status = BEFORE_RECEIVING;
-        registerEvent(new OrderPlaceEvent());
-    }
-
-    public void receive() {
         this.status = RECEIVED;
+        registerEvent(new OrderPlaceEvent(this));
     }
 }

@@ -18,6 +18,7 @@
 //    private final NotificationRepository notificationRepository;
 //    private final FcmClient client;
 //
+//    TODO 루마와 얘기 후 푸쉬알림 구현
 //    @EventListener(NotificationEvent.class)
 //    public void push(NotificationEvent event) {
 //        Member member = memberRepository.getById(event.memberId());

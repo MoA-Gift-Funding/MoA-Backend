@@ -21,7 +21,7 @@ public class NotificationEventHandler {
     @EventListener(NotificationEvent.class)
     public void save(NotificationEvent event) {
         Member member = memberRepository.getById(event.memberId());
-        Notification notification = new Notification(event.url(), event.message(), member);
+        Notification notification = new Notification(event.notificationUrl(), event.notificationMessage(), member);
         notificationRepository.save(notification);
     }
 }
