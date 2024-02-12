@@ -10,10 +10,10 @@ import static moa.acceptance.freind.FriendAcceptanceSteps.친구_차단_해제_�
 import io.restassured.common.mapper.TypeRef;
 import java.util.List;
 import moa.acceptance.AcceptanceTest;
+import moa.friend.query.response.FriendResponse;
 import moa.friend.request.SyncContactRequest;
 import moa.friend.request.SyncContactRequest.ContactRequest;
 import moa.friend.request.UpdateFriendRequest;
-import moa.friend.query.response.FriendResponse;
 import moa.member.domain.Member;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

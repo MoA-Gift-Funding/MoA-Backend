@@ -50,7 +50,8 @@ public class FundingService {
         fundingValidator.validateVisible(member, funding);
         TossPayment payment = tossPaymentRepository.getByOrderId(command.paymentOrderId());
         payment.use(member.getId());
-        FundingParticipant participant = new FundingParticipant(member, funding, payment, command.message(), command.visible());
+        FundingParticipant participant = new FundingParticipant(member, funding, payment, command.message(),
+                command.visible());
         funding.participate(participant);
         fundingRepository.save(funding);
     }
