@@ -15,18 +15,12 @@ public class SmsSender {
     private final NHNSmsConfig config;
 
     public void send(String message, String phoneNumber) {
-        send(message, List.of(phoneNumber));
-    }
-
-    public void send(String message, List<String> phoneNumbers) {
-        List<RecipientRequest> recipientNoList = phoneNumbers.stream()
-                .map(RecipientRequest::new)
-                .toList();
         NHNSendSmsRequest request = new NHNSendSmsRequest(
                 "[모아] " + message,
                 config.sendNo(),
-                recipientNoList
+                List.of(new RecipientRequest(phoneNumber))
         );
+        
         NHNSendSmsResponse response = client.sendSms(config.appKey(), config.secretKey(), request);
         if (!response.header().isSuccessful()) {
             log.error("NHN 문자 발송 API 에서 문제 발생 {}", response);

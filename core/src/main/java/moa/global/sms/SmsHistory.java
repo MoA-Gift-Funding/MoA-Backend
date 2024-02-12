@@ -1,19 +1,13 @@
 package moa.global.sms;
 
-import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static moa.global.sms.SmsHistory.SmsStatus.BEFORE_SEND;
 import static moa.global.sms.SmsHistory.SmsStatus.ERROR_OCCUR;
 import static moa.global.sms.SmsHistory.SmsStatus.SEND;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,24 +21,14 @@ public class SmsHistory extends RootEntity<Long> {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-
     private String message;
-
-    @Column(name = "phone_number")
-    @ElementCollection(fetch = LAZY)
-    @CollectionTable(
-            name = "sms_phone_number",
-            joinColumns = @JoinColumn(name = "sms_history_id")
-    )
-    private List<String> phoneNumbers;
-
+    private String phoneNumber;
+    private String errorMessage;
     private SmsStatus status = BEFORE_SEND;
 
-    private String errorMessage;
-
-    public SmsHistory(String message, List<String> phoneNumbers) {
+    public SmsHistory(String message, String phoneNumber) {
         this.message = message;
-        this.phoneNumbers = phoneNumbers;
+        this.phoneNumber = phoneNumber;
     }
 
     public enum SmsStatus {

@@ -20,10 +20,10 @@ public class SmsSendEventListener {
     @Transactional(propagation = REQUIRES_NEW)
     @TransactionalEventListener(value = SmsSendEvent.class, phase = AFTER_COMMIT)
     public void createOrder(SmsSendEvent event) {
-        SmsHistory smsHistory = new SmsHistory(event.smsMessage(), event.phoneNumbers());
+        SmsHistory smsHistory = new SmsHistory(event.smsMessage(), event.phoneNumber());
         smsHistoryRepository.save(smsHistory);
         try {
-            smsSender.send(smsHistory.getMessage(), smsHistory.getPhoneNumbers());
+            smsSender.send(smsHistory.getMessage(), smsHistory.getPhoneNumber());
             smsHistory.send();
         } catch (Exception e) {
             smsHistory.error(e.getMessage());

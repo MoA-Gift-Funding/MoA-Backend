@@ -1,6 +1,5 @@
 package moa.order.domain;
 
-import java.util.List;
 import moa.funding.domain.Funding;
 import moa.global.sms.SmsSendEvent;
 import moa.notification.domain.NotificationEvent;
@@ -84,7 +83,7 @@ public class OrderPlaceEvent implements NotificationEvent, SmsSendEvent {
     }
 
     @Override
-    public List<String> phoneNumbers() {
-        return List.of(phoneNumber);
+    public String phoneNumber() {
+        return phoneNumber;
     }
 }

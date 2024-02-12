@@ -14,14 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class OrderEventHandler {
 
-    public static final String MESSAGE_FORMAT = """
-            %s님이 등록하신 펀딩 [%s]이 달성 완료됐어요!
-            다음 링크를 통해 정보를 입력하고 [%s]을(를) 수령해주세요 🥰
-                
-            수령하러 가기 🎁
-            %s
-            """;
-
     private final OrderRepository orderRepository;
     private final FundingRepository fundingRepository;
 
