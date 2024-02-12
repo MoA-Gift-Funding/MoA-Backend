@@ -1,0 +1,57 @@
+plugins {
+    id 'java-test-fixtures'
+}
+
+bootJar { enabled = false }
+jar { enabled = true }
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.session:spring-session-data-redis'
+
+    // presigned url
+    implementation platform('software.amazon.awssdk:bom:2.20.56')
+    implementation 'software.amazon.awssdk:s3'
+
+    // Apple Login 에 사용
+    implementation 'org.bouncycastle:bcpkix-jdk18on:1.77'
+
+    // JWT
+    implementation 'com.auth0:java-jwt:4.4.0'
+    implementation "io.jsonwebtoken:jjwt-api:0.11.2"
+    implementation "io.jsonwebtoken:jjwt-impl:0.11.2"
+    implementation "io.jsonwebtoken:jjwt-jackson:0.11.2"
+
+    // Firebase
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
+
+    // TestContainer
+    testImplementation 'org.testcontainers:junit-jupiter'
+
+    // LocalStack
+    testImplementation 'org.testcontainers:localstack'
+
+    testFixturesImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testFixturesImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // swagger TODO 제거
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+processResources.dependsOn('importConfigFromSubmodule')
+
+tasks.register('importConfigFromSubmodule', Copy) {
+    from '../MoA-Backend-Submodule'
+    include "application*.yml"
+    include "*.p8"
+    include "*.json"
+    exclude "application-local.yml"
+    into './src/main/resources'
+}
+

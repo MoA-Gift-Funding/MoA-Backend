@@ -1,1 +1,5 @@
 rootProject.name = 'moa'
+include 'batch'
+include 'core'
+include 'api'
+
