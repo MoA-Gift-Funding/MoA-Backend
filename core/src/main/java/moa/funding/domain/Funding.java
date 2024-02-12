@@ -7,7 +7,7 @@ import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 import static moa.funding.domain.FundingStatus.CANCELLED;
-import static moa.funding.domain.FundingStatus.DELIVERY_WAITING;
+import static moa.funding.domain.FundingStatus.COMPLETED;
 import static moa.funding.domain.FundingStatus.PROCESSING;
 import static moa.funding.exception.FundingExceptionType.DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_FUNDING_AMOUNT;
@@ -169,7 +169,7 @@ public class Funding extends RootEntity<Long> {
 
         participants.add(participant);
         if (participant.getAmount().equals(remainAmount)) {
-            this.status = DELIVERY_WAITING;
+            this.status = COMPLETED;
             registerEvent(new FundingFinishEvent(id));
         }
     }
@@ -202,7 +202,7 @@ public class Funding extends RootEntity<Long> {
         if (!remainAmount().equals(price)) {
             throw new FundingException(DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT);
         }
-        this.status = DELIVERY_WAITING;
+        this.status = COMPLETED;
         registerEvent(new FundingFinishEvent(id));
     }
 

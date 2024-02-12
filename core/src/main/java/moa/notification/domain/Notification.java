@@ -25,7 +25,11 @@ public class Notification extends RootEntity<Long> {
 
     private String url;
 
+    private String title;
+
     private String message;
+
+    private String imageUrl;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
@@ -33,9 +37,18 @@ public class Notification extends RootEntity<Long> {
 
     private boolean isRead = false;
 
-    public Notification(String url, String message, Member member) {
+    public Notification(
+            String url,
+            String title,
+            String message,
+            String imageUrl,
+            Member member
+    ) {
+        this.id = id;
         this.url = url;
+        this.title = title;
         this.message = message;
+        this.imageUrl = imageUrl;
         this.member = member;
     }
 

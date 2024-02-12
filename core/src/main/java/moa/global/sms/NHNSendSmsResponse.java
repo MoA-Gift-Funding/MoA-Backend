@@ -1,4 +1,4 @@
-package moa.member.infrastructure.sms.response;
+package moa.global.sms;
 
 import java.util.List;
 

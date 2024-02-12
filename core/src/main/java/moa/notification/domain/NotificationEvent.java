@@ -6,5 +6,9 @@ public interface NotificationEvent {
 
     String url();
 
+    String title();
+
     String message();
+
+    String imageUrl();
 }

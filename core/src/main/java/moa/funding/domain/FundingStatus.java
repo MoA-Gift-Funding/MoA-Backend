@@ -6,8 +6,7 @@ import lombok.Getter;
 public enum FundingStatus {
 
     PROCESSING("진행중"),
-    DELIVERY_WAITING("배송대기"),
-    DELIVERY_COMPLETED("배송완료"),
+    COMPLETED("완료"),
     CANCELLED("취소"),
     ;
 
