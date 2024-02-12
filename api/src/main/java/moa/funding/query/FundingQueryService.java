@@ -6,7 +6,6 @@ import moa.friend.domain.Friend;
 import moa.friend.query.FriendQueryRepository;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingMessage;
-import moa.funding.domain.FundingMessageQueryRepository;
 import moa.funding.domain.FundingStatus;
 import moa.funding.domain.FundingValidator;
 import moa.funding.query.response.FundingDetailResponse;

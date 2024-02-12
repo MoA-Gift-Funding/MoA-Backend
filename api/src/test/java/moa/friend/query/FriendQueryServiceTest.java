@@ -3,7 +3,6 @@ package moa.friend.query;
 import static moa.fixture.MemberFixture.member;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.member.domain.OauthId.OauthProvider.KAKAO;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import moa.ApplicationTest;
@@ -13,6 +12,7 @@ import moa.friend.query.response.FriendResponse;
 import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import moa.member.domain.OauthId;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -59,7 +59,7 @@ class FriendQueryServiceTest {
         List<FriendResponse> result = friendQueryService.findFriendsByMemberId(member1.getId());
 
         // then
-        assertThat(result)
+        Assertions.assertThat(result)
                 .usingRecursiveComparison()
                 .isEqualTo(List.of(
                         new FriendResponse(

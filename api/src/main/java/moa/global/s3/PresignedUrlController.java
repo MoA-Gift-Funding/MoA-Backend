@@ -4,6 +4,7 @@ import static moa.member.domain.MemberStatus.PRESIGNED_UP;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import moa.auth.Auth;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,14 @@ public class PresignedUrlController implements PresignedUrlApi {
             @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId,
             @Valid @RequestBody CreatePresignedUrlRequest request
     ) {
-        return ResponseEntity.ok(presignedUrlClient.create(request.fileName()));
+        String name = generateFileName(request.fileName());
+        String url = presignedUrlClient.create(name);
+        return ResponseEntity.ok(new CreatePresignedUrlResponse(url, name));
+    }
+
+    private static String generateFileName(String fileName) {
+        String[] split = fileName.split("\\.");
+        String fileExt = split[split.length - 1];
+        return UUID.randomUUID() + "." + fileExt;
     }
 }

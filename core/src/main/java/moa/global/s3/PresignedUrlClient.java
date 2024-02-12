@@ -1,7 +1,6 @@
 package moa.global.s3;
 
 import java.time.Duration;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
@@ -15,30 +14,17 @@ public class PresignedUrlClient {
     private final S3Presigner.Builder presignerBuilder;
     private final AwsS3Property s3Property;
 
-    /**
-     * @param fileName 파일명: example.png
-     */
-    public CreatePresignedUrlResponse create(String fileName) {
-        String generatedFileName = generateFileName(fileName);
+    public String create(String fileName) {
         try (S3Presigner presigner = presignerBuilder.build()) {
             PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
                     .signatureDuration(Duration.ofMinutes(s3Property.presignedUrlExpiresMinutes()))
                     .putObjectRequest(builder -> builder
                             .bucket(s3Property.bucket())
-                            .key(s3Property.imagePath() + generatedFileName)
+                            .key(s3Property.imagePath() + fileName)
                             .build()
                     ).build();
             PresignedPutObjectRequest presignedRequest = presigner.presignPutObject(presignRequest);
-            return new CreatePresignedUrlResponse(
-                    presignedRequest.url().toExternalForm(),
-                    generatedFileName
-            );
+            return presignedRequest.url().toExternalForm();
         }
-    }
-
-    private static String generateFileName(String fileName) {
-        String[] split = fileName.split("\\.");
-        String fileExt = split[split.length - 1];
-        return UUID.randomUUID() + "." + fileExt;
     }
 }

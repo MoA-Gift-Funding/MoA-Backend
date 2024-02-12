@@ -5,7 +5,6 @@ import static moa.fixture.MemberFixture.member;
 import static moa.fixture.TossPaymentFixture.tossPayment;
 import static moa.funding.domain.MessageVisibility.PUBLIC;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import java.util.List;
@@ -23,6 +22,7 @@ import moa.member.domain.MemberRepository;
 import moa.pay.domain.TossPaymentRepository;
 import moa.product.domain.Product;
 import moa.product.domain.ProductRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -108,7 +108,7 @@ class FundingQueryServiceTest {
         );
 
         // then
-        assertThat(result)
+        Assertions.assertThat(result)
                 .hasSize(3)
                 .extracting(ParticipatedFundingResponse::fundingId)
                 .containsExactly(member1Funding.getId(), member2Funding.getId(), member1Funding.getId());
