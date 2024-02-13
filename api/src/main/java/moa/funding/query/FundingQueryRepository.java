@@ -45,7 +45,7 @@ public interface FundingQueryRepository extends JpaRepository<Funding, Long> {
                 )
             AND f.member.id != :memberId
             """)
-    Page<Funding> findByMembersFriend(
+    Page<Funding> findByUnblockedFriends(
             @Param("memberId") Long memberId,
             @Param("statuses") List<FundingStatus> statuses,
             Pageable pageable

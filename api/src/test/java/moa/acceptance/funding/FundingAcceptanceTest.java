@@ -1,11 +1,20 @@
 package moa.acceptance.funding;
 
+import static moa.acceptance.AcceptanceSupport.ID를_추출한다;
+import static moa.acceptance.AcceptanceSupport.assertStatus;
+import static moa.acceptance.freind.FriendAcceptanceSteps.연락처_동기화;
+import static moa.acceptance.freind.FriendAcceptanceSteps.친구_차단_요청;
+import static moa.acceptance.funding.FundingAcceptanceSteps.나의_펀딩목록_조회_요청;
+import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_메시지_조회_요청;
+import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_목록_조회_요청;
+import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_상세_조회_요청;
+import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_생성_요청;
+import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_참여_요청;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import java.time.LocalDate;
-import moa.acceptance.AcceptanceSupport;
 import moa.acceptance.AcceptanceTest;
-import moa.acceptance.freind.FriendAcceptanceSteps;
 import moa.address.domain.Address;
 import moa.address.domain.DeliveryAddress;
 import moa.address.domain.DeliveryAddressRepository;
@@ -47,6 +56,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
     private Member 말랑;
     private Product 상품;
     private DeliveryAddress 준호_배송_정보;
+    private DeliveryAddress 말랑_배송_정보;
     private String 준호_token;
     private String 말랑_token;
 
@@ -71,6 +81,19 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                 ),
                 true
         ));
+        말랑_배송_정보 = deliveryRepository.save(new DeliveryAddress(
+                말랑,
+                "말랑집",
+                "말랑",
+                "010-2222-1111",
+                new Address(
+                        "11112",
+                        "도로명",
+                        "지번",
+                        "상세"
+                ),
+                true
+        ));
     }
 
     @Nested
@@ -82,10 +105,10 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request);
+            var response = 펀딩_생성_요청(준호_token, request);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.CREATED);
+            assertStatus(response, HttpStatus.CREATED);
         }
 
         @Test
@@ -103,10 +126,10 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             );
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request);
+            var response = 펀딩_생성_요청(준호_token, request);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.BAD_REQUEST);
+            assertStatus(response, BAD_REQUEST);
         }
 
         @Test
@@ -124,10 +147,10 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             );
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request);
+            var response = 펀딩_생성_요청(준호_token, request);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.BAD_REQUEST);
+            assertStatus(response, BAD_REQUEST);
         }
     }
 
@@ -138,14 +161,14 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         void 사용자의_펀딩_목록을_조회한다() {
             // given
             var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
-            FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request);
-            FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request);
+            펀딩_생성_요청(준호_token, request);
+            펀딩_생성_요청(준호_token, request);
 
             // when
-            var response = FundingAcceptanceSteps.나의_펀딩목록_조회_요청(준호_token);
+            var response = 나의_펀딩목록_조회_요청(준호_token);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.OK);
+            assertStatus(response, HttpStatus.OK);
             var result = response.as(PageResponse.class);
             Assertions.assertThat(result.content()).hasSize(2);
         }
@@ -154,23 +177,23 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         void 펀딩_상세_정보를_조회한다() {
             // given
             var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
-            Long fundingId = AcceptanceSupport.ID를_추출한다(FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request));
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_상세_조회_요청(준호_token, fundingId);
+            var response = 펀딩_상세_조회_요청(준호_token, fundingId);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.OK);
+            assertStatus(response, HttpStatus.OK);
         }
 
         @Test
         void 펀딩_상세_정보를_조회한다_참여한_인원의_메시지를_포함한다() {
             // given
-            FriendAcceptanceSteps.연락처_동기화(준호_token, new SyncContactRequest(
+            연락처_동기화(준호_token, new SyncContactRequest(
                     new ContactRequest("신동훈 (모아)", "010-1234-5678")
             ));
             var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
-            Long fundingId = AcceptanceSupport.ID를_추출한다(FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request));
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
             var participateRequest = new FundingParticipateRequest(
                     "orderId",
                     "잘~ 먹고갑니다!",
@@ -185,13 +208,13 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                             말랑.getId()
                     )
             );
-            FundingAcceptanceSteps.펀딩_참여_요청(말랑_token, fundingId, participateRequest);
+            펀딩_참여_요청(말랑_token, fundingId, participateRequest);
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_상세_조회_요청(준호_token, fundingId);
+            var response = 펀딩_상세_조회_요청(준호_token, fundingId);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.OK);
+            assertStatus(response, HttpStatus.OK);
             var detailResponse = response.as(FundingDetailResponse.class);
             Assertions.assertThat(detailResponse.participants().get(0).message())
                     .isEqualTo(participateRequest.message());
@@ -202,12 +225,12 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             // given
             Member 루마 = signup("루마", "010-3333-3333");
             String 루마_token = login(루마);
-            FriendAcceptanceSteps.연락처_동기화(준호_token, new SyncContactRequest(
+            연락처_동기화(준호_token, new SyncContactRequest(
                     new ContactRequest("신동훈 (모아)", "010-1234-5678"),
                     new ContactRequest("루마", "010-3333-3333")
             ));
             var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
-            Long fundingId = AcceptanceSupport.ID를_추출한다(FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request));
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
             var requestWithInvisibleMessage = new FundingParticipateRequest(
                     "orderId",
                     "잘~ 먹고갑니다!",
@@ -222,13 +245,13 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                             말랑.getId()
                     )
             );
-            FundingAcceptanceSteps.펀딩_참여_요청(말랑_token, fundingId, requestWithInvisibleMessage);
+            펀딩_참여_요청(말랑_token, fundingId, requestWithInvisibleMessage);
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_상세_조회_요청(루마_token, fundingId);
+            var response = 펀딩_상세_조회_요청(루마_token, fundingId);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.OK);
+            assertStatus(response, HttpStatus.OK);
             var detailResponse = response.as(FundingDetailResponse.class);
             assertSoftly(
                     softly -> {
@@ -244,11 +267,11 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         @Test
         void 펀딩_상세_정보를_조회한다_참여한_인원의_메시지를_포함한다_비공개처리여도_개설자가_조회하면_보인다() {
             // given
-            FriendAcceptanceSteps.연락처_동기화(준호_token, new SyncContactRequest(
+            연락처_동기화(준호_token, new SyncContactRequest(
                     new ContactRequest("신동훈 (모아)", "010-1234-5678")
             ));
             var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
-            Long fundingId = AcceptanceSupport.ID를_추출한다(FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request));
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
             var requestWithInvisibleMessage = new FundingParticipateRequest(
                     "orderId",
                     "잘~ 먹고갑니다!",
@@ -263,13 +286,13 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                             말랑.getId()
                     )
             );
-            FundingAcceptanceSteps.펀딩_참여_요청(말랑_token, fundingId, requestWithInvisibleMessage);
+            펀딩_참여_요청(말랑_token, fundingId, requestWithInvisibleMessage);
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_상세_조회_요청(준호_token, fundingId);
+            var response = 펀딩_상세_조회_요청(준호_token, fundingId);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.OK);
+            assertStatus(response, HttpStatus.OK);
             var detailResponse = response.as(FundingDetailResponse.class);
             Assertions.assertThat(detailResponse.participants().get(0).message())
                     .isEqualTo(requestWithInvisibleMessage.message());
@@ -278,11 +301,11 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         @Test
         void 펀딩_상세_정보를_조회한다_참여한_인원의_메시지를_포함한다_비공개처리여도_작성자가_조회하면_보인다() {
             // given
-            FriendAcceptanceSteps.연락처_동기화(준호_token, new SyncContactRequest(
+            연락처_동기화(준호_token, new SyncContactRequest(
                     new ContactRequest("신동훈 (모아)", "010-1234-5678")
             ));
             var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
-            Long fundingId = AcceptanceSupport.ID를_추출한다(FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request));
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
             var requestWithInvisibleMessage = new FundingParticipateRequest(
                     "orderId",
                     "잘~ 먹고갑니다!",
@@ -297,13 +320,13 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                             말랑.getId()
                     )
             );
-            FundingAcceptanceSteps.펀딩_참여_요청(말랑_token, fundingId, requestWithInvisibleMessage);
+            펀딩_참여_요청(말랑_token, fundingId, requestWithInvisibleMessage);
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_상세_조회_요청(말랑_token, fundingId);
+            var response = 펀딩_상세_조회_요청(말랑_token, fundingId);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.OK);
+            assertStatus(response, HttpStatus.OK);
             var detailResponse = response.as(FundingDetailResponse.class);
             Assertions.assertThat(detailResponse.participants().get(0).message())
                     .isEqualTo(requestWithInvisibleMessage.message());
@@ -312,35 +335,35 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         @Test
         void 펀딩_상세_정보를_조회한다_차단되었을_시_조회할_수_없다() {
             // given
-            FriendAcceptanceSteps.연락처_동기화(말랑_token, new SyncContactRequest(
+            연락처_동기화(말랑_token, new SyncContactRequest(
                     new ContactRequest("최준호 (모아)", "010-2222-2222")
             ));
             Long 준호의_말랑_친구_ID = getFriendId(준호, 말랑);
-            FriendAcceptanceSteps.친구_차단_요청(준호_token, 준호의_말랑_친구_ID);
+            친구_차단_요청(준호_token, 준호의_말랑_친구_ID);
             var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
-            Long fundingId = AcceptanceSupport.ID를_추출한다(FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request));
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_상세_조회_요청(말랑_token, fundingId);
+            var response = 펀딩_상세_조회_요청(말랑_token, fundingId);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.FORBIDDEN);
+            assertStatus(response, HttpStatus.FORBIDDEN);
         }
 
         @Test
         void 펀딩_목록을_조회한다() {
             // given
-            FriendAcceptanceSteps.연락처_동기화(말랑_token, new SyncContactRequest(
+            연락처_동기화(말랑_token, new SyncContactRequest(
                     new ContactRequest("최준호 (모아)", "010-2222-2222")
             ));
             var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
-            FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request);
+            펀딩_생성_요청(준호_token, request);
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_목록_조회_요청(말랑_token);
+            var response = 펀딩_목록_조회_요청(말랑_token);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.OK);
+            assertStatus(response, HttpStatus.OK);
             var result = response.as(PageResponse.class);
             Assertions.assertThat(result.content()).hasSize(1);
         }
@@ -348,11 +371,11 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         @Test
         void 펀딩_목록을_조회한다_남은_기간이_짧은_순서로_보여진다() {
             // given
-            FriendAcceptanceSteps.연락처_동기화(말랑_token, new SyncContactRequest(
+            연락처_동기화(말랑_token, new SyncContactRequest(
                     new ContactRequest("최준호 (모아)", "010-2222-2222")
             ));
             var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
-            FundingAcceptanceSteps.펀딩_생성_요청(준호_token, new FundingCreateRequest(
+            펀딩_생성_요청(준호_token, new FundingCreateRequest(
                     "",
                     "15일 남은 펀딩",
                     "저에게 에어팟 맥스를 선물할 기회!!",
@@ -362,7 +385,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     준호_배송_정보.getId(),
                     "택배함 옆에 놔주세요"
             ));
-            FundingAcceptanceSteps.펀딩_생성_요청(준호_token, new FundingCreateRequest(
+            펀딩_생성_요청(준호_token, new FundingCreateRequest(
                     "",
                     "10일 남은 펀딩",
                     "저에게 맥북을 선물할 기회!!",
@@ -372,7 +395,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                     준호_배송_정보.getId(),
                     "택배함 옆에 놔주세요"
             ));
-            FundingAcceptanceSteps.펀딩_생성_요청(준호_token, new FundingCreateRequest(
+            펀딩_생성_요청(준호_token, new FundingCreateRequest(
                     "",
                     "20일 남은 펀딩",
                     "저에게 맥북을 선물할 기회!!",
@@ -384,10 +407,10 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             ));
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_목록_조회_요청(말랑_token);
+            var response = 펀딩_목록_조회_요청(말랑_token);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.OK);
+            assertStatus(response, HttpStatus.OK);
             assertSoftly(
                     softly -> {
                         softly.assertThat(response.jsonPath().getList("content")).hasSize(3);
@@ -401,13 +424,13 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         void 펀딩_목록을_조회한다_내_펀딩은_보이지_않는다() {
             // given
             var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
-            FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request);
+            펀딩_생성_요청(준호_token, request);
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_목록_조회_요청(준호_token);
+            var response = 펀딩_목록_조회_요청(준호_token);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.OK);
+            assertStatus(response, HttpStatus.OK);
             var result = response.as(PageResponse.class);
             Assertions.assertThat(result.content()).isEmpty();
         }
@@ -415,14 +438,14 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         @Test
         void 펀딩_목록을_조회한다_친구가_아닌사람의_펀딩은_조회되지_않는다() {
             // given
-            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
-            FundingAcceptanceSteps.펀딩_생성_요청(말랑_token, request);
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 말랑_배송_정보.getId());
+            펀딩_생성_요청(말랑_token, request);
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_목록_조회_요청(준호_token);
+            var response = 펀딩_목록_조회_요청(준호_token);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.OK);
+            assertStatus(response, HttpStatus.OK);
             var result = response.as(PageResponse.class);
             Assertions.assertThat(result.content()).isEmpty();
         }
@@ -430,19 +453,19 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         @Test
         void 펀딩_목록을_조회한다_상대방이_나를_차단한_경우_보이지_않는다() {
             // given
-            FriendAcceptanceSteps.연락처_동기화(준호_token, new SyncContactRequest(
+            연락처_동기화(준호_token, new SyncContactRequest(
                     new ContactRequest("신동훈 (모아)", "010-1234-5678")
             ));
             Long 말랑의_준호_친구_ID = getFriendId(말랑, 준호);
-            FriendAcceptanceSteps.친구_차단_요청(말랑_token, 말랑의_준호_친구_ID);
-            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
-            FundingAcceptanceSteps.펀딩_생성_요청(말랑_token, request);
+            친구_차단_요청(말랑_token, 말랑의_준호_친구_ID);
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 말랑_배송_정보.getId());
+            펀딩_생성_요청(말랑_token, request);
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_목록_조회_요청(준호_token);
+            var response = 펀딩_목록_조회_요청(준호_token);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.OK);
+            assertStatus(response, HttpStatus.OK);
             var result = response.as(PageResponse.class);
             Assertions.assertThat(result.content()).isEmpty();
         }
@@ -450,19 +473,19 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         @Test
         void 펀딩_목록을_조회한다_내가_차단한_경우_보이지_않는다() {
             // given
-            FriendAcceptanceSteps.연락처_동기화(준호_token, new SyncContactRequest(
+            연락처_동기화(준호_token, new SyncContactRequest(
                     new ContactRequest("신동훈 (모아)", "010-1234-5678")
             ));
             Long 준호의_말랑_친구_ID = getFriendId(준호, 말랑);
-            FriendAcceptanceSteps.친구_차단_요청(준호_token, 준호의_말랑_친구_ID);
-            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
-            FundingAcceptanceSteps.펀딩_생성_요청(말랑_token, request);
+            친구_차단_요청(준호_token, 준호의_말랑_친구_ID);
+            var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 말랑_배송_정보.getId());
+            펀딩_생성_요청(말랑_token, request);
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_목록_조회_요청(준호_token);
+            var response = 펀딩_목록_조회_요청(준호_token);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.OK);
+            assertStatus(response, HttpStatus.OK);
             var result = response.as(PageResponse.class);
             Assertions.assertThat(result.content()).isEmpty();
         }
@@ -472,20 +495,20 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             // given
             Member 루마 = signup("루마", "010-3333-3333");
             String 루마_token = login(루마);
-            FriendAcceptanceSteps.연락처_동기화(준호_token, new SyncContactRequest(
+            연락처_동기화(준호_token, new SyncContactRequest(
                     new ContactRequest("신동훈 (모아)", "010-1234-5678"),
                     new ContactRequest("루마", "010-3333-3333")
             ));
             Long 루마의_주노_친구 = getFriendId(루마, 준호);
-            FriendAcceptanceSteps.친구_차단_요청(루마_token, 루마의_주노_친구);
+            친구_차단_요청(루마_token, 루마의_주노_친구);
             var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
-            FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request);
+            펀딩_생성_요청(준호_token, request);
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_목록_조회_요청(말랑_token);
+            var response = 펀딩_목록_조회_요청(말랑_token);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.OK);
+            assertStatus(response, HttpStatus.OK);
             var result = response.as(PageResponse.class);
             Assertions.assertThat(result.content()).hasSize(1);
         }
@@ -497,11 +520,11 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         @Test
         void 펀딩_메시지_목록을_조회한다() {
             // given
-            FriendAcceptanceSteps.연락처_동기화(준호_token, new SyncContactRequest(
+            연락처_동기화(준호_token, new SyncContactRequest(
                     new ContactRequest("신동훈 (모아)", "010-1234-5678")
             ));
             var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
-            Long fundingId = AcceptanceSupport.ID를_추출한다(FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request));
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
             var participateRequest = new FundingParticipateRequest(
                     "orderId",
                     "잘~ 먹고갑니다!",
@@ -516,13 +539,13 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                             말랑.getId()
                     )
             );
-            FundingAcceptanceSteps.펀딩_참여_요청(말랑_token, fundingId, participateRequest);
+            펀딩_참여_요청(말랑_token, fundingId, participateRequest);
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_메시지_조회_요청(준호_token);
+            var response = 펀딩_메시지_조회_요청(준호_token);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.OK);
+            assertStatus(response, HttpStatus.OK);
             var result = response.as(PageResponse.class);
             Assertions.assertThat(result.content()).hasSize(1);
         }
@@ -530,11 +553,11 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         @Test
         void 펀딩_메시지_목록을_조회한다_비공개처리여도_개설자가_조회하면_보인다() {
             // given
-            FriendAcceptanceSteps.연락처_동기화(준호_token, new SyncContactRequest(
+            연락처_동기화(준호_token, new SyncContactRequest(
                     new ContactRequest("신동훈 (모아)", "010-1234-5678")
             ));
             var request = 펀딩_생성_요청_데이터(LocalDate.now().plusDays(5), 준호_배송_정보.getId());
-            Long fundingId = AcceptanceSupport.ID를_추출한다(FundingAcceptanceSteps.펀딩_생성_요청(준호_token, request));
+            Long fundingId = ID를_추출한다(펀딩_생성_요청(준호_token, request));
             var requestWithInvisibleMessage = new FundingParticipateRequest(
                     "orderId",
                     "잘~ 먹고갑니다!",
@@ -549,13 +572,13 @@ public class FundingAcceptanceTest extends AcceptanceTest {
                             말랑.getId()
                     )
             );
-            FundingAcceptanceSteps.펀딩_참여_요청(말랑_token, fundingId, requestWithInvisibleMessage);
+            펀딩_참여_요청(말랑_token, fundingId, requestWithInvisibleMessage);
 
             // when
-            var response = FundingAcceptanceSteps.펀딩_메시지_조회_요청(준호_token);
+            var response = 펀딩_메시지_조회_요청(준호_token);
 
             // then
-            AcceptanceSupport.assertStatus(response, HttpStatus.OK);
+            assertStatus(response, HttpStatus.OK);
             var result = response.as(PageResponse.class);
             Assertions.assertThat(result.content()).hasSize(1);
         }

@@ -43,8 +43,8 @@ class NotificationQueryServiceTest {
     @Test
     void 모든_알림을_조회하며_읽지_않은_알림은_읽기_처리한다() {
         // given
-        notificationRepository.save(new Notification("url1", "message", member));
-        notificationRepository.save(new Notification("url2", "message", member));
+        notificationRepository.save(new Notification("url1", "title", "message", "", member));
+        notificationRepository.save(new Notification("url2", "title", "message", "", member));
 
         // when
         Notifications notifications = notificationQueryService.readAll(member.getId());
@@ -59,11 +59,11 @@ class NotificationQueryServiceTest {
     @Test
     void 읽지_않은_알림이_있는지_확인한다() {
         // given
-        notificationRepository.save(new Notification("url1", "message", member));
+        notificationRepository.save(new Notification("url1", "title", "message", "", member));
         Notifications notifications = notificationQueryService.readAll(member.getId());
         assertThat(notificationQueryService.existsUnread(member.getId())).isFalse();
 
-        notificationRepository.save(new Notification("url2", "message", member));
+        notificationRepository.save(new Notification("url2", "title", "message", "", member));
 
         // when
         boolean hasUnread = notificationQueryService.existsUnread(member.getId());

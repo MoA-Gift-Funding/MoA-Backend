@@ -10,14 +10,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class FcmClient {
 
-    public void sendMessage(String targetDeviceToken, String title, String body) {
+    public void sendMessage(
+            String targetDeviceToken,
+            String title,
+            String content,
+            String imageUrl,
+            String url
+    ) {
         Notification notification = Notification.builder()
                 .setTitle(title)
-                .setBody(body)
+                .setBody(content)
+                .setImage(imageUrl)
                 .build();
         Message message = Message.builder()
                 .setToken(targetDeviceToken)
                 .setNotification(notification)
+                .putData("url", url)
                 .build();
         try {
             String response = FirebaseMessaging.getInstance().sendAsync(message).get();
