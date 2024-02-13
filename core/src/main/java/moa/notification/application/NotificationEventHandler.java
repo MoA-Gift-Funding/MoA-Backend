@@ -1,6 +1,6 @@
 package moa.notification.application;
 
-import static moa.global.config.AsyncConfig.VIRTUAL_THREAD_EXECUTOR;
+import static moa.global.config.async.AsyncConfig.VIRTUAL_THREAD_EXECUTOR;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 

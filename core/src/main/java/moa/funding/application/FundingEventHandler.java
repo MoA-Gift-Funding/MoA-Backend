@@ -1,12 +1,10 @@
 package moa.funding.application;
 
-import static moa.global.config.AsyncConfig.VIRTUAL_THREAD_EXECUTOR;
+import static moa.global.config.async.AsyncConfig.VIRTUAL_THREAD_EXECUTOR;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import moa.friend.domain.Friend;
@@ -27,7 +25,6 @@ public class FundingEventHandler {
 
     private final FriendRepository friendRepository;
     private final NotificationService notificationService;
-    private final ExecutorService executors = Executors.newVirtualThreadPerTaskExecutor();
 
     @Async(VIRTUAL_THREAD_EXECUTOR)
     @Transactional(propagation = REQUIRES_NEW)
@@ -42,9 +39,7 @@ public class FundingEventHandler {
                 .map(it -> makeNotificationCreateCommand(member, funding, friendsUnblockedMe))
                 .toList();
         for (NotificationPushCommand command : notificationPushCommands) {
-            executors.submit(() -> {
-                notificationService.push(command);
-            });
+            notificationService.push(command);
         }
     }
 
