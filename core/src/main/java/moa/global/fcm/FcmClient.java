@@ -3,6 +3,7 @@ package moa.global.fcm;
 import static moa.global.config.async.AsyncConfig.VIRTUAL_THREAD_EXECUTOR;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import jakarta.annotation.Nullable;
@@ -22,6 +23,7 @@ public class FcmClient {
             String imageUrl,
             String url
     ) {
+        log.info("call FcmClient sendMessage");
         if (targetDeviceToken == null) {
             return;
         }
@@ -36,10 +38,11 @@ public class FcmClient {
                 .putData("url", url)
                 .build();
         try {
-            String response = FirebaseMessaging.getInstance().sendAsync(message).get();
-            log.info("FCM 알림 전송 성공 : " + response);
-        } catch (Exception e) {
-            log.error("FCM 알림 전송에 실패했습니다.", e);
+            String result = FirebaseMessaging.getInstance().send(message);
+            log.info("FCM 알림 전송 성공 : " + result);
+        } catch (FirebaseMessagingException e) {
+            log.info("FCM 알림 전송 실패", e);
+            throw new RuntimeException(e);
         }
     }
 }
