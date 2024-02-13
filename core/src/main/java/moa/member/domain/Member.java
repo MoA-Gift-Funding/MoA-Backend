@@ -2,6 +2,7 @@ package moa.member.domain;
 
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 import static moa.member.domain.MemberStatus.PRESIGNED_UP;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.member.exception.MemberExceptionType.ALREADY_SIGNED_UP;
@@ -13,7 +14,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import lombok.AccessLevel;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import moa.global.domain.RootEntity;
@@ -23,7 +24,7 @@ import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 @SQLDelete(sql = "UPDATE member SET status = 'WITHDRAW' WHERE id = ?")
 public class Member extends RootEntity<Long> {
 
@@ -55,6 +56,9 @@ public class Member extends RootEntity<Long> {
     @Enumerated(STRING)
     private MemberStatus status;
 
+    @Column(unique = true)
+    private String tossCustomerKey;
+
     public Member(
             OauthId oauthId,
             String email,
@@ -71,6 +75,7 @@ public class Member extends RootEntity<Long> {
         this.birthday = birthday;
         this.profileImageUrl = profileImageUrl;
         this.phone = new Phone(this, phoneNumber);
+        this.tossCustomerKey = UUID.randomUUID().toString();
     }
 
     public void preSignup(MemberValidator validator) {
