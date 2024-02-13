@@ -22,6 +22,9 @@ public record FundingDetailResponse(
         @Schema(example = "1")
         Long memberId,
 
+        @Schema(example = "주노", description = "펀딩을 등록한 회원의 닉네임")
+        String nickName,
+
         @Schema(example = "https://펀딩-이미지-URL.com")
         String fundingImageUrl,
 
@@ -91,11 +94,7 @@ public record FundingDetailResponse(
         }
 
         private static Participant getParticipant(FundingParticipant participant, List<Friend> friends) {
-            String nickName = friends.stream()
-                    .filter(friend -> friend.getTarget().equals(participant.getMember()))
-                    .findAny()
-                    .map(Friend::getNickname)
-                    .orElseGet(() -> participant.getMember().getNickname());
+            String nickName = getNickName(participant.getMember(), friends);
             return new Participant(
                     participant.getMember().getId(),
                     nickName,
@@ -106,11 +105,20 @@ public record FundingDetailResponse(
         }
     }
 
+    private static String getNickName(Member member, List<Friend> friends) {
+        return friends.stream()
+                .filter(friend -> friend.getTarget().equals(member))
+                .findAny()
+                .map(Friend::getNickname)
+                .orElseGet(member::getNickname);
+    }
+
     public static FundingDetailResponse of(Funding funding, Member member, List<Friend> friends) {
         Product product = funding.getProduct();
         return new FundingDetailResponse(
                 funding.getId(),
-                member.getId(),
+                funding.getMember().getId(),
+                getNickName(funding.getMember(), friends),
                 funding.getImageUrl(),
                 funding.getTitle(),
                 funding.getDescription(),
