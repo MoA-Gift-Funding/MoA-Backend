@@ -5,6 +5,8 @@ import static org.springframework.transaction.annotation.Propagation.REQUIRES_NE
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import moa.friend.domain.Friend;
@@ -12,8 +14,8 @@ import moa.friend.domain.FriendRepository;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingCreateEvent;
 import moa.member.domain.Member;
-import moa.notification.domain.BasicNotificationEvent;
-import org.springframework.context.ApplicationEventPublisher;
+import moa.notification.application.NotificationService;
+import moa.notification.application.command.NotificationPushCommand;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +26,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 public class FundingEventHandler {
 
     private final FriendRepository friendRepository;
-    private final ApplicationEventPublisher publisher;
+    private final NotificationService notificationService;
+    private final ExecutorService executors = Executors.newVirtualThreadPerTaskExecutor();
 
     @Async(VIRTUAL_THREAD_EXECUTOR)
     @Transactional(propagation = REQUIRES_NEW)
@@ -35,17 +38,14 @@ public class FundingEventHandler {
         List<Friend> friendsUnblockedMe = friendRepository.findUnblockedByTargetId(member);
         List<Friend> myUnblockedFriends = friendRepository.findUnblockedByMemberId(member);
         List<Member> unblockedFriends = getUnblockedFriends(friendsUnblockedMe, myUnblockedFriends);
-        unblockedFriends.stream()
-                .map(it -> new BasicNotificationEvent(
-                        it.getId(),
-                        "giftMoA://navigation?name=FundDetail&fundingId=" + funding.getId(),
-                        "친구의 새로운 펀딩",
-                        "%s님의 [%s] 펀딩이 개설되었어요. 친구의 펀딩을 구경해볼까요? 🎁".formatted(
-                                getNickName(it, friendsUnblockedMe), funding.getTitle()
-                        ),
-                        funding.getProduct().getImageUrl()
-                ))
-                .forEach(it -> publisher.publishEvent(it));
+        List<NotificationPushCommand> notificationPushCommands = unblockedFriends.stream()
+                .map(it -> makeNotificationCreateCommand(member, funding, friendsUnblockedMe))
+                .toList();
+        for (NotificationPushCommand command : notificationPushCommands) {
+            executors.submit(() -> {
+                notificationService.push(command);
+            });
+        }
     }
 
     private List<Member> getUnblockedFriends(List<Friend> friendsUnblockedMe, List<Friend> myUnblockedFriends) {
@@ -57,6 +57,22 @@ public class FundingEventHandler {
                 .toList();
         unblocked.retainAll(myUnblockedFriendsTarget);
         return unblocked;
+    }
+
+    private NotificationPushCommand makeNotificationCreateCommand(
+            Member member,
+            Funding funding,
+            List<Friend> friendsUnblockedMe
+    ) {
+        return new NotificationPushCommand(
+                member.getId(),
+                "giftMoA://navigation?name=FundDetail&fundingId=" + funding.getId(),
+                "친구의 새로운 펀딩",
+                "%s님의 [%s] 펀딩이 개설되었어요. 친구의 펀딩을 구경해볼까요? 🎁".formatted(
+                        getNickName(member, friendsUnblockedMe), funding.getTitle()
+                ),
+                funding.getProduct().getImageUrl()
+        );
     }
 
     private String getNickName(Member member, List<Friend> friendsUnblockedMe) {
