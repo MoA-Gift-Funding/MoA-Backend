@@ -6,6 +6,7 @@ import static moa.acceptance.freind.FriendAcceptanceSteps.내_친구_목록_조�
 import static moa.acceptance.freind.FriendAcceptanceSteps.연락처_동기화;
 import static moa.acceptance.freind.FriendAcceptanceSteps.친구_차단_요청;
 import static moa.acceptance.freind.FriendAcceptanceSteps.친구_차단_해제_요청;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import io.restassured.common.mapper.TypeRef;
 import java.util.List;
@@ -15,7 +16,6 @@ import moa.friend.request.SyncContactRequest;
 import moa.friend.request.SyncContactRequest.ContactRequest;
 import moa.friend.request.UpdateFriendRequest;
 import moa.member.domain.Member;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -133,7 +133,7 @@ public class FriendAcceptanceTest extends AcceptanceTest {
             // then
             List<FriendResponse> result = response.as(new TypeRef<>() {
             });
-            Assertions.assertThat(result)
+            assertThat(result)
                     .hasSize(2)
                     .extracting(FriendResponse::customNickname)
                     .containsExactly("주노", "루마");
@@ -154,7 +154,7 @@ public class FriendAcceptanceTest extends AcceptanceTest {
             // then
             List<FriendResponse> result = response.as(new TypeRef<>() {
             });
-            Assertions.assertThat(result)
+            assertThat(result)
                     .hasSize(1)
                     .extracting(FriendResponse::customNickname)
                     .containsExactly("말랑");
