@@ -35,7 +35,10 @@ public record MemberResponse(
         String phoneNumber,
 
         @Schema(example = "SIGNED_UP")
-        MemberStatus status
+        MemberStatus status,
+
+        @Schema(description = "토스 Customer Key, UUID 형태")
+        String customerKey
 ) {
     public static MemberResponse from(Member member) {
         return new MemberResponse(
@@ -48,7 +51,8 @@ public record MemberResponse(
                 member.getBirthyear(),
                 member.getProfileImageUrl(),
                 member.getPhoneNumber(),
-                member.getStatus()
+                member.getStatus(),
+                member.getTossCustomerKey()
         );
     }
 }
