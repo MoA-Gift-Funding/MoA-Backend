@@ -1,5 +1,6 @@
 package moa.global.sms;
 
+import static moa.global.config.AsyncConfig.VIRTUAL_THREAD_EXECUTOR;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 
@@ -16,7 +17,7 @@ public class SmsSendEventListener {
     private final SmsSender smsSender;
     private final SmsHistoryRepository smsHistoryRepository;
 
-    @Async("virtualThreadExecutor")
+    @Async(VIRTUAL_THREAD_EXECUTOR)
     @Transactional(propagation = REQUIRES_NEW)
     @TransactionalEventListener(value = SmsSendEvent.class, phase = AFTER_COMMIT)
     public void createOrder(SmsSendEvent event) {

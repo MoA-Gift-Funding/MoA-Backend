@@ -145,6 +145,8 @@ public class Funding extends RootEntity<Long> {
         if (endDate.isAfter(LocalDate.now().plusWeeks(4))) {
             throw new FundingException(EXCEED_FUNDING_MAX_PERIOD);
         }
+
+        registerEvent(new FundingCreateEvent(this));
     }
 
     public void participate(FundingParticipant participant) {
