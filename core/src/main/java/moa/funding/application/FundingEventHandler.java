@@ -36,7 +36,7 @@ public class FundingEventHandler {
         List<Friend> myUnblockedFriends = friendRepository.findUnblockedByMemberId(member);
         List<Member> unblockedFriends = getUnblockedFriends(friendsUnblockedMe, myUnblockedFriends);
         List<NotificationPushCommand> notificationPushCommands = unblockedFriends.stream()
-                .map(it -> makeNotificationCreateCommand(member, funding, friendsUnblockedMe))
+                .map(it -> makeNotificationCreateCommand(member, it, funding, friendsUnblockedMe))
                 .toList();
         for (NotificationPushCommand command : notificationPushCommands) {
             notificationService.push(command);
@@ -55,26 +55,27 @@ public class FundingEventHandler {
     }
 
     private NotificationPushCommand makeNotificationCreateCommand(
-            Member member,
+            Member fundingOwner,
+            Member target,
             Funding funding,
-            List<Friend> friendsUnblockedMe
+            List<Friend> friendsUnblockedOwner
     ) {
         return new NotificationPushCommand(
-                member.getId(),
+                target.getId(),
                 "giftMoA://navigation?name=FundDetail&fundingId=" + funding.getId(),
                 "친구의 새로운 펀딩",
                 "%s님의 [%s] 펀딩이 개설되었어요. 친구의 펀딩을 구경해볼까요? 🎁".formatted(
-                        getNickName(member, friendsUnblockedMe), funding.getTitle()
+                        getNickName(fundingOwner, friendsUnblockedOwner), funding.getTitle()
                 ),
                 funding.getProduct().getImageUrl()
         );
     }
 
-    private String getNickName(Member member, List<Friend> friendsUnblockedMe) {
-        return friendsUnblockedMe.stream()
-                .filter(friend -> friend.getTarget().equals(member))
+    private String getNickName(Member owner, List<Friend> friendsUnblockedOwner) {
+        return friendsUnblockedOwner.stream()
+                .filter(friend -> friend.getTarget().equals(owner))
                 .findAny()
                 .map(Friend::getNickname)
-                .orElseGet(member::getNickname);
+                .orElseGet(owner::getNickname);
     }
 }
