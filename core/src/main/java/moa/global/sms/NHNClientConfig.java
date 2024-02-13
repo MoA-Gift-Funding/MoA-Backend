@@ -1,4 +1,4 @@
-package moa.member.infrastructure.sms;
+package moa.global.sms;
 
 import static moa.global.http.HttpInterfaceUtil.createHttpInterface;
 

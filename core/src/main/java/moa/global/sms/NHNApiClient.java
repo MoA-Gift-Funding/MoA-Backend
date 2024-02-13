@@ -1,9 +1,7 @@
-package moa.member.infrastructure.sms;
+package moa.global.sms;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import moa.member.infrastructure.sms.request.NHNSendSmsRequest;
-import moa.member.infrastructure.sms.response.NHNSendSmsResponse;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;

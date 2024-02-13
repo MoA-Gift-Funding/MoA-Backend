@@ -31,6 +31,9 @@ public class Product extends RootEntity<Long> {
     @Column
     private String imageUrl;
 
+    @Column
+    private String deliveryUrl;
+
     public Product(String name, Price price) {
         this.name = name;
         this.price = price;

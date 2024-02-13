@@ -4,7 +4,11 @@ public interface NotificationEvent {
 
     Long memberId();
 
-    String url();
+    String notificationUrl();
 
-    String message();
+    String notificationTitle();
+
+    String notificationMessage();
+
+    String notificationImageUrl();
 }

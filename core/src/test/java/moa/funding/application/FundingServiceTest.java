@@ -3,7 +3,7 @@ package moa.funding.application;
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
 import static moa.funding.domain.FundingStatus.CANCELLED;
-import static moa.funding.domain.FundingStatus.DELIVERY_WAITING;
+import static moa.funding.domain.FundingStatus.COMPLETED;
 import static moa.funding.domain.MessageVisibility.PUBLIC;
 import static moa.funding.exception.FundingExceptionType.ONLY_PROCESSING_FUNDING_CAN_BE_CANCELLED;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
@@ -91,7 +91,7 @@ class FundingServiceTest {
 
         // then
         Funding after = fundingRepository.getById(funding.getId());
-        assertThat(after.getStatus()).isEqualTo(DELIVERY_WAITING);
+        assertThat(after.getStatus()).isEqualTo(COMPLETED);
         assertThat(events.stream(FundingFinishEvent.class).count()).isEqualTo(1);
     }
 
