@@ -22,6 +22,7 @@ public class FcmClient {
             String imageUrl,
             String url
     ) {
+        log.info("call FcmClient sendMessage");
         if (targetDeviceToken == null) {
             return;
         }
@@ -36,10 +37,10 @@ public class FcmClient {
                 .putData("url", url)
                 .build();
         try {
-            String response = FirebaseMessaging.getInstance().sendAsync(message).get();
-            log.info("FCM 알림 전송 성공 : " + response);
+            String result = FirebaseMessaging.getInstance().send(message);
+            log.info("FCM 알림 전송 성공 : " + result);
         } catch (Exception e) {
-            log.error("FCM 알림 전송에 실패했습니다.", e);
+            log.info("FCM 알림 전송 실패", e);
         }
     }
 }
