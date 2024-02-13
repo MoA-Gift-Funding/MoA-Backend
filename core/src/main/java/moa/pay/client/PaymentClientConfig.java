@@ -1,6 +1,5 @@
 package moa.pay.client;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static moa.pay.exception.TossPaymentExceptionType.TOSS_API_ERROR;
 
 import lombok.RequiredArgsConstructor;
@@ -22,9 +21,10 @@ public class PaymentClientConfig {
     @Bean
     public TossClient tossClient() {
         RestClient build = RestClient.builder()
-                .defaultStatusHandler(HttpStatusCode::isError, (response, body) -> {
-                    String errorInfo = new String(body.getBody().readAllBytes(), UTF_8);
-                    throw new TossPaymentException(TOSS_API_ERROR.withDetail(errorInfo));
+                .defaultStatusHandler(HttpStatusCode::isError, (request, response) -> {
+                    throw new TossPaymentException(TOSS_API_ERROR.withDetail(
+                            new String(response.getBody().readAllBytes())
+                    ));
                 })
                 .build();
         return HttpInterfaceUtil.createHttpInterface(build, TossClient.class);

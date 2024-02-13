@@ -4,7 +4,10 @@ import org.springframework.http.HttpStatus;
 
 public interface MoaExceptionType {
 
-    String MESSAGE_FORMAT = "%s \n  -> detail: []";
+    String MESSAGE_FORMAT = """
+            %s
+             -> detail: [%s]
+            """;
 
     MoaExceptionType withDetail(String detailMessage);
 
