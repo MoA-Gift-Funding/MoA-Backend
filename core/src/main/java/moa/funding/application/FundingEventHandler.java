@@ -36,7 +36,12 @@ public class FundingEventHandler {
         List<Friend> myUnblockedFriends = friendRepository.findUnblockedByMemberId(member);
         List<Member> unblockedFriends = getUnblockedFriends(friendsUnblockedMe, myUnblockedFriends);
         List<NotificationPushCommand> notificationPushCommands = unblockedFriends.stream()
-                .map(it -> makeNotificationCreateCommand(member, it, funding, friendsUnblockedMe))
+                .map(it -> makeNotificationCreateCommand(
+                        member,
+                        it,
+                        funding,
+                        friendsUnblockedMe
+                ))
                 .toList();
         for (NotificationPushCommand command : notificationPushCommands) {
             notificationService.push(command);
