@@ -27,6 +27,7 @@ public class ExceptionControllerAdvice {
         log.info("[{}] 잘못된 요청이 들어왔습니다. uri: {} {},  내용:  {}",
                 MDC.get(REQUEST_ID), request.getMethod(), request.getRequestURI(), type.getMessage());
         log.info("[{}] request header: {}", MDC.get(REQUEST_ID), getHeaders(request));
+        log.info("[{}] request query string: {}", MDC.get(REQUEST_ID), getQueryString(request));
         log.info("[{}] request body: {}", MDC.get(REQUEST_ID), getRequestBody(request));
         return ResponseEntity.status(type.getHttpStatus())
                 .body(new ExceptionResponse(type.name(), type.getMessage()));
@@ -50,6 +51,14 @@ public class ExceptionControllerAdvice {
             headerMap.put(headerName, request.getHeader(headerName));
         }
         return headerMap;
+    }
+
+    private String getQueryString(HttpServletRequest httpRequest) {
+        String queryString = httpRequest.getQueryString();
+        if (queryString == null) {
+            return " - ";
+        }
+        return queryString;
     }
 
     private String getRequestBody(HttpServletRequest request) {
