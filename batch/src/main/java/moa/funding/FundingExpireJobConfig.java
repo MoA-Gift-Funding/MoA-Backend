@@ -25,7 +25,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class BatchFundingConfig {
+public class FundingExpireJobConfig {
 
     private final JobLauncher jobLauncher;
     private final JdbcTemplate jdbcTemplate;
