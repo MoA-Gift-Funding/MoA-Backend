@@ -1,7 +1,11 @@
 package moa.funding;
 
 import static moa.member.domain.MemberStatus.SIGNED_UP;
+import static org.springframework.data.domain.Sort.Direction.ASC;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -19,7 +23,6 @@ import moa.funding.request.FundingFinishRequest;
 import moa.funding.request.FundingParticipateRequest;
 import moa.global.presentation.PageResponse;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -88,7 +91,7 @@ public class FundingController implements FundingApi {
     @GetMapping("/my")
     public ResponseEntity<PageResponse<MyFundingDetail>> findMyFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @PageableDefault(size = 10, sort = "createdDate", direction = Direction.DESC) Pageable pageable
+            @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
     ) {
         var result = fundingQueryService.findMyFundings(memberId, pageable);
         return ResponseEntity.ok(PageResponse.from(result));
@@ -106,17 +109,17 @@ public class FundingController implements FundingApi {
     @GetMapping
     public ResponseEntity<PageResponse<FundingResponse>> findFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @RequestParam(value = "statuses", defaultValue = "PROCESSING") List<FundingStatus> statuses,
-            @PageableDefault(size = 10, sort = "endDate", direction = Direction.ASC) Pageable pageable
+            @Parameter(in = ParameterIn.QUERY, description = "조회될 펀딩 상태들 (기본값 PROCESSING)", example = "PROCESSING,DELIVERY_WAITING") @RequestParam(value = "statuses", defaultValue = "PROCESSING") List<FundingStatus> statuses,
+            @PageableDefault(size = 10, sort = "endDate", direction = ASC) Pageable pageable
     ) {
         var result = fundingQueryService.findFundings(memberId, statuses, pageable);
         return ResponseEntity.ok(PageResponse.from(result));
     }
 
     @GetMapping("/messages")
-    public ResponseEntity<PageResponse<FundingMessageResponse>> findFundings(
+    public ResponseEntity<PageResponse<FundingMessageResponse>> findFundingMessages(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @PageableDefault(size = 10, sort = "createdDate", direction = Direction.DESC) Pageable pageable
+            @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
     ) {
         var result = fundingQueryService.findMessages(memberId, pageable);
         return ResponseEntity.ok(PageResponse.from(result));

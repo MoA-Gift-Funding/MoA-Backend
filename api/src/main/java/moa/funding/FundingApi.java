@@ -1,6 +1,8 @@
 package moa.funding;
 
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,6 +18,7 @@ import java.util.List;
 import moa.auth.Auth;
 import moa.funding.domain.FundingStatus;
 import moa.funding.query.response.FundingDetailResponse;
+import moa.funding.query.response.FundingMessageResponse;
 import moa.funding.query.response.FundingResponse;
 import moa.funding.query.response.MyFundingsResponse.MyFundingDetail;
 import moa.funding.request.FundingCreateRequest;
@@ -41,10 +44,7 @@ public interface FundingApi {
                     @ApiResponse(responseCode = "201"),
                     @ApiResponse(responseCode = "400"),
                     @ApiResponse(responseCode = "401"),
-                    @ApiResponse(
-                            responseCode = "403",
-                            description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)"
-                    ),
+                    @ApiResponse(responseCode = "403"),
                     @ApiResponse(responseCode = "404"),
             }
     )
@@ -62,10 +62,7 @@ public interface FundingApi {
                     @ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "400"),
                     @ApiResponse(responseCode = "401"),
-                    @ApiResponse(
-                            responseCode = "403",
-                            description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)"
-                    ),
+                    @ApiResponse(responseCode = "403"),
                     @ApiResponse(responseCode = "404"),
             }
     )
@@ -86,10 +83,7 @@ public interface FundingApi {
                     @ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "400"),
                     @ApiResponse(responseCode = "401"),
-                    @ApiResponse(
-                            responseCode = "403",
-                            description = "주인이 아닌 경우"
-                    ),
+                    @ApiResponse(responseCode = "403"),
                     @ApiResponse(responseCode = "404"),
             }
     )
@@ -144,23 +138,10 @@ public interface FundingApi {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200"),
-                    @ApiResponse(
-                            responseCode = "400",
-                            content = @Content(schema = @Schema(hidden = true))
-                    ),
-                    @ApiResponse(
-                            responseCode = "401",
-                            content = @Content(schema = @Schema(hidden = true))
-                    ),
-                    @ApiResponse(
-                            responseCode = "403",
-                            description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)",
-                            content = @Content(schema = @Schema(hidden = true))
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            content = @Content(schema = @Schema(hidden = true))
-                    ),
+                    @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
             }
     )
     @Operation(summary = "내가 개설한 펀딩 조회")
@@ -177,11 +158,7 @@ public interface FundingApi {
                     @ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
-                    @ApiResponse(
-                            responseCode = "403",
-                            description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)",
-                            content = @Content(schema = @Schema(hidden = true))
-                    ),
+                    @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
             }
     )
@@ -199,11 +176,7 @@ public interface FundingApi {
                     @ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
-                    @ApiResponse(
-                            responseCode = "403",
-                            description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)",
-                            content = @Content(schema = @Schema(hidden = true))
-                    ),
+                    @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
             }
     )
@@ -212,10 +185,28 @@ public interface FundingApi {
     ResponseEntity<PageResponse<FundingResponse>> findFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
-            @Parameter(in = ParameterIn.QUERY, description = "조회될 펀딩 상태들 (기본값 PROCESSING)", example = "PROCESSING,DELIVERY_WAITING")
+            @Parameter(in = QUERY, description = "조회될 펀딩 상태들 (기본값 PROCESSING)", example = "PROCESSING,DELIVERY_WAITING")
             @RequestParam(value = "statuses", defaultValue = "PROCESSING") List<FundingStatus> statuses,
 
             @ParameterObject
             @PageableDefault(size = 10) Pageable pageable
+    );
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+            }
+    )
+    @Operation(summary = "펀딩 메세지 목록 조회")
+    @GetMapping("/messages")
+    public ResponseEntity<PageResponse<FundingMessageResponse>> findFundingMessages(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+
+            @ParameterObject
+            @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
     );
 }
