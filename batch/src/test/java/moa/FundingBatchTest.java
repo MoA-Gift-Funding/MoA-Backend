@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import moa.funding.BatchFundingConfig;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingRepository;
 import moa.funding.domain.FundingStatus;
@@ -29,13 +28,11 @@ import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 
 @SpringBootTest
 @SpringBatchTest
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ContextConfiguration(classes = BatchFundingConfig.class)
 class FundingBatchTest {
 
     @Autowired
