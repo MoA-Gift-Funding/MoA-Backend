@@ -43,7 +43,6 @@ public class FundingService {
         return fundingRepository.save(funding).getId();
     }
 
-    // TODO 락 걸어서 동시 접근 제한, 예외 발생 시 결제 취소
     public void participate(FundingParticipateCommand command) {
         Funding funding = fundingRepository.getWithLockById(command.fundingId());
         Member member = memberRepository.getById(command.memberId());
@@ -55,7 +54,6 @@ public class FundingService {
         fundingRepository.save(funding);
     }
 
-    // TODO 락 걸어서 동시 접근 제한, 예외 발생 시 결제 취소
     public void finish(FundingFinishCommand command) {
         Funding funding = fundingRepository.getWithLockById(command.fundingId());
         Member member = memberRepository.getById(command.memberId());
