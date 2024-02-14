@@ -3,6 +3,7 @@ package moa.pay.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import moa.pay.application.command.TempPaymentSaveCommand;
 
 public record PrepayRequest(
         @Schema(description = "주문 ID, 6자 이상 64자 이하", example = "sample-12341")
@@ -11,4 +12,11 @@ public record PrepayRequest(
         @Schema(description = "가격", example = "10000")
         @Positive int amount
 ) {
+    public TempPaymentSaveCommand toCommand(Long memberId) {
+        return new TempPaymentSaveCommand(
+                memberId,
+                orderId,
+                amount
+        );
+    }
 }
