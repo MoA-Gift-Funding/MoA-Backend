@@ -53,6 +53,9 @@ public class TossPayment {
     @Enumerated(STRING)
     private TossPaymentStatus status;
 
+    @Embedded
+    private TossPaymentCancel cancel;
+
     @CreatedDate
     private LocalDateTime createdDate;
 
@@ -77,11 +80,12 @@ public class TossPayment {
     }
 
     // TODO 배치 작업으로 WAIT_CANCEL 상태의 결제를 환불해야 함
-    public void pendingCancel() {
+    public void pendingCancel(String reason) {
         if (status == CANCELED) {
             throw new TossPaymentException(ALREADY_CANCELED_PAYMENT);
         }
         this.status = PENDING_CANCEL;
+        this.cancel = new TossPaymentCancel(reason);
     }
 
     public void cancel() {
@@ -89,5 +93,9 @@ public class TossPayment {
             throw new TossPaymentException(ONLY_CANCEL_PENDING_PAYMENT);
         }
         this.status = CANCELED;
+    }
+
+    public String getIdempotencyKeyForCancel() {
+        return cancel.getIdempotencyKey();
     }
 }

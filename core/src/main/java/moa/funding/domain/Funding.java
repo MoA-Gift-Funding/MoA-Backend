@@ -215,7 +215,7 @@ public class Funding extends RootEntity<Long> {
         this.status = CANCELLED;
         for (FundingParticipant participant : participants) {
             TossPayment tossPayment = participant.getTossPayment();
-            tossPayment.pendingCancel();
+            tossPayment.pendingCancel("펀딩 생성자의 펀딩 취소로 인한 결제 취소");
         }
     }
 

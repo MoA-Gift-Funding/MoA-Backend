@@ -17,7 +17,6 @@ import moa.global.exception.MoaExceptionType;
 import moa.pay.client.TossClient;
 import moa.pay.client.dto.TossPaymentResponse;
 import moa.pay.domain.TossPayment;
-import moa.pay.domain.TossPaymentCancelRepository;
 import moa.pay.domain.TossPaymentRepository;
 import moa.pay.exception.TossPaymentException;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,9 +39,6 @@ class TossPaymentServiceTest {
 
     @Autowired
     private TossPaymentRepository tossPaymentRepository;
-
-    @Autowired
-    private TossPaymentCancelRepository tossPaymentCancelRepository;
 
     @MockBean
     private TossClient tossClient;
@@ -139,7 +135,6 @@ class TossPaymentServiceTest {
             // then
             TossPayment after = tossPaymentRepository.getByOrderId(payment.getOrderId());
             assertThat(after.getStatus()).isEqualTo(CANCELED);
-            assertThat(tossPaymentCancelRepository.findAll()).hasSize(1);
         }
 
         @Test

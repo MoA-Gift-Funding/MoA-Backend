@@ -10,8 +10,6 @@ import moa.pay.client.dto.TossPaymentResponse;
 import moa.pay.domain.TemporaryTossPayment;
 import moa.pay.domain.TemporaryTossPaymentRepository;
 import moa.pay.domain.TossPayment;
-import moa.pay.domain.TossPaymentCancel;
-import moa.pay.domain.TossPaymentCancelRepository;
 import moa.pay.domain.TossPaymentRepository;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +20,6 @@ public class TossPaymentService {
     private final TossClient tossClient;
     private final PaymentProperty paymentProperty;
     private final TossPaymentRepository paymentRepository;
-    private final TossPaymentCancelRepository paymentCancelRepository;
     private final TemporaryTossPaymentRepository temporaryTossPaymentRepository;
 
     public void saveTemp(TempPaymentSaveCommand command) {
@@ -44,15 +41,13 @@ public class TossPaymentService {
 
     public void cancelPayment(String paymentOrderId, String reason) {
         TossPayment payment = paymentRepository.getByOrderId(paymentOrderId);
-        payment.pendingCancel();
+        payment.pendingCancel(reason);
         paymentRepository.save(payment);
-        TossPaymentCancel cancel = paymentCancelRepository.findByTossPayment(payment)
-                .orElseGet(() -> paymentCancelRepository.save(new TossPaymentCancel(payment, reason)));
         tossClient.cancelPayment(
                 payment.getPaymentKey(),
                 paymentProperty.basicAuth(),
-                cancel.getIdempotencyKey(),
-                new TossPaymentCancelRequest(cancel.getReason())
+                payment.getIdempotencyKeyForCancel(),
+                new TossPaymentCancelRequest(reason)
         );
         payment.cancel();
         paymentRepository.save(payment);
