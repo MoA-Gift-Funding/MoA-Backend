@@ -16,6 +16,7 @@ import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @Getter
 @Entity
@@ -34,11 +35,21 @@ public class TossPaymentCancel {
     @Column(unique = true)
     private String idempotencyKey;  // 멱등키
 
+    private String reason;
+
     @CreatedDate
     private LocalDateTime createdDate;
 
-    public TossPaymentCancel(TossPayment tossPayment) {
+    @LastModifiedDate
+    private LocalDateTime updatedDate;
+
+    public TossPaymentCancel(TossPayment tossPayment, String reason) {
         this.tossPayment = tossPayment;
+        this.reason = reason;
         this.idempotencyKey = UUID.randomUUID().toString() + LocalDateTime.now();
+    }
+
+    public String getPaymentKey() {
+        return tossPayment.getPaymentKey();
     }
 }
