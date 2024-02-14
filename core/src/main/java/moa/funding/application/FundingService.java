@@ -43,20 +43,17 @@ public class FundingService {
         return fundingRepository.save(funding).getId();
     }
 
-    // TODO 락 걸어서 동시 접근 제한, 예외 발생 시 결제 취소
     public void participate(FundingParticipateCommand command) {
         Funding funding = fundingRepository.getWithLockById(command.fundingId());
         Member member = memberRepository.getById(command.memberId());
         fundingValidator.validateVisible(member, funding);
         TossPayment payment = tossPaymentRepository.getByOrderId(command.paymentOrderId());
         payment.use(member.getId());
-        FundingParticipant participant = new FundingParticipant(member, funding, payment, command.message(),
-                command.visible());
+        FundingParticipant participant = command.toParticipant(member, funding, payment);
         funding.participate(participant);
         fundingRepository.save(funding);
     }
 
-    // TODO 락 걸어서 동시 접근 제한, 예외 발생 시 결제 취소
     public void finish(FundingFinishCommand command) {
         Funding funding = fundingRepository.getWithLockById(command.fundingId());
         Member member = memberRepository.getById(command.memberId());
