@@ -64,6 +64,7 @@ public interface FundingApi {
                     @ApiResponse(responseCode = "401"),
                     @ApiResponse(responseCode = "403"),
                     @ApiResponse(responseCode = "404"),
+                    @ApiResponse(responseCode = "500"),
             }
     )
     @Operation(summary = "펀딩 참여")
@@ -85,6 +86,7 @@ public interface FundingApi {
                     @ApiResponse(responseCode = "401"),
                     @ApiResponse(responseCode = "403"),
                     @ApiResponse(responseCode = "404"),
+                    @ApiResponse(responseCode = "500"),
             }
     )
     @Operation(summary = "펀딩 끝내기")
