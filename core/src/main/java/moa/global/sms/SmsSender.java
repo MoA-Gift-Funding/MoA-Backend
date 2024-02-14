@@ -20,7 +20,7 @@ public class SmsSender {
                 config.sendNo(),
                 List.of(new RecipientRequest(phoneNumber))
         );
-        
+
         NHNSendSmsResponse response = client.sendSms(config.appKey(), config.secretKey(), request);
         if (!response.header().isSuccessful()) {
             log.error("NHN 문자 발송 API 에서 문제 발생 {}", response);
