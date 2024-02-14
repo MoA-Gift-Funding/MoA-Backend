@@ -1,12 +1,12 @@
 package moa.funding;
 
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -72,7 +72,7 @@ public interface FundingApi {
     ResponseEntity<Void> participate(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
-            @Parameter(in = ParameterIn.PATH, required = true, description = "펀딩 ID")
+            @Parameter(in = PATH, required = true, description = "펀딩 ID")
             @PathVariable Long id,
 
             @Schema
@@ -94,7 +94,7 @@ public interface FundingApi {
     ResponseEntity<Void> finish(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
-            @Parameter(in = ParameterIn.PATH, required = true, description = "펀딩 ID")
+            @Parameter(in = PATH, required = true, description = "펀딩 ID")
             @PathVariable Long id,
 
             @Schema
@@ -115,7 +115,7 @@ public interface FundingApi {
     ResponseEntity<Void> cancel(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
-            @Parameter(in = ParameterIn.PATH, required = true, description = "펀딩 ID")
+            @Parameter(in = PATH, required = true, description = "펀딩 ID")
             @PathVariable Long id
     );
 
@@ -133,7 +133,7 @@ public interface FundingApi {
     ResponseEntity<Void> participateCancel(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
-            @Parameter(in = ParameterIn.PATH, required = true, description = "펀딩 ID")
+            @Parameter(in = PATH, required = true, description = "펀딩 ID")
             @PathVariable Long id
     );
 
@@ -169,7 +169,7 @@ public interface FundingApi {
     ResponseEntity<FundingDetailResponse> findFundingDetail(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
-            @Parameter(in = ParameterIn.PATH, required = true, description = "펀딩 ID")
+            @Parameter(in = PATH, required = true, description = "펀딩 ID")
             @PathVariable Long fundingId
     );
 

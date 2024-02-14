@@ -4,8 +4,6 @@ import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -109,7 +107,7 @@ public class FundingController implements FundingApi {
     @GetMapping
     public ResponseEntity<PageResponse<FundingResponse>> findFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @Parameter(in = ParameterIn.QUERY, description = "조회될 펀딩 상태들 (기본값 PROCESSING)", example = "PROCESSING,DELIVERY_WAITING") @RequestParam(value = "statuses", defaultValue = "PROCESSING") List<FundingStatus> statuses,
+            @RequestParam(value = "statuses", defaultValue = "PROCESSING") List<FundingStatus> statuses,
             @PageableDefault(size = 10, sort = "endDate", direction = ASC) Pageable pageable
     ) {
         var result = fundingQueryService.findFundings(memberId, statuses, pageable);
