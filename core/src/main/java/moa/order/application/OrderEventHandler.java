@@ -25,4 +25,3 @@ public class OrderEventHandler {
         orderRepository.save(order);
     }
 }
-
