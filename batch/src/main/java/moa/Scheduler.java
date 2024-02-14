@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class Scheduler {
 
-    private final Job paymentCancelJob;
+    private final Job fundingExpireJob;
     private final JobLauncher jobLauncher;
 
     @Scheduled(cron = "0 0 * * * *")
@@ -23,6 +23,6 @@ public class Scheduler {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLocalDateTime("now", LocalDateTime.now())
                 .toJobParameters();
-        jobLauncher.run(paymentCancelJob, jobParameters);
+        jobLauncher.run(fundingExpireJob, jobParameters);
     }
 }

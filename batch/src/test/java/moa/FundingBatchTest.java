@@ -1,6 +1,6 @@
 package moa;
 
-import static moa.funding.BatchFundingConfig.JOB_NAME;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 
 import java.time.LocalDate;
@@ -16,7 +16,6 @@ import moa.member.domain.OauthId;
 import moa.member.domain.OauthId.OauthProvider;
 import moa.product.domain.Product;
 import moa.product.domain.ProductRepository;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.BatchStatus;
@@ -51,7 +50,8 @@ class FundingBatchTest {
     void 기간이_지난_펀딩의_상태가_EXPIRED가_된다(@Autowired Job job) throws Exception {
         jobLauncherTestUtils.setJob(job);
 
-        var now = LocalDateTime.now();
+        // 24년 1월 4일 00시 기준
+        var now = LocalDateTime.of(2024, 1, 4, 0, 0, 0);
         Member member = memberRepository.save(new Member(
                 new OauthId("1", OauthProvider.APPLE),
                 null,
@@ -63,13 +63,16 @@ class FundingBatchTest {
         ));
         Product product = productRepository.save(new Product("exampleProduct", Price.from("10000")));
 
-        Funding 펀딩_만료_1 = 펀딩_생성(now.toLocalDate().minusDays(2), member, product, now);
-        Funding 펀딩_만료_2 = 펀딩_생성(now.toLocalDate().minusDays(1), member, product, now);
-        Funding 펀딩_정상_1 = 펀딩_생성(now.toLocalDate().plusDays(2), member, product, now);
-        Funding 펀딩_정상_2 = 펀딩_생성(now.toLocalDate().plusDays(4), member, product, now);
+        LocalDate nowDate = now.toLocalDate();
+        Funding 펀딩_만료_1 = 펀딩_생성(nowDate.minusDays(2), member, product, now);
+        Funding 펀딩_만료_2 = 펀딩_생성(nowDate.minusDays(1), member, product, now);
+        // endDate가 1월 4일인 경우 1월 4일 23:59:59 까지 유효
+        // 1월 4일 00시에 실행하면 만료되면 안됨
+        Funding 펀딩_정상_1 = 펀딩_생성(nowDate, member, product, now);
+        Funding 펀딩_정상_2 = 펀딩_생성(nowDate.plusDays(1), member, product, now);
 
         JobParameters jobParameters = new JobParametersBuilder()
-                .addString(JOB_NAME, LocalDateTime.now().toString())
+                .addLocalDateTime("now", now)
                 .toJobParameters();
 
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
@@ -79,7 +82,7 @@ class FundingBatchTest {
         var expectProcess1 = fundingRepository.getById(펀딩_정상_1.getId()).getStatus();
         var expectProcess2 = fundingRepository.getById(펀딩_정상_2.getId()).getStatus();
 
-        SoftAssertions.assertSoftly(
+        assertSoftly(
                 softly -> {
                     softly.assertThat(jobExecution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
                     softly.assertThat(expectExpired1).isEqualTo(FundingStatus.EXPIRED);
