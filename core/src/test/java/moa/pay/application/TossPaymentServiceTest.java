@@ -85,7 +85,7 @@ class TossPaymentServiceTest {
 
             // then
             assertThat(exceptionType).isEqualTo(TOSS_API_ERROR);
-            TossPayment after = tossPaymentRepository.getById(this.payment.getId());
+            TossPayment after = tossPaymentRepository.getByOrderId(payment.getOrderId());
             assertThat(after.getStatus()).isEqualTo(PENDING_CANCEL);
         }
 
@@ -98,7 +98,7 @@ class TossPaymentServiceTest {
             );
 
             // then
-            TossPayment after = tossPaymentRepository.getById(this.payment.getId());
+            TossPayment after = tossPaymentRepository.getByOrderId(payment.getOrderId());
             assertThat(after.getStatus()).isEqualTo(CANCELED);
         }
 
@@ -131,14 +131,13 @@ class TossPaymentServiceTest {
                     );
 
             // when
-            System.out.println("00000000000000000000000000000000000");
             tossPaymentService.cancelPayment(
                     payment.getOrderId(),
                     "그냥"
             );
 
             // then
-            TossPayment after = tossPaymentRepository.getById(this.payment.getId());
+            TossPayment after = tossPaymentRepository.getByOrderId(payment.getOrderId());
             assertThat(after.getStatus()).isEqualTo(CANCELED);
             assertThat(tossPaymentCancelRepository.findAll()).hasSize(1);
         }
