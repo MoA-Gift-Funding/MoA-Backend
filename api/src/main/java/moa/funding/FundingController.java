@@ -11,7 +11,7 @@ import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import moa.auth.Auth;
-import moa.funding.application.FundingService;
+import moa.funding.application.FundingFacade;
 import moa.funding.domain.FundingStatus;
 import moa.funding.query.FundingQueryService;
 import moa.funding.query.response.FundingDetailResponse;
@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/fundings")
 public class FundingController implements FundingApi {
 
-    private final FundingService fundingService;
+    private final FundingFacade fundingFacade;
     private final FundingQueryService fundingQueryService;
 
     @PostMapping
@@ -46,7 +46,7 @@ public class FundingController implements FundingApi {
             @Auth(permit = {SIGNED_UP}) Long memberId,
             @Valid @RequestBody FundingCreateRequest request
     ) {
-        Long fundingId = fundingService.create(request.toCommand(memberId));
+        Long fundingId = fundingFacade.create(request.toCommand(memberId));
         return ResponseEntity.created(URI.create("/fundings/" + fundingId)).build();
     }
 
@@ -56,7 +56,7 @@ public class FundingController implements FundingApi {
             @PathVariable Long id,
             @Valid @RequestBody FundingParticipateRequest request
     ) {
-        fundingService.participate(request.toCommand(id, memberId));
+        fundingFacade.participate(request.toCommand(id, memberId));
         return ResponseEntity.ok().build();
     }
 
@@ -66,7 +66,7 @@ public class FundingController implements FundingApi {
             @PathVariable Long id,
             @Valid @RequestBody FundingFinishRequest request
     ) {
-        fundingService.finish(request.toCommand(id, memberId));
+        fundingFacade.finish(request.toCommand(id, memberId));
         return ResponseEntity.ok().build();
     }
 
@@ -75,7 +75,7 @@ public class FundingController implements FundingApi {
             @Auth(permit = {SIGNED_UP}) Long memberId,
             @PathVariable Long id
     ) {
-        fundingService.cancel(id, memberId);
+        fundingFacade.cancel(id, memberId);
         return ResponseEntity.ok().build();
     }
 
@@ -84,7 +84,7 @@ public class FundingController implements FundingApi {
             @Auth(permit = {SIGNED_UP}) Long memberId,
             @PathVariable Long id
     ) {
-        fundingService.participateCancel(id, memberId);
+        fundingFacade.participateCancel(id, memberId);
         return ResponseEntity.ok().build();
     }
 

@@ -2,6 +2,7 @@ package moa.funding.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moa.funding.application.command.FundingCreateCommand;
 import moa.funding.application.command.FundingFinishCommand;
 import moa.funding.application.command.FundingParticipateCommand;
 import moa.pay.application.TossPaymentService;
@@ -14,6 +15,10 @@ public class FundingFacade {
 
     private final FundingService fundingService;
     private final TossPaymentService tossPaymentService;
+
+    public Long create(FundingCreateCommand command) {
+        return fundingService.create(command);
+    }
 
     public void participate(FundingParticipateCommand command) {
         try {
@@ -37,5 +42,13 @@ public class FundingFacade {
                     "펀딩 끝내기 실패"
             );
         }
+    }
+
+    public void participateCancel(Long fundingId, Long memberId) {
+        fundingService.participateCancel(fundingId, memberId);
+    }
+
+    public void cancel(Long fundingId, Long memberId) {
+        fundingService.cancel(fundingId, memberId);
     }
 }
