@@ -81,7 +81,7 @@ public record FundingDetailResponse(
         private static Participant of(Funding funding, FundingParticipant participant, Member member,
                                       List<Friend> friends) {
             if (participant.getFundingMessage().getVisible() == PRIVATE
-                    && !isFundingOwner(funding, member) && !isMessageOwner(participant, member)) {
+                && !isFundingOwner(funding, member) && !isMessageOwner(participant, member)) {
                 return new Participant(
                         null,
                         null,
