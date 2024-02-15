@@ -1,6 +1,6 @@
 package moa.pay;
 
-import static moa.Crons.EVERY_10_MINUTE;
+import static moa.Crons.EVERY_10_MINUTE_FROM_06_TO_23_HOURS;
 
 import jakarta.persistence.EntityManagerFactory;
 import java.sql.PreparedStatement;
@@ -50,7 +50,7 @@ public class PaymentCancelJobConfig {
     private final TossClient tossClient;
     private final PaymentProperty paymentProperty;
 
-    @Scheduled(cron = EVERY_10_MINUTE)
+    @Scheduled(cron = EVERY_10_MINUTE_FROM_06_TO_23_HOURS)
     public void launch() throws Exception {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLocalDateTime("now", LocalDateTime.now())
