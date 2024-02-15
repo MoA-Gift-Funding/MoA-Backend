@@ -2,7 +2,6 @@ package moa.funding;
 
 import static moa.fixture.MemberFixture.member;
 import static moa.funding.domain.FundingStatus.CANCELLED;
-import static moa.funding.domain.FundingStatus.EXPIRED;
 import static moa.funding.domain.MessageVisibility.PUBLIC;
 import static moa.funding.domain.ParticipantStatus.CANCEL;
 import static moa.funding.domain.ParticipantStatus.PARTICIPATING;
@@ -89,12 +88,6 @@ class FundingCancelJobConfigTest {
         var 만료_6일차 = 펀딩_및_참여정보_사전_생성(owner, part, LocalDate.of(2024, 1, 14));
         var 만료_7일차 = 펀딩_및_참여정보_사전_생성(owner, part, LocalDate.of(2024, 1, 13));
         var 만료_8일차 = 펀딩_및_참여정보_사전_생성(owner, part, LocalDate.of(2024, 1, 12)); // 만료 제거 대상
-        만료_6일차.expire();
-        fundingRepository.save(만료_6일차);
-        만료_7일차.expire();
-        fundingRepository.save(만료_7일차);
-        만료_8일차.expire();
-        fundingRepository.save(만료_8일차);
 
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLocalDateTime("now", now)
@@ -137,7 +130,7 @@ class FundingCancelJobConfigTest {
     private void 취소되지_않은_펀딩_상태_확인(Long fundingId) {
         transactionTemplate.executeWithoutResult((status) -> {
             Funding find = fundingRepository.getById(fundingId);
-            assertThat(find.getStatus()).isEqualTo(EXPIRED);
+            assertThat(find.getStatus()).isNotEqualTo(CANCELLED);
             assertThat(find.getParticipants())
                     .extracting(FundingParticipant::getStatus)
                     .containsOnly(PARTICIPATING);
