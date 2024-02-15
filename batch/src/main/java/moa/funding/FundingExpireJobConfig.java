@@ -56,7 +56,7 @@ public class FundingExpireJobConfig {
         return new StepBuilder("updateExpiredFundingStatus", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
                     int updated = jdbcTemplate.update("""
-                            UPDATE funding SET status = 'EXPIRED' 
+                            UPDATE funding SET status = 'EXPIRED'
                             WHERE status = 'PROCESSING'
                             AND end_date <= ?
                             """, now.minusDays(1)
