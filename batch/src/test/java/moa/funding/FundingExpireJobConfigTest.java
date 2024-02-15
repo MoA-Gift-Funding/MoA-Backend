@@ -1,4 +1,4 @@
-package moa;
+package moa.funding;
 
 import static moa.funding.domain.FundingStatus.EXPIRED;
 import static moa.funding.domain.FundingStatus.PROCESSING;
@@ -8,6 +8,7 @@ import static org.springframework.batch.core.BatchStatus.COMPLETED;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import moa.BatchTest;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingRepository;
 import moa.funding.domain.FundingVisibility;
@@ -36,6 +37,9 @@ class FundingExpireJobConfigTest {
     private JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
+    private Job fundingExpireJob;
+
+    @Autowired
     private FundingRepository fundingRepository;
 
     @Autowired
@@ -45,7 +49,7 @@ class FundingExpireJobConfigTest {
     private ProductRepository productRepository;
 
     @Test
-    void 기간이_지난_펀딩의_상태가_EXPIRED가_된다(@Autowired Job fundingExpireJob) throws Exception {
+    void 기간이_지난_펀딩의_상태가_EXPIRED가_된다() throws Exception {
         jobLauncherTestUtils.setJob(fundingExpireJob);
 
         // 24년 1월 4일 00시 기준

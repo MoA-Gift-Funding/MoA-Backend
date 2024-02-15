@@ -53,10 +53,10 @@ public class FundingExpireJobConfig {
             @Value("#{jobParameters[now]}") LocalDateTime now
     ) {
         log.info("[기간이 지난 펀딩 만료] 배치작업 수행 time: {}", now);
-        return new StepBuilder("updateExpiredFundingStatus", jobRepository)
+        return new StepBuilder("fundingExpireStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
                     int updated = jdbcTemplate.update("""
-                            UPDATE funding SET status = 'EXPIRED' 
+                            UPDATE funding SET status = 'EXPIRED'
                             WHERE status = 'PROCESSING'
                             AND end_date <= ?
                             """, now.minusDays(1)

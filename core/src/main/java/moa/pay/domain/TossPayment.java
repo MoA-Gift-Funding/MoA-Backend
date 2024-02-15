@@ -19,17 +19,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import moa.global.domain.Price;
+import moa.global.domain.RootEntity;
 import moa.pay.exception.TossPaymentException;
-import org.springframework.data.annotation.CreatedDate;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = PROTECTED)
-public class TossPayment {
+public class TossPayment extends RootEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -53,8 +52,8 @@ public class TossPayment {
     @Enumerated(STRING)
     private TossPaymentStatus status;
 
-    @CreatedDate
-    private LocalDateTime createdDate;
+    @Embedded
+    private TossPaymentCancel cancel;
 
     public TossPayment(String paymentKey, String orderId, String orderName, String totalAmount, Long memberId) {
         this.paymentKey = paymentKey;
@@ -76,12 +75,12 @@ public class TossPayment {
         this.status = USED;
     }
 
-    // TODO 배치 작업으로 WAIT_CANCEL 상태의 결제를 환불해야 함
-    public void pendingCancel() {
+    public void pendingCancel(String reason) {
         if (status == CANCELED) {
             throw new TossPaymentException(ALREADY_CANCELED_PAYMENT);
         }
         this.status = PENDING_CANCEL;
+        this.cancel = new TossPaymentCancel(reason);
     }
 
     public void cancel() {
@@ -89,5 +88,13 @@ public class TossPayment {
             throw new TossPaymentException(ONLY_CANCEL_PENDING_PAYMENT);
         }
         this.status = CANCELED;
+    }
+
+    public String getIdempotencyKeyForCancel() {
+        return cancel.getIdempotencyKey();
+    }
+
+    public void regenerateIdempotencyKeyForCancel() {
+        cancel.regenerateIdempotencyKey();
     }
 }

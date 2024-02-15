@@ -28,7 +28,6 @@ import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import moa.pay.client.TossClient;
 import moa.pay.domain.TossPayment;
-import moa.pay.domain.TossPaymentCancelRepository;
 import moa.pay.domain.TossPaymentRepository;
 import moa.pay.exception.TossPaymentException;
 import moa.product.domain.Product;
@@ -58,9 +57,6 @@ class FundingFacadeTest {
 
     @Autowired
     private TossPaymentRepository tossPaymentRepository;
-
-    @Autowired
-    private TossPaymentCancelRepository tossPaymentCancelRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -124,7 +120,6 @@ class FundingFacadeTest {
         latch.await();
 
         // then
-        assertThat(tossPaymentCancelRepository.findAll()).hasSize(1);
         assertThat(tossPaymentRepository.findAll())
                 .extracting(TossPayment::getStatus)
                 .containsExactlyInAnyOrder(CANCELED, USED);
@@ -172,7 +167,6 @@ class FundingFacadeTest {
         latch.await();
 
         // then
-        assertThat(tossPaymentCancelRepository.findAll()).hasSize(1);
         TossPayment afterLumaPayment = tossPaymentRepository.getByOrderId(lumaPayment.getOrderId());
         assertThat(tossPaymentRepository.findAll())
                 .extracting(TossPayment::getStatus)
