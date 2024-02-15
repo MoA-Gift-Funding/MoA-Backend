@@ -4,9 +4,12 @@ import static moa.fixture.MemberFixture.member;
 import static moa.funding.domain.FundingStatus.CANCELLED;
 import static moa.funding.domain.FundingStatus.EXPIRED;
 import static moa.funding.domain.MessageVisibility.PUBLIC;
+import static moa.funding.domain.ParticipantStatus.CANCEL;
+import static moa.funding.domain.ParticipantStatus.PARTICIPATING;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
+import static moa.pay.domain.TossPaymentStatus.PENDING_CANCEL;
+import static moa.pay.domain.TossPaymentStatus.USED;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import static org.springframework.batch.core.BatchStatus.COMPLETED;
 
@@ -19,6 +22,7 @@ import moa.friend.domain.FriendRepository;
 import moa.funding.application.FundingService;
 import moa.funding.application.command.FundingParticipateCommand;
 import moa.funding.domain.Funding;
+import moa.funding.domain.FundingParticipant;
 import moa.funding.domain.FundingRepository;
 import moa.funding.domain.FundingVisibility;
 import moa.global.domain.Price;
@@ -36,8 +40,7 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @BatchTest
 @SuppressWarnings("NonAsciiCharacters")
@@ -69,10 +72,11 @@ class FundingCancelJobConfigTest {
     private FundingService fundingService;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private TransactionTemplate transactionTemplate;
 
     @Test
     void 만료된지_일주일_된_펀딩의_상태를_변경한다() throws Exception {
+        // given
         jobLauncherTestUtils.setJob(fundingCancelJob);
 
         Member owner = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
@@ -96,20 +100,17 @@ class FundingCancelJobConfigTest {
                 .addLocalDateTime("now", now)
                 .toJobParameters();
 
+        // when
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 
+        // then
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
-
-        만료_6일차 = fundingRepository.getById(만료_6일차.getId());
-        만료_7일차 = fundingRepository.getById(만료_7일차.getId());
-        만료_8일차 = fundingRepository.getById(만료_8일차.getId());
-        취소되지_않은_펀딩_상태_확인(만료_6일차);
-        취소되지_않은_펀딩_상태_확인(만료_7일차);
-        만료된_일주일_초과_펀딩_상태_확인(만료_8일차);
+        취소되지_않은_펀딩_상태_확인(만료_6일차.getId());
+        취소되지_않은_펀딩_상태_확인(만료_7일차.getId());
+        만료된_일주일_초과_펀딩_상태_확인(만료_8일차.getId());
     }
 
-    @Transactional
-    protected Funding 펀딩_및_참여정보_사전_생성(Member owner, Member part1, LocalDate endDate) {
+    private Funding 펀딩_및_참여정보_사전_생성(Member owner, Member part1, LocalDate endDate) {
         // given
         Funding funding = new Funding(
                 null,
@@ -133,49 +134,31 @@ class FundingCancelJobConfigTest {
         return funding;
     }
 
-    protected void 취소되지_않은_펀딩_상태_확인(Funding funding) {
-        var parts = jdbcTemplate.queryForObject(
-                "SELECT count(*) FROM funding_participant WHERE status = 'PARTICIPATING' AND funding_id = ?"
-                , new Object[]{funding.getId()}
-                , Integer.class);
-        var payments = jdbcTemplate.queryForObject(
-                """
-                        SELECT count(*) FROM toss_payment tp
-                        INNER JOIN funding_participant fp ON tp.id = fp.payment_id
-                        INNER JOIN funding f ON fp.funding_id = f.id
-                        WHERE tp.status != 'PENDING_CANCEL' AND f.id = ?
-                        """
-                , new Object[]{funding.getId()}
-                , Integer.class);
-        assertSoftly(
-                softly -> {
-                    softly.assertThat(parts).isNotZero();
-                    softly.assertThat(payments).isNotZero();
-                    softly.assertThat(funding.getStatus()).isEqualTo(EXPIRED);
-                }
-        );
+    private void 취소되지_않은_펀딩_상태_확인(Long fundingId) {
+        transactionTemplate.executeWithoutResult((status) -> {
+            Funding find = fundingRepository.getById(fundingId);
+            assertThat(find.getStatus()).isEqualTo(EXPIRED);
+            assertThat(find.getParticipants())
+                    .extracting(FundingParticipant::getStatus)
+                    .containsOnly(PARTICIPATING);
+            for (FundingParticipant participant : find.getParticipants()) {
+                assertThat(participant.getTossPayment().getStatus())
+                        .isEqualTo(USED);
+            }
+        });
     }
 
-    protected void 만료된_일주일_초과_펀딩_상태_확인(Funding funding) {
-        var parts = jdbcTemplate.queryForObject(
-                "SELECT count(*) FROM funding_participant WHERE status = 'CANCEL' AND funding_id = ?"
-                , new Object[]{funding.getId()}
-                , Integer.class);
-        var payments = jdbcTemplate.queryForObject(
-                """
-                        SELECT count(*) FROM toss_payment tp
-                        INNER JOIN funding_participant fp ON tp.id = fp.payment_id
-                        INNER JOIN funding f ON fp.funding_id = f.id
-                        WHERE tp.status = 'PENDING_CANCEL' AND f.id = ?
-                        """
-                , new Object[]{funding.getId()}
-                , Integer.class);
-        assertSoftly(
-                softly -> {
-                    softly.assertThat(parts).isNotZero();
-                    softly.assertThat(payments).isNotZero();
-                    softly.assertThat(funding.getStatus()).isEqualTo(CANCELLED);
-                }
-        );
+    private void 만료된_일주일_초과_펀딩_상태_확인(Long fundingId) {
+        transactionTemplate.executeWithoutResult((status) -> {
+            Funding find = fundingRepository.getById(fundingId);
+            assertThat(find.getStatus()).isEqualTo(CANCELLED);
+            assertThat(find.getParticipants())
+                    .extracting(FundingParticipant::getStatus)
+                    .containsOnly(CANCEL);
+            for (FundingParticipant participant : find.getParticipants()) {
+                assertThat(participant.getTossPayment().getStatus())
+                        .isEqualTo(PENDING_CANCEL);
+            }
+        });
     }
 }
