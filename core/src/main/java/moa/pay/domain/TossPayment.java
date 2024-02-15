@@ -19,17 +19,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import moa.global.domain.Price;
+import moa.global.domain.RootEntity;
 import moa.pay.exception.TossPaymentException;
-import org.springframework.data.annotation.CreatedDate;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = PROTECTED)
-public class TossPayment {
+public class TossPayment extends RootEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -56,9 +55,6 @@ public class TossPayment {
     @Embedded
     private TossPaymentCancel cancel;
 
-    @CreatedDate
-    private LocalDateTime createdDate;
-
     public TossPayment(String paymentKey, String orderId, String orderName, String totalAmount, Long memberId) {
         this.paymentKey = paymentKey;
         this.orderId = orderId;
@@ -79,7 +75,6 @@ public class TossPayment {
         this.status = USED;
     }
 
-    // TODO 배치 작업으로 WAIT_CANCEL 상태의 결제를 환불해야 함
     public void pendingCancel(String reason) {
         if (status == CANCELED) {
             throw new TossPaymentException(ALREADY_CANCELED_PAYMENT);
@@ -97,5 +92,9 @@ public class TossPayment {
 
     public String getIdempotencyKeyForCancel() {
         return cancel.getIdempotencyKey();
+    }
+
+    public void regenerateIdempotencyKeyForCancel() {
+        cancel.regenerateIdempotencyKey();
     }
 }
