@@ -1,7 +1,10 @@
 package moa.funding;
 
+import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
+import static moa.fixture.TossPaymentFixture.tossPayment;
 import static moa.funding.domain.FundingStatus.CANCELLED;
+import static moa.funding.domain.FundingStatus.EXPIRED;
 import static moa.funding.domain.MessageVisibility.PUBLIC;
 import static moa.funding.domain.ParticipantStatus.CANCEL;
 import static moa.funding.domain.ParticipantStatus.PARTICIPATING;
@@ -11,10 +14,10 @@ import static moa.pay.domain.TossPaymentStatus.USED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import static org.springframework.batch.core.BatchStatus.COMPLETED;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import moa.BatchTest;
 import moa.friend.domain.Friend;
 import moa.friend.domain.FriendRepository;
@@ -23,7 +26,6 @@ import moa.funding.application.command.FundingParticipateCommand;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingParticipant;
 import moa.funding.domain.FundingRepository;
-import moa.funding.domain.FundingVisibility;
 import moa.global.domain.Price;
 import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
@@ -85,9 +87,9 @@ class FundingCancelJobConfigTest {
 
         // 24년 1월 20일 00시 00분 기준
         LocalDateTime now = LocalDateTime.of(2024, 1, 20, 0, 0, 0);
-        var 만료_6일차 = 펀딩_및_참여정보_사전_생성(owner, part, LocalDate.of(2024, 1, 14));
-        var 만료_7일차 = 펀딩_및_참여정보_사전_생성(owner, part, LocalDate.of(2024, 1, 13));
-        var 만료_8일차 = 펀딩_및_참여정보_사전_생성(owner, part, LocalDate.of(2024, 1, 12)); // 만료 제거 대상
+        var 만료_6일차 = 만료된_펀딩_및_참여정보_생성(owner, part, LocalDate.of(2024, 1, 14));
+        var 만료_7일차 = 만료된_펀딩_및_참여정보_생성(owner, part, LocalDate.of(2024, 1, 13));
+        var 만료_8일차 = 만료된_펀딩_및_참여정보_생성(owner, part, LocalDate.of(2024, 1, 12)); // 만료 제거 대상
 
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLocalDateTime("now", now)
@@ -103,27 +105,26 @@ class FundingCancelJobConfigTest {
         만료된_일주일_초과_펀딩_상태_확인(만료_8일차.getId());
     }
 
-    private Funding 펀딩_및_참여정보_사전_생성(Member owner, Member part1, LocalDate endDate) {
+    private Funding 만료된_펀딩_및_참여정보_생성(Member owner, Member participant, LocalDate endDate) {
         // given
-        Funding funding = new Funding(
-                null,
-                "펀딩이올시다",
-                "",
-                endDate,
-                FundingVisibility.PUBLIC,
-                Price.from(10000L),
+        Funding funding = funding(
                 owner,
                 productRepository.save(new Product("", Price.from("1000000"))),
-                null,
-                ""
+                "10000",
+                endDate
         );
         fundingRepository.save(funding);
-        String orderId = UUID.randomUUID().toString();
-        String payKey = UUID.randomUUID().toString();
-        tossPaymentRepository.save(
-                new TossPayment(payKey, orderId, "order", "10000", part1.getId()));
-        var command = new FundingParticipateCommand(funding.getId(), part1.getId(), orderId, "hi", PUBLIC);
+        TossPayment payment = tossPaymentRepository.save(tossPayment("10000", participant.getId()));
+        var command = new FundingParticipateCommand(
+                funding.getId(),
+                participant.getId(),
+                payment.getOrderId(),
+                "hi",
+                PUBLIC
+        );
         fundingService.participate(command);
+        setField(funding, "status", EXPIRED);
+        fundingRepository.save(funding);
         return funding;
     }
 

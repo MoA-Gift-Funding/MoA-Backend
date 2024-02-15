@@ -70,14 +70,9 @@ public class FundingCancelJobConfig {
                     int fundingCount = jdbcTemplate.update("""
                             UPDATE funding f
                             SET f.status = 'CANCELLED'
-                            WHERE id IN (
-                                SELECT f.id
-                                FROM funding f
-                                INNER JOIN funding_participant fp ON f.id = fp.funding_id
-                                WHERE fp.status = 'PARTICIPATING'
-                                AND f.end_date <= ?
-                                );
-                                """, limitDate
+                            WHERE f.status = 'EXPIRED' 
+                            AND f.end_date <= ? 
+                            """, limitDate
                     );
                     int tossPaymentCount = jdbcTemplate.update("""                       
                             UPDATE toss_payment tp

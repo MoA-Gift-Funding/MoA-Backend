@@ -14,11 +14,20 @@ public class FundingFixture {
             Product product,
             String maximumAmount
     ) {
-        return new Funding(
+        return funding(owner, product, maximumAmount, LocalDate.now().plusWeeks(4));
+    }
+
+    public static Funding funding(
+            Member owner,
+            Product product,
+            String maximumAmount,
+            LocalDate endDate
+    ) {
+        Funding funding = new Funding(
                 null,
                 "",
                 "",
-                LocalDate.now().plusWeeks(4),
+                endDate,
                 FundingVisibility.PUBLIC,
                 Price.from(maximumAmount),
                 owner,
@@ -26,6 +35,6 @@ public class FundingFixture {
                 null,
                 ""
         );
+        return funding;
     }
-
 }
