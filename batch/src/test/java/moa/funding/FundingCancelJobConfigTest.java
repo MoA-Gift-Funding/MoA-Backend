@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import moa.BatchTest;
-import moa.FundingParticipantRepository;
 import moa.friend.domain.Friend;
 import moa.friend.domain.FriendRepository;
 import moa.funding.application.FundingService;
@@ -65,9 +64,6 @@ class FundingCancelJobConfigTest {
 
     @Autowired
     private TossPaymentRepository tossPaymentRepository;
-
-    @Autowired
-    private FundingParticipantRepository fundingParticipantRepository;
 
     @Autowired
     private FundingService fundingService;
