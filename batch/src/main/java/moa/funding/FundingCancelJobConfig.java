@@ -102,6 +102,7 @@ public class FundingCancelJobConfig {
                 .build();
     }
 
+    @Bean
     public ItemWriter<Long> fundingCancelWriter() {
         return chunk -> {
             String fundingIdsInParam = chunk.getItems()
