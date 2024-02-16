@@ -27,7 +27,8 @@ public class NotificationService {
                 notification.getTitle(),
                 notification.getMessage(),
                 notification.getImageUrl(),
-                notification.getUrl()
+                notification.getUrl(),
+                notification.getType()
         );
     }
 }

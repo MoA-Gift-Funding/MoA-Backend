@@ -11,4 +11,6 @@ public interface NotificationEvent {
     String notificationMessage();
 
     String notificationImageUrl();
+    
+    NotificationType notificationType();
 }

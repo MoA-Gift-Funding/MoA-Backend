@@ -1,10 +1,12 @@
 package moa.notification.domain;
 
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -31,6 +33,9 @@ public class Notification extends RootEntity<Long> {
 
     private String imageUrl;
 
+    @Enumerated(STRING)
+    private NotificationType type;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -42,17 +47,22 @@ public class Notification extends RootEntity<Long> {
             String title,
             String message,
             String imageUrl,
+            NotificationType type,
             Member member
     ) {
-        this.id = id;
         this.url = url;
         this.title = title;
         this.message = message;
         this.imageUrl = imageUrl;
         this.member = member;
+        this.type = type;
     }
 
     public void read() {
         this.isRead = true;
+    }
+
+    public String getType() {
+        return type.name().toLowerCase();
     }
 }

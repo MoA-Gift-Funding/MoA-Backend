@@ -1,8 +1,11 @@
 package moa.order.domain;
 
+import static moa.notification.domain.NotificationType.PARTY;
+
 import moa.funding.domain.Funding;
 import moa.global.sms.SmsSendEvent;
 import moa.notification.domain.NotificationEvent;
+import moa.notification.domain.NotificationType;
 import moa.product.domain.Product;
 
 public class OrderPlaceEvent implements NotificationEvent, SmsSendEvent {
@@ -75,6 +78,11 @@ public class OrderPlaceEvent implements NotificationEvent, SmsSendEvent {
     @Override
     public String notificationImageUrl() {
         return notificationImageUrl;
+    }
+
+    @Override
+    public NotificationType notificationType() {
+        return PARTY;
     }
 
     @Override

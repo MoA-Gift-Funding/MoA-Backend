@@ -1,6 +1,7 @@
 package moa.funding.application;
 
 import static moa.global.config.async.AsyncConfig.VIRTUAL_THREAD_EXECUTOR;
+import static moa.notification.domain.NotificationType.PARTY;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 
@@ -72,7 +73,8 @@ public class FundingEventHandler {
                 "%s님의 [%s] 펀딩이 개설되었어요. 친구의 펀딩을 구경해볼까요? 🎁".formatted(
                         getNickName(fundingOwner, friendsUnblockedOwner), funding.getTitle()
                 ),
-                funding.getProduct().getImageUrl()
+                funding.getProduct().getImageUrl(),
+                PARTY
         );
     }
 

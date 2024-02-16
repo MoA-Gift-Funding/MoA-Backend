@@ -5,6 +5,7 @@ public record BasicNotificationEvent(
         String notificationUrl,
         String notificationTitle,
         String notificationMessage,
-        String notificationImageUrl
+        String notificationImageUrl,
+        NotificationType notificationType
 ) implements NotificationEvent {
 }

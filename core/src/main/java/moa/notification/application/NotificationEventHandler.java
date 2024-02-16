@@ -27,7 +27,8 @@ public class NotificationEventHandler {
                 event.notificationUrl(),
                 event.notificationTitle(),
                 event.notificationMessage(),
-                event.notificationImageUrl()
+                event.notificationImageUrl(),
+                event.notificationType()
         ));
     }
 }
