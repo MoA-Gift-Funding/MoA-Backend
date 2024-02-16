@@ -1,4 +1,4 @@
-package moa.global.sms;
+package moa.sms.client;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

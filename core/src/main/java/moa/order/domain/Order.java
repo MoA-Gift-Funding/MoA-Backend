@@ -56,6 +56,5 @@ public class Order extends RootEntity<Long> {
         this.address = funding.getAddress();
         this.member = funding.getMember();
         this.status = RECEIVED;
-        registerEvent(new OrderPlaceEvent(this));
     }
 }

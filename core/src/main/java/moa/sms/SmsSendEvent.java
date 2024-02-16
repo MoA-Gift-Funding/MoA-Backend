@@ -1,4 +1,4 @@
-package moa.global.sms;
+package moa.sms;
 
 public interface SmsSendEvent {
 

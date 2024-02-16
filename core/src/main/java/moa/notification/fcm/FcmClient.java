@@ -1,4 +1,4 @@
-package moa.global.fcm;
+package moa.notification.fcm;
 
 import static moa.global.config.async.AsyncConfig.VIRTUAL_THREAD_EXECUTOR;
 

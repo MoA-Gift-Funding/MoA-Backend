@@ -1,15 +1,15 @@
-package moa.global.sms;
+package moa.sms.client;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import moa.global.sms.NHNSendSmsRequest.RecipientRequest;
+import moa.sms.client.NHNSendSmsRequest.RecipientRequest;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SmsSender {
+public class SmsClient {
 
     private final NHNApiClient client;
     private final NHNSmsConfig config;

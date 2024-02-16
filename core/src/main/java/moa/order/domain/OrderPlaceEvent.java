@@ -1,8 +1,8 @@
 package moa.order.domain;
 
 import moa.funding.domain.Funding;
-import moa.global.sms.SmsSendEvent;
 import moa.product.domain.Product;
+import moa.sms.SmsSendEvent;
 
 // TODO 이것도 직접 문자 전송하도록 변경
 public class OrderPlaceEvent implements SmsSendEvent {

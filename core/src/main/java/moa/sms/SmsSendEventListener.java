@@ -1,10 +1,11 @@
-package moa.global.sms;
+package moa.sms;
 
 import static moa.global.config.async.AsyncConfig.VIRTUAL_THREAD_EXECUTOR;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 
 import lombok.RequiredArgsConstructor;
+import moa.sms.client.SmsClient;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class SmsSendEventListener {
 
-    private final SmsSender smsSender;
+    private final SmsClient smsClient;
     private final SmsHistoryRepository smsHistoryRepository;
 
     @Async(VIRTUAL_THREAD_EXECUTOR)
@@ -24,7 +25,7 @@ public class SmsSendEventListener {
         SmsHistory smsHistory = new SmsHistory(event.smsMessage(), event.phoneNumber());
         smsHistoryRepository.save(smsHistory);
         try {
-            smsSender.send(smsHistory.getMessage(), smsHistory.getPhoneNumber());
+            smsClient.send(smsHistory.getMessage(), smsHistory.getPhoneNumber());
             smsHistory.send();
         } catch (Exception e) {
             smsHistory.error(e.getMessage());

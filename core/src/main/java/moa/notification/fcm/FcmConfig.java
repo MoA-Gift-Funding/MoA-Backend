@@ -1,4 +1,4 @@
-package moa.global.fcm;
+package moa.notification.fcm;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
