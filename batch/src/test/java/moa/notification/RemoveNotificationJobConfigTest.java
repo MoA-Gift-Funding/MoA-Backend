@@ -7,7 +7,10 @@ import static org.springframework.batch.core.BatchStatus.COMPLETED;
 
 import java.time.LocalDateTime;
 import moa.BatchTest;
+import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
+import moa.notification.domain.Notification;
+import moa.notification.domain.NotificationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -19,6 +22,7 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @BatchTest
 @SuppressWarnings("NonAsciiCharacters")
@@ -35,6 +39,9 @@ class RemoveNotificationJobConfigTest {
     private MemberRepository memberRepository;
 
     @Autowired
+    private NotificationRepository notificationRepository;
+
+    @Autowired
     private Job removeNotificationJob;
 
     @BeforeEach
@@ -48,19 +55,10 @@ class RemoveNotificationJobConfigTest {
         // given
         var member = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
         LocalDateTime now = LocalDateTime.of(2024, 1, 20, 0, 0, 0);
+        알림_저장(member, LocalDateTime.of(2024, 1, 4, 0, 0, 0)); // 삭제 대상
+        알림_저장(member, LocalDateTime.of(2024, 1, 5, 0, 0, 0));
+        알림_저장(member, LocalDateTime.of(2024, 1, 6, 0, 0, 0));
 
-        jdbcTemplate.update("""
-                INSERT INTO notification(url, title, message, member_id, created_date, is_read)
-                VALUES ('testUrl', 'testTitle', 'testMessage', ?, ?, false)
-                """, member.getId(), LocalDateTime.of(2024, 1, 4, 0, 0, 0)); // 삭제 대상
-        jdbcTemplate.update("""
-                INSERT INTO notification(url, title, message, member_id, created_date, is_read)
-                VALUES ('testUrl', 'testTitle', 'testMessage', ?, ?, false)
-                """, member.getId(), LocalDateTime.of(2024, 1, 5, 0, 0, 0));
-        jdbcTemplate.update("""
-                INSERT INTO notification(url, title, message, member_id, created_date, is_read)
-                VALUES ('testUrl', 'testTitle', 'testMessage', ?, ?, false)
-                """, member.getId(), LocalDateTime.of(2024, 1, 6, 0, 0, 0));
         // when
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLocalDateTime("now", now)
@@ -70,7 +68,14 @@ class RemoveNotificationJobConfigTest {
 
         // then
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
-        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM notification", Integer.class);
+        Integer count = notificationRepository.findAll().size();
         assertThat(count).isEqualTo(2);
+    }
+
+    private void 알림_저장(Member member, LocalDateTime createDate) {
+        var notification = new Notification("testUrl", "testTitle", "testMessage", "testImageUrl", member);
+        notificationRepository.save(notification);
+        ReflectionTestUtils.setField(notification, "createdDate", createDate);
+        notificationRepository.save(notification);
     }
 }
