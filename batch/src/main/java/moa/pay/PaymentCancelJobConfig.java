@@ -19,6 +19,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -61,8 +62,8 @@ public class PaymentCancelJobConfig {
     @Bean
     public Job paymentCancelJob() {
         return new JobBuilder("paymentCancelJob", jobRepository)
-                .start(regenerateIdempotencyKeyForCancelStep())  // 결제 취소를 위한 멱등키 재생성
-                .next(paymentCancelStep())  // 결제 취소
+                .start(regenerateIdempotencyKeyForCancelStep(null))  // 결제 취소를 위한 멱등키 재생성
+                .next(paymentCancelStep(null))  // 결제 취소
                 .build();
     }
 
@@ -72,7 +73,11 @@ public class PaymentCancelJobConfig {
      * 멱등키를 재생성하는 작업을 수행한다.
      */
     @Bean
-    public Step regenerateIdempotencyKeyForCancelStep() {
+    @JobScope
+    public Step regenerateIdempotencyKeyForCancelStep(
+            @Value("#{jobParameters[now]}") LocalDateTime now
+    ) {
+        log.info("[취소 대기중인 결제 멱등키 재생성] 배치작업 수행 time: {}]", now);
         return new StepBuilder("regenerateIdempotencyKeyForCancelStep", jobRepository)
                 .<TossPayment, TossPayment>chunk(100, transactionManager)
                 .reader(regenerateIdempotencyKeyCandidateReader(null))
@@ -141,7 +146,10 @@ public class PaymentCancelJobConfig {
      * 취소 대기중인 결제들을 모두 결제 취소시킨다.
      */
     @Bean
-    public Step paymentCancelStep() {
+    public Step paymentCancelStep(
+            @Value("#{jobParameters[now]}") LocalDateTime now
+    ) {
+        log.info("[취소 대기중인 결제 취소] 배치작업 수행 time: {}", now);
         return new StepBuilder("paymentCancelStep", jobRepository)
                 .<TossPayment, TossPayment>chunk(10, transactionManager)
                 .reader(pendingCancelPaymentReader())
