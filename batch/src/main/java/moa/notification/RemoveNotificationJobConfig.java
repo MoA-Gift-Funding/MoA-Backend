@@ -53,7 +53,7 @@ public class RemoveNotificationJobConfig {
     public Step removeNotificationStep(
             @Value("#{jobParameters[now]}") LocalDateTime now
     ) {
-        log.info("[removeNotificationStep] execute [now: {}]", now);
+        log.info("[15일 지난 알림 제거] 배치작업 수행 time: {}]", now);
         return new StepBuilder("removeNotificationStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
                     int updated = jdbcTemplate.update("""
