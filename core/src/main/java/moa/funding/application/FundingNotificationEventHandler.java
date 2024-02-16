@@ -74,7 +74,6 @@ public class FundingNotificationEventHandler {
                 .orElseGet(target::getNickname);
     }
 
-
     @TransactionalEventListener(value = FundingFinishEvent.class, phase = AFTER_COMMIT)
     public void push(FundingFinishEvent event) {
         Funding funding = fundingRepository.getById(event.fundingId());
