@@ -29,13 +29,13 @@ public class NotificationFactory {
     public Notification generateFundingFinishNotification(
             String fundingTitle,
             String productImageUrl,
-            Long orderId,
+            Long fundingId,
             Member target
     ) {
         return new Notification(
-                "giftMoA://navigation?name=MyOrder&orderId=" + orderId,
+                "giftMoA://navigation?name=FundDetail&fundingId=" + fundingId,
                 "펀딩 달성",
-                "[%s] 펀딩이 달성 완료됐어요. 곧 펀딩 상품의 배송이 시작됩니다. 🎁"
+                "[%s] 펀딩이 달성 완료됐어요. 내 펀딩에서 상품 수령 버튼을 눌러주세요 🎁"
                         .formatted(fundingTitle),
                 productImageUrl,
                 PARTY,
