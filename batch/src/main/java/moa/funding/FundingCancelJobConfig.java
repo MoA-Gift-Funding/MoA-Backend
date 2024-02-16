@@ -1,9 +1,10 @@
 package moa.funding;
 
 import static moa.Crons.EVERY_MIDNIGHT;
-import static org.springframework.batch.repeat.RepeatStatus.FINISHED;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -11,14 +12,20 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.JdbcCursorItemReader;
+import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -30,7 +37,8 @@ public class FundingCancelJobConfig {
     private final JobLauncher jobLauncher;
     private final JdbcTemplate jdbcTemplate;
     private final JobRepository jobRepository;
-    private final PlatformTransactionManager transactionManager;
+    private final DataSource dataSource;
+    private final PlatformTransactionManager transactionManger;
 
     @Scheduled(cron = EVERY_MIDNIGHT)
     public void launch() throws Exception {
@@ -56,53 +64,73 @@ public class FundingCancelJobConfig {
      * <p>
      * 참여자의 상태 PARTICIPATING -> CANCEL
      * <p>
-     * 결제의 상태 UNUSED -> PENDING_CANCEL
+     * 결제의 상태 USED, UNUSED -> PENDING_CANCEL
      */
     @Bean
     @JobScope
     public Step fundingCancelStep(
             @Value("#{jobParameters[now]}") LocalDateTime now
     ) {
-        log.info("[fundingCancelStep] execute [now: {}]", now);
+        log.info("[만료된 지 일주일 지난 펀딩 취소] 배치작업 수행 time: {}", now);
         return new StepBuilder("fundingCancelStep", jobRepository)
-                .tasklet((contribution, chunkContext) -> {
-                    LocalDateTime limitDate = now.minusDays(8);
-                    int fundingCount = jdbcTemplate.update("""
-                            UPDATE funding f
-                            SET f.status = 'CANCELLED'
-                            WHERE f.status = 'EXPIRED' 
-                            AND f.end_date <= ? 
-                            """, limitDate
-                    );
-                    int tossPaymentCount = jdbcTemplate.update("""                       
-                            UPDATE toss_payment tp
-                            SET tp.status = 'PENDING_CANCEL'
-                            WHERE tp.id IN (
+                .<Long, Long>chunk(100, transactionManger)
+                .reader(fundingToBeCancelReader(null))
+                .writer(fundingCancelWriter())
+                .build();
+    }
+
+    @Bean
+    @StepScope
+    public JdbcCursorItemReader<Long> fundingToBeCancelReader(
+            @Value("#{jobParameters[now]}") LocalDateTime now
+    ) {
+        LocalDateTime limitDate = now.minusDays(8);  // 8이어야 7일부터 가능
+        return new JdbcCursorItemReaderBuilder<Long>()
+                .fetchSize(100)
+                .dataSource(dataSource)
+                .rowMapper(new SingleColumnRowMapper<>())
+                .sql("""
+                        SELECT id
+                        FROM funding f
+                        WHERE f.status = 'EXPIRED'
+                        AND f.end_date <= ?
+                        """)
+                .preparedStatementSetter(new ArgumentPreparedStatementSetter(
+                        new Object[]{limitDate}
+                ))
+                .name("jdbcCursorItemReader")
+                .build();
+    }
+
+    public ItemWriter<Long> fundingCancelWriter() {
+        return chunk -> {
+            String fundingIdsInParam = chunk.getItems()
+                    .stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(", "));
+            jdbcTemplate.update("""
+                    UPDATE funding f
+                    SET f.status = 'CANCELLED'
+                    WHERE f.id IN (?);
+                    """, fundingIdsInParam
+            );
+            jdbcTemplate.update("""
+                    UPDATE funding_participant fp
+                    SET fp.status = 'CANCEL'
+                    WHERE fp.funding_id IN (?);
+                    """, fundingIdsInParam
+            );
+            jdbcTemplate.update("""                       
+                    UPDATE toss_payment tp
+                    SET tp.status = 'PENDING_CANCEL'
+                    WHERE tp.id IN (
                                 SELECT tp.id
                                 FROM toss_payment tp
-                                INNER JOIN funding_participant fp ON tp.id = fp.payment_id
-                                INNER JOIN funding f ON fp.funding_id = f.id
-                                WHERE fp.status = 'PARTICIPATING'
-                                AND f.end_date <= ?
-                            );""", limitDate
-                    );
-                    int participantCount = jdbcTemplate.update("""
-                            UPDATE funding_participant fp
-                            SET fp.status = 'CANCEL'
-                            WHERE fp.funding_id IN (
-                                SELECT f.id
-                                FROM funding_participant fp
-                                INNER JOIN funding f ON f.id = fp.funding_id
-                                INNER JOIN toss_payment tp ON fp.payment_id = tp.id
-                                WHERE fp.status = 'PARTICIPATING'
-                                AND f.end_date <= ?
-                            );
-                             """, limitDate
-                    );
-                    log.info("fundingCount: {} tossPaymentCount: {} participantCount: {}",
-                            fundingCount, tossPaymentCount, participantCount);
-                    return FINISHED;
-                }, transactionManager)
-                .build();
+                                JOIN funding_participant fp ON tp.id = fp.payment_id
+                                WHERE fp.funding_id IN (?)
+                    ); 
+                    """, fundingIdsInParam
+            );
+        };
     }
 }
