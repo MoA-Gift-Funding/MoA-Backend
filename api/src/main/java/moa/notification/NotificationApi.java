@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import moa.auth.Auth;
 import moa.notification.query.response.CheckExistsUnreadNotificationResponse;
-import moa.notification.query.response.NotificationResponses;
+import moa.notification.query.response.NotificationResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -44,7 +44,7 @@ public interface NotificationApi {
     )
     @Operation(summary = "모든 알림을 조회한다", description = "알림을 조회하면 모든 알림이 읽음 처리된다.")
     @GetMapping
-    ResponseEntity<List<NotificationResponses>> readAll(
+    ResponseEntity<List<NotificationResponse>> readAll(
             @Auth(permit = SIGNED_UP) Long memberId
     );
 

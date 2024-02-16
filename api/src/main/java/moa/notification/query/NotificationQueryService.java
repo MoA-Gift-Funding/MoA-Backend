@@ -1,10 +1,12 @@
 package moa.notification.query;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import moa.notification.domain.NotificationRepository;
 import moa.notification.domain.Notifications;
+import moa.notification.query.response.NotificationResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +19,11 @@ public class NotificationQueryService {
     private final NotificationRepository notificationRepository;
 
     @Transactional
-    public Notifications readAll(Long memberId) {
+    public List<NotificationResponse> readAll(Long memberId) {
         Member member = memberRepository.getById(memberId);
         Notifications notifications = notificationRepository.findNotifications(member);
-        notifications.readAll(member);
-        return notifications;
+        notifications.readAll();
+        return NotificationResponse.from(notifications);
     }
 
     public boolean existsUnread(Long memberId) {

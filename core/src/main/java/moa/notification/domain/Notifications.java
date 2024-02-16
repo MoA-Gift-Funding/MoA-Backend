@@ -3,7 +3,6 @@ package moa.notification.domain;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
-import moa.member.domain.Member;
 
 @Getter
 public class Notifications {
@@ -14,7 +13,7 @@ public class Notifications {
         this.notifications.addAll(notifications);
     }
 
-    public void readAll(Member member) {
+    public void readAll() {
         for (Notification notification : notifications) {
             notification.read();
         }
