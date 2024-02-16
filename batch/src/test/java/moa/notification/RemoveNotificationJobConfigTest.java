@@ -8,7 +8,6 @@ import static org.springframework.batch.core.BatchStatus.COMPLETED;
 import java.time.LocalDateTime;
 import moa.BatchTest;
 import moa.member.domain.MemberRepository;
-import moa.notification.domain.NotificationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -20,8 +19,6 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
 @BatchTest
 @SuppressWarnings("NonAsciiCharacters")
@@ -38,20 +35,11 @@ class RemoveNotificationJobConfigTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private NotificationRepository notificationRepository;
-
-    @Autowired
     private Job removeNotificationJob;
-
-    @Autowired
-    private PlatformTransactionManager transactionManager;
-
-    private TransactionTemplate transactionTemplate;
 
     @BeforeEach
     void setUp() {
         jobLauncherTestUtils.setJob(removeNotificationJob);
-        transactionTemplate = new TransactionTemplate(transactionManager);
     }
 
     @Test
