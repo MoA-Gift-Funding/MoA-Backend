@@ -2,6 +2,7 @@ package moa.notification;
 
 import static moa.fixture.MemberFixture.member;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
+import static moa.notification.domain.NotificationType.PARTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.batch.core.BatchStatus.COMPLETED;
 
@@ -73,7 +74,7 @@ class RemoveNotificationJobConfigTest {
     }
 
     private void 알림_저장(Member member, LocalDateTime createDate) {
-        var notification = new Notification("testUrl", "testTitle", "testMessage", "testImageUrl", member);
+        var notification = new Notification("url", "title", "message", "imageUrl", PARTY, member);
         notificationRepository.save(notification);
         ReflectionTestUtils.setField(notification, "createdDate", createDate);
         notificationRepository.save(notification);
