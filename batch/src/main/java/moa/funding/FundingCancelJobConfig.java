@@ -84,7 +84,7 @@ public class FundingCancelJobConfig {
     public JdbcCursorItemReader<Long> fundingToBeCancelReader(
             @Value("#{jobParameters[now]}") LocalDateTime now
     ) {
-        LocalDateTime limitDate = now.minusDays(8);  // 8이어야 7일부터 가능
+        LocalDateTime limitDate = now.minusDays(8);  // 8이어야 7일 지난 펀딩부터 가능
         return new JdbcCursorItemReaderBuilder<Long>()
                 .fetchSize(100)
                 .dataSource(dataSource)
