@@ -34,6 +34,10 @@ public record FundingDetailResponse(
         @Schema(example = "다들 모여랏! 나에게 에어팟 맥스를 선물해 줄 기회! 기프티콘 줄거면 펀딩해주셈!")
         String description,
 
+        @Schema(description = "생성일자", example = "2024-01-13 12:00:34")
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        LocalDateTime createdDate,
+
         @Schema(example = "2024-02-04")
         @JsonFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
 
@@ -122,6 +126,7 @@ public record FundingDetailResponse(
                 funding.getImageUrl(),
                 funding.getTitle(),
                 funding.getDescription(),
+                funding.getCreatedDate(),
                 funding.getEndDate(),
                 funding.possibleMaxAmount().longValue(),
                 funding.remainAmount().longValue(),
