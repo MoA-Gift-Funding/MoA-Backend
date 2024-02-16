@@ -8,7 +8,6 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 import static moa.funding.domain.FundingStatus.CANCELLED;
 import static moa.funding.domain.FundingStatus.COMPLETED;
-import static moa.funding.domain.FundingStatus.EXPIRED;
 import static moa.funding.domain.FundingStatus.PROCESSING;
 import static moa.funding.exception.FundingExceptionType.DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_FUNDING_AMOUNT;
@@ -218,13 +217,6 @@ public class Funding extends RootEntity<Long> {
             TossPayment tossPayment = participant.getTossPayment();
             tossPayment.pendingCancel("펀딩 생성자의 펀딩 취소로 인한 결제 취소");
         }
-    }
-
-    public void expire() {
-        if (status != PROCESSING) {
-            throw new FundingException(ONLY_PROCESSING_FUNDING_CAN_BE_CANCELLED);
-        }
-        this.status = EXPIRED;
     }
 
     public int getFundingRate() {
