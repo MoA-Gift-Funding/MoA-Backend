@@ -146,6 +146,7 @@ public class PaymentCancelJobConfig {
      * 취소 대기중인 결제들을 모두 결제 취소시킨다.
      */
     @Bean
+    @JobScope
     public Step paymentCancelStep(
             @Value("#{jobParameters[now]}") LocalDateTime now
     ) {

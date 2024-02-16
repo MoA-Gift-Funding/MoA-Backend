@@ -2,15 +2,17 @@ package moa.notification.query;
 
 import static java.lang.Boolean.TRUE;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
+import static moa.notification.domain.NotificationType.PARTY;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import moa.ApplicationTest;
 import moa.fixture.MemberFixture;
 import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import moa.notification.domain.Notification;
 import moa.notification.domain.NotificationRepository;
-import moa.notification.domain.Notifications;
+import moa.notification.query.response.NotificationResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -43,27 +45,27 @@ class NotificationQueryServiceTest {
     @Test
     void 모든_알림을_조회하며_읽지_않은_알림은_읽기_처리한다() {
         // given
-        notificationRepository.save(new Notification("url1", "title", "message", "", member));
-        notificationRepository.save(new Notification("url2", "title", "message", "", member));
+        notificationRepository.save(new Notification("url1", "title", "message", "", PARTY, member));
+        notificationRepository.save(new Notification("url2", "title", "message", "", PARTY, member));
 
         // when
-        Notifications notifications = notificationQueryService.readAll(member.getId());
+        List<NotificationResponse> notifications = notificationQueryService.readAll(member.getId());
 
         // then
-        assertThat(notifications.getNotifications())
+        assertThat(notifications)
                 .hasSize(2)
-                .extracting(Notification::isRead)
+                .extracting(NotificationResponse::isRead)
                 .containsOnly(TRUE);
     }
 
     @Test
     void 읽지_않은_알림이_있는지_확인한다() {
         // given
-        notificationRepository.save(new Notification("url1", "title", "message", "", member));
-        Notifications notifications = notificationQueryService.readAll(member.getId());
+        notificationRepository.save(new Notification("url1", "title", "message", "", PARTY, member));
+        List<NotificationResponse> notifications = notificationQueryService.readAll(member.getId());
         assertThat(notificationQueryService.existsUnread(member.getId())).isFalse();
 
-        notificationRepository.save(new Notification("url2", "title", "message", "", member));
+        notificationRepository.save(new Notification("url2", "title", "message", "", PARTY, member));
 
         // when
         boolean hasUnread = notificationQueryService.existsUnread(member.getId());

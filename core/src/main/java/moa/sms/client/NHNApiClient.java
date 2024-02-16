@@ -1,4 +1,4 @@
-package moa.global.sms;
+package moa.sms.client;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 

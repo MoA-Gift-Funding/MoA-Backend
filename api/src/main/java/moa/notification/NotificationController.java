@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import moa.auth.Auth;
 import moa.notification.query.NotificationQueryService;
 import moa.notification.query.response.CheckExistsUnreadNotificationResponse;
-import moa.notification.query.response.NotificationResponses;
+import moa.notification.query.response.NotificationResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,12 +21,11 @@ public class NotificationController implements NotificationApi {
     private final NotificationQueryService notificationQueryService;
 
     @GetMapping
-    public ResponseEntity<List<NotificationResponses>> readAll(
+    public ResponseEntity<List<NotificationResponse>> readAll(
             @Auth(permit = SIGNED_UP) Long memberId
     ) {
         var notifications = notificationQueryService.readAll(memberId);
-        var response = NotificationResponses.from(notifications);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(notifications);
     }
 
     @GetMapping("/check")

@@ -1,9 +1,9 @@
-package moa.global.sms;
+package moa.sms;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
-import static moa.global.sms.SmsHistory.SmsStatus.BEFORE_SEND;
-import static moa.global.sms.SmsHistory.SmsStatus.ERROR_OCCUR;
-import static moa.global.sms.SmsHistory.SmsStatus.SEND;
+import static moa.sms.SmsHistory.SmsStatus.BEFORE_SEND;
+import static moa.sms.SmsHistory.SmsStatus.ERROR_OCCUR;
+import static moa.sms.SmsHistory.SmsStatus.SEND;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

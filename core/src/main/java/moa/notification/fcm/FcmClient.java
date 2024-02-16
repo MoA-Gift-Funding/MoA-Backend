@@ -1,4 +1,4 @@
-package moa.global.fcm;
+package moa.notification.fcm;
 
 import static moa.global.config.async.AsyncConfig.VIRTUAL_THREAD_EXECUTOR;
 
@@ -20,7 +20,8 @@ public class FcmClient {
             String title,
             String content,
             String imageUrl,
-            String url
+            String url,
+            String type
     ) {
         log.info("call FcmClient sendMessage");
         if (targetDeviceToken == null) {
@@ -35,6 +36,7 @@ public class FcmClient {
                 .setToken(targetDeviceToken)
                 .setNotification(notification)
                 .putData("url", url)
+                .putData("type", type)
                 .build();
         try {
             String result = FirebaseMessaging.getInstance().send(message);
