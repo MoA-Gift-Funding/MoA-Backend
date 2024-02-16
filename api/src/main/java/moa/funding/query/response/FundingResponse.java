@@ -4,6 +4,7 @@ package moa.funding.query.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import moa.friend.domain.Friend;
 import moa.funding.domain.Funding;
@@ -17,6 +18,10 @@ public record FundingResponse(
 
         @Schema(example = "주노 하와이 보내주기")
         String title,
+
+        @Schema(description = "생성일자", example = "2024-01-13 12:00:34")
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        LocalDateTime createdDate,
 
         @Schema(example = "2024-02-21")
         @JsonFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
@@ -49,6 +54,7 @@ public record FundingResponse(
                 funding.getId(),
                 funding.getImageUrl(),
                 funding.getTitle(),
+                funding.getCreatedDate(),
                 funding.getEndDate(),
                 funding.getStatus().getDescription(),
                 funding.getMember().getId(),
