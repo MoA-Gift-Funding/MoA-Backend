@@ -26,7 +26,7 @@ public class ExtractAuthenticationInterceptor implements HandlerInterceptor {
         return true;
     }
 
-    public static String extractAccessToken(HttpServletRequest request) {
+    private static String extractAccessToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_TYPE)) {
             return bearerToken.substring(7);
