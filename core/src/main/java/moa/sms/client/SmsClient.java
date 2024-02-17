@@ -16,7 +16,7 @@ public class SmsClient {
 
     public void send(String message, String phoneNumber) {
         NHNSendSmsRequest request = new NHNSendSmsRequest(
-                "[모아] " + message,
+                message,
                 config.sendNo(),
                 List.of(new RecipientRequest(phoneNumber))
         );
