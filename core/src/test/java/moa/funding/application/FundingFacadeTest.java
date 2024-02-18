@@ -2,6 +2,7 @@ package moa.funding.application;
 
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
+import static moa.fixture.ProductFixture.product;
 import static moa.funding.domain.MessageVisibility.PUBLIC;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.pay.domain.TossPaymentStatus.CANCELED;
@@ -83,7 +84,7 @@ class FundingFacadeTest {
         friendRepository.save(new Friend(mallang, luma, "루마"));
         friendRepository.save(new Friend(juno, mallang, "말랑"));
         friendRepository.save(new Friend(luma, mallang, "말랑"));
-        Product product = productRepository.save(new Product("상품", Price.from("10000")));
+        Product product = productRepository.save(product("상품", Price.from("10000")));
         funding = fundingRepository.save(funding(mallang, product, "10000"));
         junoPayment = tossPaymentRepository.save(new TossPayment("1", "1", "8000원", "8000", juno.getId()));
         lumaPayment = tossPaymentRepository.save(new TossPayment("2", "2", "5000원", "5000", luma.getId()));

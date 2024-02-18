@@ -2,6 +2,7 @@ package moa.funding.domain;
 
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
+import static moa.fixture.ProductFixture.product;
 import static moa.fixture.TossPaymentFixture.tossPayment;
 import static moa.funding.domain.FundingStatus.COMPLETED;
 import static moa.funding.domain.MessageVisibility.PUBLIC;
@@ -26,7 +27,6 @@ import moa.global.domain.Price;
 import moa.global.exception.MoaExceptionType;
 import moa.member.domain.Member;
 import moa.pay.domain.TossPayment;
-import moa.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -48,7 +48,7 @@ class FundingTest {
             // given
             Funding funding = funding(
                     mock(Member.class),
-                    new Product("", Price.from("4999")),
+                    product("", Price.from("4999")),
                     "5000"
             );
 
@@ -64,7 +64,7 @@ class FundingTest {
             // given
             Funding funding = funding(
                     mock(Member.class),
-                    new Product("", Price.from("15000")),
+                    product("", Price.from("15000")),
                     "4999"
             );
 
@@ -80,7 +80,7 @@ class FundingTest {
             // given
             Funding funding = funding(
                     mock(Member.class),
-                    new Product("", Price.from("15000")),
+                    product("", Price.from("15000")),
                     "15001"
             );
 
@@ -102,7 +102,7 @@ class FundingTest {
                     FundingVisibility.PUBLIC,
                     Price.from("15000"),
                     mock(Member.class),
-                    new Product("", Price.from("15000")),
+                    product("", Price.from("15000")),
                     null,
                     ""
             );
@@ -125,7 +125,7 @@ class FundingTest {
                     FundingVisibility.PUBLIC,
                     Price.from("15000"),
                     mock(Member.class),
-                    new Product("", Price.from("15000")),
+                    product("", Price.from("15000")),
                     null,
                     ""
             );
@@ -142,7 +142,7 @@ class FundingTest {
             // given
             Funding funding = funding(
                     mock(Member.class),
-                    new Product("", Price.from("15000")),
+                    product("", Price.from("15000")),
                     "15000"
             );
 
@@ -166,7 +166,7 @@ class FundingTest {
             TossPayment payment = tossPayment(fundedAmount, 1L);
             Funding funding = funding(
                     mock(Member.class),
-                    new Product("", Price.from(productPrice)),
+                    product("", Price.from(productPrice)),
                     fundedAmount
             );
             var participant = new FundingParticipant(mock(Member.class), funding, payment, "",
@@ -189,7 +189,7 @@ class FundingTest {
             // given
             Funding funding = funding(
                     mock(Member.class),
-                    new Product("", Price.from("10000")),
+                    product("", Price.from("10000")),
                     "10000"
             );
             TossPayment payment = tossPayment("1000", 1L);
@@ -207,7 +207,7 @@ class FundingTest {
             // given
             Funding funding = funding(
                     mock(Member.class),
-                    new Product("", Price.from("100000")),
+                    product("", Price.from("100000")),
                     "10000"
             );
             TossPayment payment = tossPayment("10001", 1L);
@@ -225,7 +225,7 @@ class FundingTest {
             // given
             Funding funding = funding(
                     mock(Member.class),
-                    new Product("", Price.from("16000")),
+                    product("", Price.from("16000")),
                     "10000"
             );
             TossPayment payment = tossPayment("10000", 1L);
@@ -246,7 +246,7 @@ class FundingTest {
             // given
             Funding funding = funding(
                     mock(Member.class),
-                    new Product("", Price.from("14000")),
+                    product("", Price.from("14000")),
                     "10000"
             );
             TossPayment payment = tossPayment("10000", 1L);
@@ -267,7 +267,7 @@ class FundingTest {
             // given
             Funding funding = funding(
                     mock(Member.class),
-                    new Product("", Price.from("14000")),
+                    product("", Price.from("14000")),
                     "10000"
             );
             TossPayment payment = tossPayment("10000", 1L);
@@ -288,7 +288,7 @@ class FundingTest {
             Member member = member(1L, "", "", SIGNED_UP);
             Funding funding = funding(
                     member,
-                    new Product("", Price.from("14000")),
+                    product("", Price.from("14000")),
                     "10000"
             );
             TossPayment payment = tossPayment("10000", 1L);
@@ -306,7 +306,7 @@ class FundingTest {
             Member member = member(1L, "", "", SIGNED_UP);
             Funding funding = funding(
                     member,
-                    new Product("", Price.from("10000")),
+                    product("", Price.from("10000")),
                     "10000"
             );
             TossPayment payment = tossPayment("10000", 1L);
@@ -329,7 +329,7 @@ class FundingTest {
             Member member = member(1L, "", "", SIGNED_UP);
             Funding funding = funding(
                     member,
-                    new Product("", Price.from("10000")),
+                    product("", Price.from("10000")),
                     "10000"
             );
 
@@ -346,7 +346,7 @@ class FundingTest {
             Member member = member(1L, "", "", SIGNED_UP);
             Funding funding = funding(
                     member,
-                    new Product("", Price.from("10000")),
+                    product("", Price.from("10000")),
                     "10000"
             );
 

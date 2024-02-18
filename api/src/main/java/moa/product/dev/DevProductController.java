@@ -1,9 +1,14 @@
 package moa.product.dev;
 
+import static moa.product.domain.ProductId.ProductProvider.WINCUBE;
+
+import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import moa.global.domain.Price;
 import moa.product.domain.Product;
+import moa.product.domain.ProductId;
 import moa.product.domain.ProductRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +28,20 @@ public class DevProductController {
 
     @PostMapping
     public void create(@RequestBody ProductCreateReuqest reuqest) {
-        productRepository.save(new Product(reuqest.name, Price.from(reuqest.price)));
+        String string = UUID.randomUUID().toString();
+        productRepository.save(new Product(
+                new ProductId(string, WINCUBE),
+                "imageUrl",
+                "brand",
+                "category",
+                reuqest.name,
+                Price.from(reuqest.price),
+                "desc",
+                LocalDate.now().plusDays(1000),
+                0,
+                60,
+                List.of()
+        ));
     }
 
     @GetMapping

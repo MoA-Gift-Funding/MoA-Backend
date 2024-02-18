@@ -1,5 +1,6 @@
 package moa.funding;
 
+import static moa.fixture.ProductFixture.product;
 import static moa.funding.domain.FundingStatus.EXPIRED;
 import static moa.funding.domain.FundingStatus.PROCESSING;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -63,7 +64,7 @@ class FundingExpireJobConfigTest {
                 "testImageUrl",
                 "010-1234-5678"
         ));
-        Product product = productRepository.save(new Product("exampleProduct", Price.from("10000")));
+        Product product = productRepository.save(product("exampleProduct", Price.from("10000")));
 
         LocalDate nowDate = now.toLocalDate();
         Funding 펀딩_만료_1 = 펀딩_생성(nowDate.minusDays(2), member, product);

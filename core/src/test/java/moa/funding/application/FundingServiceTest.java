@@ -2,6 +2,7 @@ package moa.funding.application;
 
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
+import static moa.fixture.ProductFixture.product;
 import static moa.funding.domain.FundingStatus.CANCELLED;
 import static moa.funding.domain.FundingStatus.COMPLETED;
 import static moa.funding.domain.MessageVisibility.PUBLIC;
@@ -27,7 +28,6 @@ import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import moa.pay.domain.TossPayment;
 import moa.pay.domain.TossPaymentRepository;
-import moa.product.domain.Product;
 import moa.product.domain.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -79,7 +79,7 @@ class FundingServiceTest {
         friendRepository.save(new Friend(part, owner, "1"));
         Funding funding = funding(
                 owner,
-                productRepository.save(new Product("", Price.from("10000"))),
+                productRepository.save(product("", Price.from("10000"))),
                 "10000"
         );
         fundingRepository.save(funding);
@@ -107,7 +107,7 @@ class FundingServiceTest {
         friendRepository.save(new Friend(part2, owner, "1"));
         Funding funding = funding(
                 owner,
-                productRepository.save(new Product("", Price.from("10000"))),
+                productRepository.save(product("", Price.from("10000"))),
                 "10000"
         );
         fundingRepository.save(funding);
@@ -139,7 +139,7 @@ class FundingServiceTest {
         friendRepository.save(new Friend(part1, owner, "1"));
         Funding funding = funding(
                 owner,
-                productRepository.save(new Product("", Price.from("100000"))),
+                productRepository.save(product("", Price.from("100000"))),
                 "10000"
         );
         fundingRepository.save(funding);
@@ -165,7 +165,7 @@ class FundingServiceTest {
         friendRepository.save(new Friend(part, owner, "1"));
         Funding funding = funding(
                 owner,
-                productRepository.save(new Product("", Price.from("10000"))),
+                productRepository.save(product("", Price.from("10000"))),
                 "10000"
         );
         fundingRepository.save(funding);
