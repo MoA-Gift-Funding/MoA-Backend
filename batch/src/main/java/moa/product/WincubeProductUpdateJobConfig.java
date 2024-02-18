@@ -1,5 +1,6 @@
 package moa.product;
 
+import static moa.Crons.WHEN_12_AND_24_HOURS;
 import static moa.product.domain.ProductId.ProductProvider.WINCUBE;
 import static org.springframework.batch.repeat.RepeatStatus.FINISHED;
 
@@ -16,6 +17,8 @@ import moa.product.domain.Product;
 import moa.product.domain.ProductId;
 import moa.product.domain.ProductRepository;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -29,10 +32,10 @@ import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
@@ -44,9 +47,16 @@ public class WincubeProductUpdateJobConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private final JdbcTemplate jdbcTemplate;
     private final WincubeClient wincubeClient;
     private final ProductRepository productRepository;
+
+    @Scheduled(cron = WHEN_12_AND_24_HOURS)
+    public void launch() throws Exception {
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addLocalDateTime("now", LocalDateTime.now())
+                .toJobParameters();
+        jobLauncher.run(wincubeProductUpdateJob(), jobParameters);
+    }
 
     /**
      * 윈큐브 API를 호출하여 상품 목록을 받아온다.
@@ -209,37 +219,44 @@ public class WincubeProductUpdateJobConfig {
     ) {
         return new StepBuilder("deleteRemovedProductStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-                    List<Long> deleteCandidateProductIds = namedParameterJdbcTemplate.query("""
-                                    SELECT id
-                                    FROM product
-                                    WHERE product_provider = 'WINCUBE'
-                                    AND updated_date < :now
-                                    """,
-                            Map.of("now", now),
-                            new SingleColumnRowMapper<Long>());
-
-                    namedParameterJdbcTemplate.update("""
-                            DELETE FROM product_option po
-                            WHERE po.product_id IN (:ids)
-                            """, Map.of("ids", deleteCandidateProductIds));
-
-                    namedParameterJdbcTemplate.update("""
-                            DELETE FROM product p
-                            WHERE p.id IN (:ids)
-                            """, Map.of("ids", deleteCandidateProductIds));
-
-                    namedParameterJdbcTemplate.update("""
-                            DELETE FROM product_option po
-                            WHERE po.id IN (
-                                SELECT po.id
-                                FROM product_option po
-                                JOIN product p ON p.id = po.product_id
-                                WHERE po.updated_date < :now
-                                AND p.product_provider = 'WINCUBE'
-                            ) 
-                            """, Map.of("now", now));
+                    deleteDeletedProduct(now);
+                    deleteDeletedProductOptions(now);
                     return FINISHED;
                 }, transactionManager)
                 .build();
+    }
+
+    private void deleteDeletedProduct(LocalDateTime now) {
+        List<Long> deleteCandidateProductIds = namedParameterJdbcTemplate.query("""
+                        SELECT id
+                        FROM product
+                        WHERE product_provider = 'WINCUBE'
+                        AND updated_date < :now
+                        """,
+                Map.of("now", now),
+                new SingleColumnRowMapper<Long>());
+
+        namedParameterJdbcTemplate.update("""
+                DELETE FROM product_option po
+                WHERE po.product_id IN (:ids)
+                """, Map.of("ids", deleteCandidateProductIds));
+
+        namedParameterJdbcTemplate.update("""
+                DELETE FROM product p
+                WHERE p.id IN (:ids)
+                """, Map.of("ids", deleteCandidateProductIds));
+    }
+
+    private void deleteDeletedProductOptions(LocalDateTime now) {
+        namedParameterJdbcTemplate.update("""
+                DELETE FROM product_option po
+                WHERE po.id IN (
+                    SELECT po.id
+                    FROM product_option po
+                    JOIN product p ON p.id = po.product_id
+                    WHERE po.updated_date < :now
+                    AND p.product_provider = 'WINCUBE'
+                ) 
+                """, Map.of("now", now));
     }
 }
