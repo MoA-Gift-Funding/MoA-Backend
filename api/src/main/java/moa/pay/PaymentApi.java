@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "토스 결제 API", description = "토스 결제 관련 API")
+@SecurityRequirement(name = "JWT")
 public interface PaymentApi {
 
     @ApiResponses(
@@ -30,7 +31,6 @@ public interface PaymentApi {
             }
     )
     @Operation(summary = "결제 전 사전 결제정보 생성")
-    @SecurityRequirement(name = "JWT")
     @PostMapping("/prepay")
     ResponseEntity<Void> prepay(
             @Auth(permit = {SIGNED_UP}) Long memberId,
