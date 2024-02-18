@@ -39,8 +39,7 @@ public class DevProductController {
                 "desc",
                 LocalDate.now().plusDays(1000),
                 0,
-                60,
-                List.of()
+                60
         ));
     }
 
