@@ -72,6 +72,7 @@ public class WincubeProductUpdateJobConfig {
         return new JobBuilder("wincubeProductUpdateJob", jobRepository)
                 .start(wincubeProductUpdateStep(null))
                 .next(deleteRemovedProductStep(null))
+                // TODO 회의 이후 판매 중지된 상품으로 진행중인 펀딩에 대해 어떤 처리를 할 지 추가한다.
                 .build();
     }
 
@@ -142,6 +143,7 @@ public class WincubeProductUpdateJobConfig {
                         sale_end_date,
                         discount_rate,
                         limit_date,
+                        status,
                         created_date,
                         updated_date
                     )
@@ -158,6 +160,7 @@ public class WincubeProductUpdateJobConfig {
                         :saleEndDate,
                         :discountRate,
                         :limitDate,
+                        'SALES',
                         :createdDate,
                         :updatedDate
                     )
@@ -170,6 +173,7 @@ public class WincubeProductUpdateJobConfig {
                     description = :description,
                     sale_end_date = :saleEndDate,
                     discount_rate = :discountRate,
+                    status = 'SALES',
                     limit_date = :limitDate,
                     updated_date = :updatedDate
                     """, SqlParameterSourceUtils.createBatch(items));
@@ -188,6 +192,7 @@ public class WincubeProductUpdateJobConfig {
                             product_id,
                             code,
                             option_name,
+                            status,
                             created_date,
                             updated_date
                         )
@@ -196,12 +201,14 @@ public class WincubeProductUpdateJobConfig {
                             :productId,
                             :code,
                             :optionName,
+                            'SUPPORTED',
                             :createdDate,
                             :updatedDate
                         )
                         ON DUPLICATE KEY UPDATE
                         option_name = :optionName,
-                        updated_date = :updatedDate
+                        updated_date = :updatedDate,
+                        status = 'SUPPORTED'
                         """, SqlParameterSourceUtils.createBatch(optionsWithProductId));
             }
         };
@@ -219,14 +226,14 @@ public class WincubeProductUpdateJobConfig {
     ) {
         return new StepBuilder("deleteRemovedProductStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-                    deleteDeletedProduct(now);
+                    changeDeletedProductStatus(now);
                     deleteDeletedProductOptions(now);
                     return FINISHED;
                 }, transactionManager)
                 .build();
     }
 
-    private void deleteDeletedProduct(LocalDateTime now) {
+    private void changeDeletedProductStatus(LocalDateTime now) {
         List<Long> deleteCandidateProductIds = namedParameterJdbcTemplate.query("""
                         SELECT id
                         FROM product
@@ -237,19 +244,22 @@ public class WincubeProductUpdateJobConfig {
                 new SingleColumnRowMapper<Long>());
 
         namedParameterJdbcTemplate.update("""
-                DELETE FROM product_option po
+                UPDATE product_option po
+                SET po.status = 'NOT_SUPPORTED'
                 WHERE po.product_id IN (:ids)
                 """, Map.of("ids", deleteCandidateProductIds));
 
         namedParameterJdbcTemplate.update("""
-                DELETE FROM product p
+                UPDATE product p
+                SET p.status = 'SALES_DISCONTINUED'
                 WHERE p.id IN (:ids)
                 """, Map.of("ids", deleteCandidateProductIds));
     }
 
     private void deleteDeletedProductOptions(LocalDateTime now) {
         namedParameterJdbcTemplate.update("""
-                DELETE FROM product_option po
+                UPDATE product_option po
+                SET po.status = 'NOT_SUPPORTED'
                 WHERE po.id IN (
                     SELECT po.id
                     FROM product_option po

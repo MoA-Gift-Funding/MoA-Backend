@@ -1,11 +1,13 @@
 package moa.product.domain;
 
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -60,6 +62,9 @@ public class Product extends RootEntity<Long> {
     private int discountRate;
 
     private int limitDate;
+
+    @Enumerated(STRING)
+    private ProductStatus status;
 
     @OneToMany(fetch = LAZY, mappedBy = "product")
     private List<ProductOption> options = new ArrayList<>();
