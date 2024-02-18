@@ -11,7 +11,6 @@ import static moa.pay.domain.TossPaymentStatus.USED;
 import static moa.pay.exception.TossPaymentExceptionType.TOSS_API_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.willThrow;
 
 import java.util.List;
@@ -145,12 +144,7 @@ class FundingFacadeTest {
         );
         willThrow(new TossPaymentException(TOSS_API_ERROR))
                 .given(tossClient)
-                .cancelPayment(
-                        anyString(),
-                        anyString(),
-                        anyString(),
-                        any()
-                );
+                .cancelPayment(any());
         ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
         List<FundingParticipateCommand> commands = List.of(junoParticipantCommand, lumaParticipantCommand);
         CountDownLatch latch = new CountDownLatch(2);

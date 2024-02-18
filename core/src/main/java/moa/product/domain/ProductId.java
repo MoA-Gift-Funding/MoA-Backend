@@ -6,13 +6,14 @@ import static lombok.AccessLevel.PROTECTED;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Enumerated;
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Embeddable
 @NoArgsConstructor(access = PROTECTED)
-public class ProductId {
+public class ProductId implements Serializable {
 
     @Column(nullable = false, name = "product_id")
     private String productId;  // 각 상품 제공자에서 상품을 구별하기 위해 사용되는 아이디

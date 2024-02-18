@@ -3,9 +3,7 @@ package moa.pay.application;
 import lombok.RequiredArgsConstructor;
 import moa.pay.application.command.PaymentPermitCommand;
 import moa.pay.application.command.TempPaymentSaveCommand;
-import moa.pay.client.PaymentProperty;
 import moa.pay.client.TossClient;
-import moa.pay.client.dto.TossPaymentCancelRequest;
 import moa.pay.client.dto.TossPaymentResponse;
 import moa.pay.domain.TemporaryTossPayment;
 import moa.pay.domain.TemporaryTossPaymentRepository;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 public class TossPaymentService {
 
     private final TossClient tossClient;
-    private final PaymentProperty paymentProperty;
     private final TossPaymentRepository paymentRepository;
     private final TemporaryTossPaymentRepository temporaryTossPaymentRepository;
 
@@ -30,10 +27,7 @@ public class TossPaymentService {
     public void permitPayment(PaymentPermitCommand command) {
         TemporaryTossPayment prePayment = temporaryTossPaymentRepository.getById(command.orderId());
         prePayment.check(command.orderId(), command.amount(), command.memberId());
-        TossPaymentResponse response = tossClient.confirmPayment(
-                paymentProperty.basicAuth(),
-                command.toConfirmRequest()
-        );
+        TossPaymentResponse response = tossClient.confirmPayment(command.toConfirmRequest());
         TossPayment payment = response.toPayment(command.memberId());
         paymentRepository.save(payment);
         temporaryTossPaymentRepository.delete(prePayment);
@@ -43,12 +37,7 @@ public class TossPaymentService {
         TossPayment payment = paymentRepository.getByOrderId(paymentOrderId);
         payment.pendingCancel(reason);
         paymentRepository.save(payment);
-        tossClient.cancelPayment(
-                payment.getPaymentKey(),
-                paymentProperty.basicAuth(),
-                payment.getIdempotencyKeyForCancel(),
-                new TossPaymentCancelRequest(reason)
-        );
+        tossClient.cancelPayment(payment);
         payment.cancel();
         paymentRepository.save(payment);
     }

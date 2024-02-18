@@ -1,14 +1,12 @@
 package moa.product.domain;
 
 import static jakarta.persistence.FetchType.LAZY;
-import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,14 +19,10 @@ import moa.global.domain.RootEntity;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class Product extends RootEntity<Long> {
+public class Product extends RootEntity<ProductId> {
 
-    @Id
-    @GeneratedValue(strategy = IDENTITY)
-    private Long id;
-
-    @Embedded
-    private ProductId productId;
+    @EmbeddedId
+    private ProductId id;
 
     @Column
     private String imageUrl;
@@ -54,7 +48,7 @@ public class Product extends RootEntity<Long> {
     private List<ProductOption> options = new ArrayList<>();
 
     public Product(
-            ProductId productId,
+            ProductId id,
             String imageUrl,
             String brand,
             String category,
@@ -66,7 +60,7 @@ public class Product extends RootEntity<Long> {
             int limitDate,
             List<ProductOption> options
     ) {
-        this.productId = productId;
+        this.id = id;
         this.imageUrl = imageUrl;
         this.brand = brand;
         this.category = category;

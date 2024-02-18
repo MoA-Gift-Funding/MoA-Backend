@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import moa.pay.client.PaymentProperty;
 import moa.pay.client.TossClient;
-import moa.pay.client.dto.TossPaymentCancelRequest;
 import moa.pay.domain.TossPayment;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
@@ -49,7 +47,6 @@ public class PaymentCancelJobConfig {
     private final EntityManagerFactory entityManagerFactory;
     private final JdbcTemplate jdbcTemplate;
     private final TossClient tossClient;
-    private final PaymentProperty paymentProperty;
 
     @Scheduled(cron = EVERY_10_MINUTE_FROM_06_TO_23_HOURS)
     public void launch() throws Exception {
@@ -172,12 +169,7 @@ public class PaymentCancelJobConfig {
         return chunk -> {
             for (TossPayment payment : chunk) {
                 try {
-                    tossClient.cancelPayment(
-                            payment.getPaymentKey(),
-                            paymentProperty.basicAuth(),
-                            payment.getIdempotencyKeyForCancel(),
-                            new TossPaymentCancelRequest(payment.getCancel().getReason())
-                    );
+                    tossClient.cancelPayment(payment);
                     jdbcTemplate.update("""
                             UPDATE toss_payment SET status = 'CANCELED' 
                             WHERE id = ?
