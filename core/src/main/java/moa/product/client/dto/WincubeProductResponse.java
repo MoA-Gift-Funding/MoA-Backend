@@ -1,13 +1,12 @@
 package moa.product.client.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import moa.product.client.dto.WincubeProductResponse.Value.Goods.Option;
+import moa.product.client.dto.WincubeProductResponse.Value.WincubeGoods.Option;
 
 public record WincubeProductResponse(
         Result result,
@@ -19,47 +18,49 @@ public record WincubeProductResponse(
         return result.code.equals(SUCCESS_CODE);
     }
 
-    record Result(
+    public record Result(
             String code,
             String goodsNum
     ) {
     }
 
-    record Value(
+    public record Value(
             List<Map<String, Object>> goodslist
     ) {
         private static final DateTimeFormatter PERIOD_END_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-        record Goods(
+        public record WincubeGoods(
                 String goodsId,
                 String affiliate,  // 상품분류 (GS25)
                 String affiliateCategory,  // 교환처분류 (편의점)
                 String desc, // 상품설명
                 String goodsNm, // 상품명
-
-                @JsonFormat(pattern = "yyyyMMdd")
-                LocalDate period_end, // 상품판매종료일 (20291231)
+                String goodsImg, // 이미지 경로
+                String normalSalePrice, // 소비자 가격
+                LocalDate periodEnd, // 상품판매종료일 (20291231)
                 int limitDate, // 유효기간 (60)
                 List<Option> options
         ) {
-            record Option(
+            public record Option(
                     String name, // 옵션 이름
                     String code  // 옵션코드
             ) {
             }
         }
 
-        public List<Goods> goodsList() {
-            List<Goods> goodsList = new ArrayList<>();
+        public List<WincubeGoods> goodsList() {
+            List<WincubeGoods> goodsList = new ArrayList<>();
             for (Map<String, Object> goodsMap : goodslist) {
-                goodsList.add(new Goods(
+                goodsList.add(new WincubeGoods(
                         (String) goodsMap.get("goods_id"),
                         (String) goodsMap.get("affiliate"),
                         (String) goodsMap.get("affiliate_category"),
                         (String) goodsMap.get("desc"),
                         (String) goodsMap.get("goods_nm"),
+                        (String) goodsMap.get("goods_img"),
+                        (String) goodsMap.get("normal_sale_price"),
                         LocalDate.parse((String) goodsMap.get("period_end"), PERIOD_END_FORMATTER),
-                        (Integer) goodsMap.get("limit_date"),
+                        Integer.parseInt((String) goodsMap.get("limit_date")),
                         getOptions(goodsMap)
                 ));
             }

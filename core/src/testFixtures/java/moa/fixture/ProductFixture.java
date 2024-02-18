@@ -3,7 +3,6 @@ package moa.fixture;
 import static moa.product.domain.ProductId.ProductProvider.WINCUBE;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 import moa.global.domain.Price;
 import moa.product.domain.Product;
@@ -23,8 +22,7 @@ public class ProductFixture {
                 "desc",
                 LocalDate.now().plusDays(1000),
                 0,
-                60,
-                List.of()
+                60
         );
     }
 }

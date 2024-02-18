@@ -48,7 +48,7 @@ public class DevProductController {
     public ResponseEntity<List<ProductResponse>> findAll() {
         List<Product> all = productRepository.findAll();
         List<ProductResponse> list = all.stream()
-                .map(it -> new ProductResponse(it.getId(), it.getName(), it.getPrice().longValue()))
+                .map(it -> new ProductResponse(it.getId(), it.getProductName(), it.getPrice().longValue()))
                 .toList();
         return ResponseEntity.ok(list);
     }

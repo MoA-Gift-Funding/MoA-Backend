@@ -10,6 +10,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,15 @@ import moa.global.domain.RootEntity;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@Table(uniqueConstraints = {
+        @UniqueConstraint(
+                name = "product_id_unique",
+                columnNames = {
+                        "product_id",
+                        "product_provider"
+                }
+        ),
+})
 public class Product extends RootEntity<Long> {
 
     @Id
@@ -37,7 +48,7 @@ public class Product extends RootEntity<Long> {
 
     private String category;
 
-    private String name;
+    private String productName;
 
     @Embedded
     private Price price;
@@ -58,24 +69,26 @@ public class Product extends RootEntity<Long> {
             String imageUrl,
             String brand,
             String category,
-            String name,
+            String productName,
             Price price,
             String description,
             LocalDate saleEndDate,
             int discountRate,
-            int limitDate,
-            List<ProductOption> options
+            int limitDate
     ) {
         this.productId = productId;
         this.imageUrl = imageUrl;
         this.brand = brand;
         this.category = category;
-        this.name = name;
+        this.productName = productName;
         this.price = price;
         this.description = description;
         this.saleEndDate = saleEndDate;
         this.discountRate = discountRate;
         this.limitDate = limitDate;
-        this.options = options;
+    }
+
+    public void addOption(ProductOption productOption) {
+        this.options.add(productOption);
     }
 }

@@ -6,6 +6,7 @@ import static lombok.AccessLevel.PROTECTED;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Enumerated;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,5 +29,22 @@ public class ProductId {
 
     public enum ProductProvider {
         WINCUBE,
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ProductId productId1)) {
+            return false;
+        }
+        return Objects.equals(getProductId(), productId1.getProductId())
+               && getProductProvider() == productId1.getProductProvider();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getProductId(), getProductProvider());
     }
 }
