@@ -13,6 +13,9 @@ import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_참여_요청
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.OK;
 
 import io.restassured.common.mapper.TypeRef;
 import java.time.LocalDate;
@@ -40,10 +43,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DisplayName("펀딩 인수테스트 (FundingAcceptance) 은(는)")
+@DisplayName("펀딩 인수테스트")
 public class FundingAcceptanceTest extends AcceptanceTest {
 
     @Autowired
@@ -111,7 +113,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_생성_요청(준호_token, request);
 
             // then
-            assertStatus(response, HttpStatus.CREATED);
+            assertStatus(response, CREATED);
         }
 
         @Test
@@ -171,7 +173,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 나의_펀딩목록_조회_요청(준호_token);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
             var result = response.as(PageResponse.class);
             assertThat(result.content()).hasSize(2);
         }
@@ -186,7 +188,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_상세_조회_요청(준호_token, fundingId);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
         }
 
         @Test
@@ -217,7 +219,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_상세_조회_요청(준호_token, fundingId);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
             var detailResponse = response.as(FundingDetailResponse.class);
             assertThat(detailResponse.participants().get(0).message())
                     .isEqualTo(participateRequest.message());
@@ -254,7 +256,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_상세_조회_요청(루마_token, fundingId);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
             var detailResponse = response.as(FundingDetailResponse.class);
             assertSoftly(
                     softly -> {
@@ -295,7 +297,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_상세_조회_요청(준호_token, fundingId);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
             var detailResponse = response.as(FundingDetailResponse.class);
             assertThat(detailResponse.participants().get(0).message())
                     .isEqualTo(requestWithInvisibleMessage.message());
@@ -329,7 +331,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_상세_조회_요청(말랑_token, fundingId);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
             var detailResponse = response.as(FundingDetailResponse.class);
             assertThat(detailResponse.participants().get(0).message())
                     .isEqualTo(requestWithInvisibleMessage.message());
@@ -350,7 +352,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_상세_조회_요청(말랑_token, fundingId);
 
             // then
-            assertStatus(response, HttpStatus.FORBIDDEN);
+            assertStatus(response, FORBIDDEN);
         }
 
         @Test
@@ -366,7 +368,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_목록_조회_요청(말랑_token);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
             var result = response.as(PageResponse.class);
             assertThat(result.content()).hasSize(1);
         }
@@ -413,7 +415,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_목록_조회_요청(말랑_token);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
             PageResponse<FundingResponse> pageResponse = response.as(new TypeRef<>() {
             });
             assertThat(pageResponse.content()).hasSize(3);
@@ -432,7 +434,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_목록_조회_요청(준호_token);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
             var result = response.as(PageResponse.class);
             assertThat(result.content()).isEmpty();
         }
@@ -447,7 +449,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_목록_조회_요청(준호_token);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
             var result = response.as(PageResponse.class);
             assertThat(result.content()).isEmpty();
         }
@@ -467,7 +469,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_목록_조회_요청(준호_token);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
             var result = response.as(PageResponse.class);
             assertThat(result.content()).isEmpty();
         }
@@ -487,7 +489,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_목록_조회_요청(준호_token);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
             var result = response.as(PageResponse.class);
             assertThat(result.content()).isEmpty();
         }
@@ -510,7 +512,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_목록_조회_요청(말랑_token);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
             var result = response.as(PageResponse.class);
             assertThat(result.content()).hasSize(1);
         }
@@ -547,7 +549,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_메시지_조회_요청(준호_token);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
             var result = response.as(PageResponse.class);
             assertThat(result.content()).hasSize(1);
         }
@@ -580,7 +582,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
             var response = 펀딩_메시지_조회_요청(준호_token);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
             var result = response.as(PageResponse.class);
             assertThat(result.content()).hasSize(1);
         }

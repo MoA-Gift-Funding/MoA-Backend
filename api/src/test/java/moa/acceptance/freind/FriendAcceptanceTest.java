@@ -7,6 +7,7 @@ import static moa.acceptance.freind.FriendAcceptanceSteps.연락처_동기화;
 import static moa.acceptance.freind.FriendAcceptanceSteps.친구_차단_요청;
 import static moa.acceptance.freind.FriendAcceptanceSteps.친구_차단_해제_요청;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpStatus.OK;
 
 import io.restassured.common.mapper.TypeRef;
 import java.util.List;
@@ -20,10 +21,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DisplayName("친구 인수테스트 (FriendAcceptance) 은(는)")
+@DisplayName("친구 인수테스트")
 public class FriendAcceptanceTest extends AcceptanceTest {
 
     private Member 말랑;
@@ -52,7 +52,7 @@ public class FriendAcceptanceTest extends AcceptanceTest {
             var response = 연락처_동기화(말랑_token, request);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
         }
     }
 
@@ -74,7 +74,7 @@ public class FriendAcceptanceTest extends AcceptanceTest {
                     .extract();
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
         }
     }
 
@@ -91,7 +91,7 @@ public class FriendAcceptanceTest extends AcceptanceTest {
             var response = 친구_차단_요청(말랑_token, 나쁜놈_친구_ID);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
         }
     }
 
@@ -109,7 +109,7 @@ public class FriendAcceptanceTest extends AcceptanceTest {
             var response = 친구_차단_해제_요청(말랑_token, 주노_친구_ID);
 
             // then
-            assertStatus(response, HttpStatus.OK);
+            assertStatus(response, OK);
         }
     }
 

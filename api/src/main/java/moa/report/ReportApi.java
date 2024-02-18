@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import moa.auth.Auth;
 import moa.report.request.ReportWriteRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -28,7 +29,7 @@ public interface ReportApi {
     )
     @Operation(summary = "특정 글 신고")
     @PostMapping
-    void write(
+    ResponseEntity<Void> write(
             @Auth(permit = {SIGNED_UP}) Long memberId,
             @Valid @RequestBody ReportWriteRequest request
     );
