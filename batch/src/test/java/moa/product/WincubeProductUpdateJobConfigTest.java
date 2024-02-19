@@ -1,5 +1,13 @@
 package moa.product;
 
+import static moa.fixture.FundingFixture.funding;
+import static moa.fixture.MemberFixture.member;
+import static moa.funding.domain.FundingStatus.CANCELLED;
+import static moa.funding.domain.FundingStatus.COMPLETED;
+import static moa.funding.domain.FundingStatus.EXPIRED;
+import static moa.funding.domain.FundingStatus.PROCESSING;
+import static moa.funding.domain.FundingStatus.STOPPED;
+import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.product.client.dto.WincubeProductResponse.SUCCESS_CODE;
 import static moa.product.domain.ProductId.ProductProvider.WINCUBE;
 import static moa.product.domain.ProductOptionStatus.NOT_SUPPORTED;
@@ -7,14 +15,19 @@ import static moa.product.domain.ProductStatus.SALES;
 import static moa.product.domain.ProductStatus.SALES_DISCONTINUED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.batch.core.BatchStatus.COMPLETED;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import moa.BatchTest;
+import moa.funding.domain.Funding;
+import moa.funding.domain.FundingRepository;
 import moa.global.domain.Price;
+import moa.member.domain.Member;
+import moa.member.domain.MemberRepository;
+import moa.notification.domain.Notification;
+import moa.notification.domain.NotificationRepository;
 import moa.product.client.WincubeClient;
 import moa.product.client.dto.WincubeProductResponse;
 import moa.product.client.dto.WincubeProductResponse.Result;
@@ -55,6 +68,15 @@ class WincubeProductUpdateJobConfigTest {
 
     @Autowired
     private ProductOptionRepository productOptionRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private FundingRepository fundingRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     @Autowired
     private TransactionTemplate transactionTemplate;
@@ -119,14 +141,14 @@ class WincubeProductUpdateJobConfigTest {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 
         // then
-        assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
+        assertThat(jobExecution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
         transactionTemplate.executeWithoutResult(status -> {
             List<Product> all = productRepository.findAll();
             assertThat(all).hasSize(3);
             Product updated = productRepository.getByProductId(new ProductId("1", WINCUBE));
             Product deleted = productRepository.getByProductId(new ProductId("2", WINCUBE));
             Product inserted = productRepository.getByProductId(new ProductId("3", WINCUBE));
-            
+
             assertThat(updated.getProductName()).isEqualTo("빼빼로");
             assertThat(updated.getStatus()).isEqualTo(SALES);
             assertThat(updated.getOptions())
@@ -145,6 +167,59 @@ class WincubeProductUpdateJobConfigTest {
                     .containsOnly(NOT_SUPPORTED);
 
             assertThat(inserted.getProductName()).isEqualTo("안성탕면");
+        });
+    }
+
+    @Test
+    void 진행중인_펀딩_중_상품이_판매중지된_펀딩이_있으면_즉시_중단하고_알림을_전송한다() throws Exception {
+        Product product = productRepository.save(product("1"));
+        Member member = memberRepository.save(member(null, "mal", "010-1111-1111", SIGNED_UP));
+        Funding processing = fundingRepository.save(funding(member, product, PROCESSING));
+        Funding expired = fundingRepository.save(funding(member, product, EXPIRED));
+        Funding canceled = fundingRepository.save(funding(member, product, CANCELLED));
+        Funding completed = fundingRepository.save(funding(member, product, COMPLETED));
+        given(wincubeClient.getProductList())
+                .willReturn(new WincubeProductResponse(
+                        new Result(SUCCESS_CODE, "2"),
+                        new Value(List.of(
+                                new HashMap<>() {{
+                                    put("goods_id", "3");
+                                    put("affiliate", "CU");
+                                    put("affiliate_category", "편의점");
+                                    put("desc", "안성의 자랑 안성탕면");
+                                    put("goods_nm", "안성탕면");
+                                    put("goods_img", "http://안성탕면.jpg");
+                                    put("normal_sale_price", "1200");
+                                    put("period_end", "20291211");
+                                    put("limit_date", "70");
+                                }}
+                        ))
+                ));
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addLocalDateTime("now", LocalDateTime.now())
+                .toJobParameters();
+
+        // when
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
+
+        // then
+        transactionTemplate.executeWithoutResult(status -> {
+            Funding stopped = fundingRepository.getById(processing.getId());
+            assertThat(stopped.getStatus()).isEqualTo(STOPPED);
+
+            Funding nonUpdateExpired = fundingRepository.getById(expired.getId());
+            assertThat(nonUpdateExpired.getStatus()).isEqualTo(EXPIRED);
+
+            Funding nonUpdateCanceled = fundingRepository.getById(canceled.getId());
+            assertThat(nonUpdateCanceled.getStatus()).isEqualTo(CANCELLED);
+
+            Funding nonUpdateCompleted = fundingRepository.getById(completed.getId());
+            assertThat(nonUpdateCompleted.getStatus()).isEqualTo(COMPLETED);
+
+            assertThat(notificationRepository.findAll())
+                    .hasSize(1)
+                    .extracting(Notification::getTitle)
+                    .containsOnly("펀딩 중단");
         });
     }
 

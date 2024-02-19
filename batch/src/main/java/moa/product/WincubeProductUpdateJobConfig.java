@@ -4,11 +4,16 @@ import static moa.Crons.WHEN_12_AND_24_HOURS;
 import static moa.product.domain.ProductId.ProductProvider.WINCUBE;
 import static org.springframework.batch.repeat.RepeatStatus.FINISHED;
 
+import jakarta.persistence.EntityManagerFactory;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moa.funding.domain.Funding;
+import moa.notification.application.NotificationService;
+import moa.notification.domain.Notification;
+import moa.notification.domain.NotificationFactory;
 import moa.product.client.WincubeClient;
 import moa.product.client.dto.WincubeProductResponse;
 import moa.product.client.dto.WincubeProductResponse.Value.WincubeGoods;
@@ -28,6 +33,8 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.JpaCursorItemReader;
+import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -49,6 +56,9 @@ public class WincubeProductUpdateJobConfig {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final WincubeClient wincubeClient;
     private final ProductRepository productRepository;
+    private final EntityManagerFactory entityManagerFactory;
+    private final NotificationService notificationService;
+    private final NotificationFactory notificationFactory;
 
     @Scheduled(cron = WHEN_12_AND_24_HOURS)
     public void launch() throws Exception {
@@ -66,13 +76,15 @@ public class WincubeProductUpdateJobConfig {
      * 모든 작업 이후 업데이트 일자가 @param now 가 아닌 상품과 상품 옵션은,
      * <p/>
      * 제거된 데이터라고 판단하여 `판매 종료`상태로 변경한다.
+     * <p/>
+     * 판매 종료된 상품으로 진행되는 펀딩이 있으면 중지시킨다.
      */
     @Bean
     public Job wincubeProductUpdateJob() {
         return new JobBuilder("wincubeProductUpdateJob", jobRepository)
                 .start(wincubeProductUpdateStep(null))
-                .next(deleteRemovedProductStep(null))
-                // TODO 회의 이후 판매 중지된 상품으로 진행중인 펀딩에 대해 어떤 처리를 할 지 추가한다.
+                .next(changeStatusRemovedProductStep(null))
+                .next(changeFundingStatusToStopStep())
                 .build();
     }
 
@@ -90,7 +102,7 @@ public class WincubeProductUpdateJobConfig {
                 .<WincubeGoods, ProductDto>chunk(100, transactionManager)
                 .reader(wincubeProductReader())
                 .processor(wincubeResponseToEntityProcessor(null))
-                .writer(productWriter(null))
+                .writer(productWriter())
                 .build();
     }
 
@@ -123,9 +135,7 @@ public class WincubeProductUpdateJobConfig {
 
     @Bean
     @StepScope
-    public ItemWriter<ProductDto> productWriter(
-            @Value("#{jobParameters[now]}") LocalDateTime now
-    ) {
+    public ItemWriter<ProductDto> productWriter() {
         return chunk -> {
             List<? extends ProductDto> items = chunk.getItems();
             namedParameterJdbcTemplate.batchUpdate("""
@@ -221,13 +231,13 @@ public class WincubeProductUpdateJobConfig {
      */
     @Bean
     @JobScope
-    public Step deleteRemovedProductStep(
+    public Step changeStatusRemovedProductStep(
             @Value("#{jobParameters[now]}") LocalDateTime now
     ) {
-        return new StepBuilder("deleteRemovedProductStep", jobRepository)
+        return new StepBuilder("changeStatusRemovedProductStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
                     changeDeletedProductStatus(now);
-                    deleteDeletedProductOptions(now);
+                    changeDeletedProductOptionsStatus(now);
                     return FINISHED;
                 }, transactionManager)
                 .build();
@@ -244,22 +254,30 @@ public class WincubeProductUpdateJobConfig {
                 new SingleColumnRowMapper<>());
 
         namedParameterJdbcTemplate.update("""
-                UPDATE product_option po
-                SET po.status = 'NOT_SUPPORTED'
-                WHERE po.product_id IN (:ids)
-                """, Map.of("ids", deleteCandidateProductIds));
+                        UPDATE product_option po
+                        SET po.status = 'NOT_SUPPORTED', po.updated_date = :now
+                        WHERE po.product_id IN (:ids)
+                        """,
+                Map.of(
+                        "now", now,
+                        "ids", deleteCandidateProductIds
+                ));
 
         namedParameterJdbcTemplate.update("""
-                UPDATE product p
-                SET p.status = 'SALES_DISCONTINUED'
-                WHERE p.id IN (:ids)
-                """, Map.of("ids", deleteCandidateProductIds));
+                        UPDATE product p
+                        SET p.status = 'SALES_DISCONTINUED', p.updated_date = :now
+                        WHERE p.id IN (:ids)
+                        """,
+                Map.of(
+                        "now", now,
+                        "ids", deleteCandidateProductIds
+                ));
     }
 
-    private void deleteDeletedProductOptions(LocalDateTime now) {
+    private void changeDeletedProductOptionsStatus(LocalDateTime now) {
         namedParameterJdbcTemplate.update("""
                 UPDATE product_option po
-                SET po.status = 'NOT_SUPPORTED'
+                SET po.status = 'NOT_SUPPORTED', po.updated_date = :now
                 WHERE po.id IN (
                     SELECT po.id
                     FROM product_option po
@@ -268,5 +286,67 @@ public class WincubeProductUpdateJobConfig {
                     AND p.product_provider = 'WINCUBE'
                 ) 
                 """, Map.of("now", now));
+    }
+
+    /**
+     * 판매 종료된 상품으로 진행되는 펀딩이 있으면 중지시키고,
+     * <p/>
+     * 펀딩 주인한테 푸쉬알림을 보낸다.
+     */
+    @Bean
+    public Step changeFundingStatusToStopStep() {
+        return new StepBuilder("changeFundingStatusToStopStep", jobRepository)
+                .<Funding, Funding>chunk(100, transactionManager)
+                .reader(stoppedCandidateFundingReader())
+                .writer(fundingStopAndSendNotificationWriter())
+                .build();
+    }
+
+    /**
+     * 현재 `진행중`인 펀딩들 중, 상품이 판매 중지된 펀딩들을 읽어온다.
+     */
+    @Bean
+    public JpaCursorItemReader<Funding> stoppedCandidateFundingReader() {
+        return new JpaCursorItemReaderBuilder<Funding>()
+                .name("stoppedCandidateFundingReader")
+                .entityManagerFactory(entityManagerFactory)
+                .queryString("""
+                        SELECT f FROM Funding f
+                        JOIN FETCH f.member
+                        JOIN f.product p
+                        WHERE p.status = 'SALES_DISCONTINUED'
+                        AND f.status = 'PROCESSING'
+                        """)
+                .build();
+    }
+
+    @Bean
+    public ItemWriter<Funding> fundingStopAndSendNotificationWriter() {
+        return chunk -> {
+            List<? extends Funding> fundings = chunk.getItems();
+            stopFundings(fundings);
+            sendNotification(fundings);
+        };
+    }
+
+    private void stopFundings(List<? extends Funding> fundings) {
+        List<Long> fundingIds = fundings.stream()
+                .map(Funding::getId)
+                .toList();
+        namedParameterJdbcTemplate.update("""
+                UPDATE funding f
+                SET f.status = 'STOPPED'
+                WHERE f.id IN(:fundingIds)
+                """, Map.of("fundingIds", fundingIds));
+    }
+
+    private void sendNotification(List<? extends Funding> fundings) {
+        for (Funding funding : fundings) {
+            Notification notification = notificationFactory.generateFundingStoppedNotification(
+                    funding.getId(),
+                    funding.getMember()
+            );
+            notificationService.push(notification);
+        }
     }
 }

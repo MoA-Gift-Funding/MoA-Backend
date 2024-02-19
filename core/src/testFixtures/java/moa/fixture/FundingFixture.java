@@ -2,10 +2,12 @@ package moa.fixture;
 
 import java.time.LocalDate;
 import moa.funding.domain.Funding;
+import moa.funding.domain.FundingStatus;
 import moa.funding.domain.FundingVisibility;
 import moa.global.domain.Price;
 import moa.member.domain.Member;
 import moa.product.domain.Product;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class FundingFixture {
 
@@ -35,6 +37,27 @@ public class FundingFixture {
                 null,
                 ""
         );
+        return funding;
+    }
+
+    public static Funding funding(
+            Member owner,
+            Product product,
+            FundingStatus status
+    ) {
+        Funding funding = new Funding(
+                null,
+                "",
+                "",
+                LocalDate.now().plusDays(10),
+                FundingVisibility.PUBLIC,
+                Price.from("5000"),
+                owner,
+                product,
+                null,
+                ""
+        );
+        ReflectionTestUtils.setField(funding, "status", status);
         return funding;
     }
 }
