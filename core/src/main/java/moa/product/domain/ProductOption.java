@@ -14,9 +14,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import moa.global.domain.BaseTimeEntity;
 
 @Getter
 @Entity
@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Table(uniqueConstraints = {
         @UniqueConstraint(columnNames = {"product_id", "code"})
 })
-public class ProductOption {
+public class ProductOption extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -41,9 +41,6 @@ public class ProductOption {
 
     @Enumerated(STRING)
     private ProductOptionStatus status;
-
-    private LocalDateTime createdDate;
-    private LocalDateTime updatedDate;
 
     public ProductOption(String optionName, String code, Product product) {
         this.optionName = optionName;
