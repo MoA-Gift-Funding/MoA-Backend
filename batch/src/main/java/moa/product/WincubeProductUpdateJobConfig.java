@@ -65,7 +65,7 @@ public class WincubeProductUpdateJobConfig {
      * <p/>
      * 모든 작업 이후 업데이트 일자가 @param now 가 아닌 상품과 상품 옵션은,
      * <p/>
-     * 제거된 데이터라고 판단하여 모두 제거한다
+     * 제거된 데이터라고 판단하여 `판매 종료`상태로 변경한다.
      */
     @Bean
     public Job wincubeProductUpdateJob() {
@@ -217,7 +217,7 @@ public class WincubeProductUpdateJobConfig {
     /**
      * 모든 작업 이후 업데이트 일자가 @Param(now) 가 아닌 상품과 상품 옵션은,
      * <p/>
-     * 제거된 데이터라고 판단하여 모두 제거한다
+     * 제거된 데이터라고 판단하여 `판매 종료`상태로 변경한다.
      */
     @Bean
     @JobScope
@@ -241,7 +241,7 @@ public class WincubeProductUpdateJobConfig {
                         AND updated_date < :now
                         """,
                 Map.of("now", now),
-                new SingleColumnRowMapper<Long>());
+                new SingleColumnRowMapper<>());
 
         namedParameterJdbcTemplate.update("""
                 UPDATE product_option po

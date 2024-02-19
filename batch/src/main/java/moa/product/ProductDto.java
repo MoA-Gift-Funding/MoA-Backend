@@ -1,12 +1,13 @@
 package moa.product;
 
+import static moa.product.domain.ProductId.ProductProvider.WINCUBE;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import moa.product.client.dto.WincubeProductResponse.Value.WincubeGoods;
-import moa.product.domain.ProductId.ProductProvider;
 
 public record ProductDto(
         String productId,
@@ -27,7 +28,7 @@ public record ProductDto(
     public ProductDto(WincubeGoods goods, LocalDateTime now) {
         this(
                 goods.goodsId(),
-                ProductProvider.WINCUBE.name(),
+                WINCUBE.name(),
                 goods.goodsImg(),
                 goods.affiliate(),
                 goods.affiliateCategory(),
