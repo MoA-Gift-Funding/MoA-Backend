@@ -33,18 +33,9 @@ public interface MemberApi {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200"),
-                    @ApiResponse(
-                            responseCode = "400",
-                            content = @Content(schema = @Schema(hidden = true))
-                    ),
-                    @ApiResponse(
-                            responseCode = "401",
-                            content = @Content(schema = @Schema(hidden = true))
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            content = @Content(schema = @Schema(hidden = true))
-                    ),
+                    @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
             }
     )
     @Operation(summary = "회원 프로필 조회")
@@ -76,7 +67,7 @@ public interface MemberApi {
                     @ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "400"),
                     @ApiResponse(responseCode = "401"),
-                    @ApiResponse(responseCode = "403", description = "핸드폰 검증이 이루어지지 않은 경우"),
+                    @ApiResponse(responseCode = "403"),
                     @ApiResponse(responseCode = "404"),
                     @ApiResponse(responseCode = "409", description = "해당 번호를 사용하는 다른 사용자가 이미 존재하는 경우"),
             }
@@ -110,23 +101,10 @@ public interface MemberApi {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200"),
-                    @ApiResponse(
-                            responseCode = "400",
-                            content = @Content(schema = @Schema(hidden = true))
-                    ),
-                    @ApiResponse(
-                            responseCode = "401",
-                            content = @Content(schema = @Schema(hidden = true))
-                    ),
-                    @ApiResponse(
-                            responseCode = "403",
-                            description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)",
-                            content = @Content(schema = @Schema(hidden = true))
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            content = @Content(schema = @Schema(hidden = true))
-                    ),
+                    @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
             }
     )
     @Operation(summary = "푸쉬알림 동의 여부 조회")
@@ -140,7 +118,7 @@ public interface MemberApi {
                     @ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "400"),
                     @ApiResponse(responseCode = "401"),
-                    @ApiResponse(responseCode = "403", description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)"),
+                    @ApiResponse(responseCode = "403"),
                     @ApiResponse(responseCode = "404"),
             }
     )
@@ -158,7 +136,7 @@ public interface MemberApi {
                     @ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "400"),
                     @ApiResponse(responseCode = "401"),
-                    @ApiResponse(responseCode = "403", description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)"),
+                    @ApiResponse(responseCode = "403"),
                     @ApiResponse(responseCode = "404"),
             }
     )
@@ -173,7 +151,7 @@ public interface MemberApi {
                     @ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "400"),
                     @ApiResponse(responseCode = "401"),
-                    @ApiResponse(responseCode = "403", description = "회원가입되지 않은 회원의 경우(임시 회원가입인 경우도 해당 케이스)"),
+                    @ApiResponse(responseCode = "403"),
                     @ApiResponse(responseCode = "404"),
             }
     )
