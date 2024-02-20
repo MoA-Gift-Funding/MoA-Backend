@@ -78,7 +78,6 @@ public class NotificationFactory {
         );
     }
 
-
     public Notification generateFundingSoonExpireNotification(
             String fundingTitle,
             String productImageUrl,
@@ -93,7 +92,6 @@ public class NotificationFactory {
                 productImageUrl,
                 CHECK,
                 target
-
         );
     }
 }
