@@ -4,6 +4,7 @@ import static moa.fixture.MemberFixture.member;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.notification.domain.NotificationType.PARTY;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.batch.core.BatchStatus.COMPLETED;
 
 import java.time.LocalDateTime;
 import moa.BatchTest;
@@ -62,6 +63,7 @@ class RemoveNotificationJobConfigTest {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 
         // then
+        assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
         Integer count = notificationRepository.findAll().size();
         assertThat(count).isEqualTo(2);
     }
