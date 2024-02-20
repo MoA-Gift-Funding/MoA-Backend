@@ -2,7 +2,6 @@ package moa.notification;
 
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
-import static moa.fixture.ProductFixture.product;
 import static moa.funding.domain.FundingStatus.EXPIRED;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,6 +19,7 @@ import moa.global.domain.Price;
 import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import moa.notification.domain.NotificationRepository;
+import moa.product.domain.Product;
 import moa.product.domain.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -35,13 +35,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 @BatchTest
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class FundingExpiredNotificationJobConfigTest {
+class FundingSoonExpireNotificationConfigTest {
 
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
-    private Job fundingExpireNotificationJob;
+    private Job fundingSoonExpireNotificationJob;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -60,23 +60,23 @@ class FundingExpiredNotificationJobConfigTest {
 
     @BeforeEach
     void setUp() {
-        jobLauncherTestUtils.setJob(fundingExpireNotificationJob);
+        jobLauncherTestUtils.setJob(fundingSoonExpireNotificationJob);
     }
 
     @Test
-    void 어제_만료된_펀딩에_대해_알림_발송() throws Exception {
+    void 다음날_만료될_펀딩에_대해_알림_발송() throws Exception {
         // given
         Member owner = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
         Member part = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
         friendRepository.save(new Friend(owner, part, "1"));
         friendRepository.save(new Friend(part, owner, "1"));
 
-        // 24년 1월 20일 00시 00분 기준
-        LocalDateTime now = LocalDateTime.of(2024, 1, 20, 20, 0, 0);
-        var 만료_1일차 = 펀딩_생성(owner, LocalDate.of(2024, 1, 19)); // 알림 발송 대상
+        // 24년 1월 20일 20시 00분 기준
+        LocalDateTime now = LocalDateTime.of(2024, 1, 20, 0, 0, 0);
+        var 만료_1일차 = 펀딩_생성(owner, LocalDate.of(2024, 1, 19));
         var 만료_2일차 = 펀딩_생성(owner, LocalDate.of(2024, 1, 18));
         var 진행중 = 펀딩_생성(owner, LocalDate.of(2024, 1, 20));
-        var 진행중2 = 펀딩_생성(owner, LocalDate.of(2024, 1, 21));
+        var 진행중2 = 펀딩_생성(owner, LocalDate.of(2024, 1, 21)); // 알림 발송 대상
 
         // when
         JobParameters jobParameters = new JobParametersBuilder()
@@ -93,7 +93,7 @@ class FundingExpiredNotificationJobConfigTest {
     private Funding 펀딩_생성(Member owner, LocalDate endDate) {
         Funding funding = funding(
                 owner,
-                productRepository.save(product("", Price.from("1000000"))),
+                productRepository.save(new Product("", Price.from("1000000"))),
                 "10000",
                 endDate
         );

@@ -1,6 +1,6 @@
 package moa.notification;
 
-import static moa.Crons.EVERY_MIDNIGHT;
+import static moa.Crons.EVERY_8PM;
 
 import jakarta.persistence.EntityManagerFactory;
 import java.time.LocalDateTime;
@@ -34,7 +34,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class FundingExpiredNotificationJobConfig {
+public class FundingSoonExpireNotificationConfig {
 
     private final JobLauncher jobLauncher;
     private final JobRepository jobRepository;
@@ -43,59 +43,59 @@ public class FundingExpiredNotificationJobConfig {
     private final EntityManagerFactory entityManagerFactory;
     private final PlatformTransactionManager transactionManager;
 
-    @Scheduled(cron = EVERY_MIDNIGHT)
+    @Scheduled(cron = EVERY_8PM)
     public void launch() throws Exception {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLocalDateTime("now", LocalDateTime.now())
                 .toJobParameters();
-        jobLauncher.run(fundingExpireNotificationJob(), jobParameters);
+        jobLauncher.run(fundingSoonExpireNotificationJob(), jobParameters);
     }
 
     @Bean
-    public Job fundingExpireNotificationJob() {
-        return new JobBuilder("fundingExpireNotificationJob", jobRepository)
-                .start(sendNotificationToExpiredFundingStep(null))
+    public Job fundingSoonExpireNotificationJob() {
+        return new JobBuilder("fundingSoonExpireNotificationJob", jobRepository)
+                .start(sendNotificationSoonExpireFundingStep(null))
                 .build();
     }
 
     /**
-     * 만료되고 하루가 지난 펀딩에 대해 알림을 발송한다.
+     * 만료 하루 전인 펀딩에 대해 알림을 전송한다.
      */
     @Bean
     @JobScope
-    public Step sendNotificationToExpiredFundingStep(
+    public Step sendNotificationSoonExpireFundingStep(
             @Value("#{jobParameters[now]}") LocalDateTime now
     ) {
-        log.info("[만료된 펀딩 알림] 배치작업 수행 time: {}]", now);
-        return new StepBuilder("sendNotificationStep", jobRepository)
+        log.info("[만료 임박 펀딩 알림] 배치작업 수행 time: {}]", now);
+        return new StepBuilder("sendNotificationSoonExpireFundingStep", jobRepository)
                 .<Funding, Notification>chunk(100, transactionManager)
-                .reader(expiredNotificationTargetFundingReader(null))
-                .processor(expiredNotificationTargetFundingProcessor())
-                .writer(expiredNotificationTargetFundingWriter())
+                .reader(soonExpireNotificationTargetFundingReader(null))
+                .processor(soonExpireNotificationTargetFundingProcessor())
+                .writer(soonExpireNotificationTargetFundingWriter())
                 .build();
     }
 
     @Bean
     @StepScope
-    public JpaCursorItemReader<Funding> expiredNotificationTargetFundingReader(
+    public JpaCursorItemReader<Funding> soonExpireNotificationTargetFundingReader(
             @Value("#{jobParameters[now]}") LocalDateTime now
     ) {
         return new JpaCursorItemReaderBuilder<Funding>()
-                .name("expiredNotificationTargetFundingReader")
+                .name("soonExpireNotificationTargetFundingReader")
                 .entityManagerFactory(entityManagerFactory)
                 .queryString("""
                         SELECT f FROM Funding f
                         WHERE f.status = 'EXPIRED'
-                        AND f.endDate = :yesterday
+                        AND f.endDate = :tomorrow
                         """)
-                .parameterValues(Map.of("yesterday", now.minusDays(1).toLocalDate()))
+                .parameterValues(Map.of("tomorrow", now.plusDays(1).toLocalDate()))
                 .build();
     }
 
     @Bean
     @StepScope
-    public ItemProcessor<Funding, Notification> expiredNotificationTargetFundingProcessor() {
-        return funding -> notificationFactory.generateFundingExpiredNotification(
+    public ItemProcessor<Funding, Notification> soonExpireNotificationTargetFundingProcessor() {
+        return funding -> notificationFactory.generateFundingSoonExpireNotification(
                 funding.getTitle(),
                 funding.getProduct().getImageUrl(),
                 funding.getId(),
@@ -105,7 +105,7 @@ public class FundingExpiredNotificationJobConfig {
 
     @Bean
     @StepScope
-    public ItemWriter<Notification> expiredNotificationTargetFundingWriter() {
+    public ItemWriter<Notification> soonExpireNotificationTargetFundingWriter() {
         return notifications -> {
             try {
                 for (Notification notification : notifications) {
