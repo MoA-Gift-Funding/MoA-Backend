@@ -10,6 +10,7 @@ import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_목록_조회
 import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_상세_조회_요청;
 import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_생성_요청;
 import static moa.acceptance.funding.FundingAcceptanceSteps.펀딩_참여_요청;
+import static moa.fixture.ProductFixture.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -72,7 +73,7 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         말랑 = signup("말랑", "010-1234-5678");
         준호_token = login(준호);
         말랑_token = login(말랑);
-        상품 = productRepository.save(new Product("에어팟 맥스", Price.from(700000L)));
+        상품 = productRepository.save(product("에어팟 맥스", Price.from(700000L)));
         준호_배송_정보 = deliveryRepository.save(new DeliveryAddress(
                 준호,
                 "준호집",

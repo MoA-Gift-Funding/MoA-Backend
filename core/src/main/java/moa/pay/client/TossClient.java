@@ -1,32 +1,29 @@
 package moa.pay.client;
 
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
+import lombok.RequiredArgsConstructor;
 import moa.pay.client.dto.TossPaymentCancelRequest;
 import moa.pay.client.dto.TossPaymentConfirmRequest;
 import moa.pay.client.dto.TossPaymentResponse;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.service.annotation.HttpExchange;
-import org.springframework.web.service.annotation.PostExchange;
+import moa.pay.domain.TossPayment;
+import org.springframework.stereotype.Component;
 
-@HttpExchange("https://api.tosspayments.com/v1/payments")
-public interface TossClient {
+@Component
+@RequiredArgsConstructor
+public class TossClient {
 
-    @PostExchange(url = "/confirm", contentType = APPLICATION_JSON_VALUE)
-    TossPaymentResponse confirmPayment(
-            @RequestHeader(AUTHORIZATION) String authorization,
-            @RequestBody TossPaymentConfirmRequest request
-    );
+    private final PaymentProperty paymentProperty;
+    private final TossApiClient client;
 
-    @PostExchange(url = "/{paymentKey}/cancel", contentType = APPLICATION_JSON_VALUE)
-    TossPaymentResponse cancelPayment(
-            @PathVariable("paymentKey") String paymentKey,
-            @RequestHeader(AUTHORIZATION) String authorization,
-            @RequestHeader("Idempotency-Key") String idempotencyKey,
-            @RequestBody TossPaymentCancelRequest request
-    );
+    public TossPaymentResponse confirmPayment(TossPaymentConfirmRequest request) {
+        return client.confirmPayment(paymentProperty.basicAuth(), request);
+    }
+
+    public TossPaymentResponse cancelPayment(TossPayment payment) {
+        return client.cancelPayment(
+                payment.getPaymentKey(),
+                paymentProperty.basicAuth(),
+                payment.getIdempotencyKeyForCancel(),
+                new TossPaymentCancelRequest(payment.getCancel().getReason())
+        );
+    }
 }

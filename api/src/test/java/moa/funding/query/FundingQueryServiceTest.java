@@ -2,6 +2,7 @@ package moa.funding.query;
 
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
+import static moa.fixture.ProductFixture.product;
 import static moa.fixture.TossPaymentFixture.tossPayment;
 import static moa.funding.domain.MessageVisibility.PUBLIC;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
@@ -62,7 +63,7 @@ class FundingQueryServiceTest {
     @Test
     void 내가_참여한_펀딩을_조회한다() {
         // given
-        Product product = productRepository.save(new Product("상품", Price.from("20000")));
+        Product product = productRepository.save(product("상품", Price.from("20000")));
         Member member1 = memberRepository.save(member(null, "사람1", "", SIGNED_UP));
         Member member2 = memberRepository.save(member(null, "사람2", "", SIGNED_UP));
         Member member3 = memberRepository.save(member(null, "사람3", "", SIGNED_UP));

@@ -1,5 +1,6 @@
 package moa.notification.domain;
 
+import static moa.notification.domain.NotificationType.CHECK;
 import static moa.notification.domain.NotificationType.PARTY;
 
 import moa.member.domain.Member;
@@ -39,6 +40,20 @@ public class NotificationFactory {
                         .formatted(fundingTitle),
                 productImageUrl,
                 PARTY,
+                target
+        );
+    }
+
+    public Notification generateFundingStoppedNotification(
+            Long fundingId,
+            Member target
+    ) {
+        return new Notification(
+                "giftMoA://navigation?name=MyFunding&fundingId=" + fundingId,
+                "펀딩 중단",
+                "입점사의 펀딩 상품 공급 중단 이슈로 펀딩이 취소되었어요🥲 마이페이지에서 입금받을 계좌 번호를 입력해주세요.",
+                null,
+                CHECK,
                 target
         );
     }

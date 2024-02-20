@@ -2,6 +2,7 @@ package moa.funding;
 
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
+import static moa.fixture.ProductFixture.product;
 import static moa.fixture.TossPaymentFixture.tossPayment;
 import static moa.funding.domain.FundingStatus.CANCELLED;
 import static moa.funding.domain.FundingStatus.EXPIRED;
@@ -31,7 +32,6 @@ import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import moa.pay.domain.TossPayment;
 import moa.pay.domain.TossPaymentRepository;
-import moa.product.domain.Product;
 import moa.product.domain.ProductRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Test;
@@ -109,7 +109,7 @@ class FundingCancelJobConfigTest {
         // given
         Funding funding = funding(
                 owner,
-                productRepository.save(new Product("", Price.from("1000000"))),
+                productRepository.save(product("", Price.from("1000000"))),
                 "10000",
                 endDate
         );

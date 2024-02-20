@@ -7,7 +7,6 @@ import static moa.pay.exception.TossPaymentExceptionType.TOSS_API_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.anyString;
 import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
@@ -64,12 +63,7 @@ class TossPaymentServiceTest {
             // given
             willThrow(new TossPaymentException(TOSS_API_ERROR))
                     .given(tossClient)
-                    .cancelPayment(
-                            anyString(),
-                            anyString(),
-                            anyString(),
-                            any()
-                    );
+                    .cancelPayment(any());
 
             // when
             MoaExceptionType exceptionType = assertThrows(TossPaymentException.class, () -> {
@@ -103,12 +97,7 @@ class TossPaymentServiceTest {
             // given
             willThrow(new TossPaymentException(TOSS_API_ERROR))
                     .given(tossClient)
-                    .cancelPayment(
-                            anyString(),
-                            anyString(),
-                            anyString(),
-                            any()
-                    );
+                    .cancelPayment(any());
             try {
                 tossPaymentService.cancelPayment(
                         payment.getOrderId(),
@@ -119,12 +108,7 @@ class TossPaymentServiceTest {
 
             willReturn(mock(TossPaymentResponse.class))
                     .given(tossClient)
-                    .cancelPayment(
-                            anyString(),
-                            anyString(),
-                            anyString(),
-                            any()
-                    );
+                    .cancelPayment(any());
 
             // when
             tossPaymentService.cancelPayment(

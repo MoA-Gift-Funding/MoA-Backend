@@ -14,6 +14,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +28,15 @@ import org.hibernate.annotations.SQLDelete;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @SQLDelete(sql = "UPDATE member SET status = 'WITHDRAW' WHERE id = ?")
+@Table(uniqueConstraints = {
+        @UniqueConstraint(
+                name = "oauth_id_unique",
+                columnNames = {
+                        "oauth_id",
+                        "oauth_provider"
+                }
+        ),
+})
 public class Member extends RootEntity<Long> {
 
     @Id

@@ -12,9 +12,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.time.LocalDateTime;
 import moa.BatchTest;
-import moa.pay.client.PaymentProperty;
 import moa.pay.client.TossClient;
-import moa.pay.client.dto.TossPaymentCancelRequest;
 import moa.pay.domain.TossPayment;
 import moa.pay.domain.TossPaymentCancel;
 import moa.pay.domain.TossPaymentRepository;
@@ -44,9 +42,6 @@ class PaymentCancelJobConfigTest {
 
     @Autowired
     private TossPaymentRepository tossPaymentRepository;
-
-    @Autowired
-    private PaymentProperty paymentProperty;
 
     @MockBean
     private TossClient tossClient;
@@ -98,12 +93,7 @@ class PaymentCancelJobConfigTest {
                 .addLocalDateTime("now", now)
                 .toJobParameters();
         willThrow(new TossPaymentException(TOSS_API_ERROR))
-                .given(tossClient).cancelPayment(
-                        결제대기_1.getPaymentKey(),
-                        paymentProperty.basicAuth(),
-                        결제대기_1.getIdempotencyKeyForCancel(),
-                        new TossPaymentCancelRequest(결제대기_1.getCancel().getReason())
-                );
+                .given(tossClient).cancelPayment(결제대기_1);
 
         // when
         jobLauncherTestUtils.launchJob(jobParameters);

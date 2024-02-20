@@ -20,7 +20,7 @@ import org.springframework.web.client.RestClient;
 public class PaymentClientConfig {
 
     @Bean
-    public TossClient tossClient() {
+    public TossApiClient tossApiClient() {
         RestClient build = RestClient.builder()
                 .defaultStatusHandler(HttpStatusCode::isError, (request, response) -> {
                     throw new TossPaymentException(TOSS_API_ERROR.withDetail(
@@ -28,6 +28,6 @@ public class PaymentClientConfig {
                     ).setStatus(HttpStatus.valueOf(response.getStatusCode().value())));
                 })
                 .build();
-        return HttpInterfaceUtil.createHttpInterface(build, TossClient.class);
+        return HttpInterfaceUtil.createHttpInterface(build, TossApiClient.class);
     }
 }

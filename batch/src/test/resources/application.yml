@@ -3,7 +3,6 @@ spring:
     active: test
     include:
       - core-test
-
 logging:
   level:
     org.springframework.jdbc.core.JdbcTemplate: debug
