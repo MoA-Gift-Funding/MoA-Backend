@@ -85,7 +85,6 @@ public class FundingSoonExpireNotificationJobConfig {
                 .entityManagerFactory(entityManagerFactory)
                 .queryString("""
                         SELECT f FROM Funding f
-                        WHERE f.status = 'EXPIRED'
                         AND f.endDate = :tomorrow
                         """)
                 .parameterValues(Map.of("tomorrow", now.plusDays(1).toLocalDate()))

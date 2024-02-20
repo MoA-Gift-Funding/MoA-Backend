@@ -3,11 +3,9 @@ package moa.notification;
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
 import static moa.fixture.ProductFixture.product;
-import static moa.funding.domain.FundingStatus.EXPIRED;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.batch.core.BatchStatus.COMPLETED;
-import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -97,8 +95,6 @@ class FundingSoonExpireNotificationJobConfigTest {
                 "10000",
                 endDate
         );
-        fundingRepository.save(funding);
-        setField(funding, "status", EXPIRED);
         fundingRepository.save(funding);
         return funding;
     }
