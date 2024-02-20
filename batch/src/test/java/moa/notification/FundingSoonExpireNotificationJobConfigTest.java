@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @BatchTest
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class FundingSoonExpireNotificationConfigTest {
+class FundingSoonExpireNotificationJobConfigTest {
 
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;

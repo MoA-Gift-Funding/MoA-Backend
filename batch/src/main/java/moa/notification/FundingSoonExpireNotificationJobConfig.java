@@ -34,7 +34,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class FundingSoonExpireNotificationConfig {
+public class FundingSoonExpireNotificationJobConfig {
 
     private final JobLauncher jobLauncher;
     private final JobRepository jobRepository;
