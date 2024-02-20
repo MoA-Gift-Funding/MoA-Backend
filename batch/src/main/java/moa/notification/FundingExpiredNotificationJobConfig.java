@@ -34,7 +34,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class FundingSoonExpireNotificationJobConfig {
+public class FundingExpiredNotificationJobConfig {
 
     private final JobLauncher jobLauncher;
     private final JobRepository jobRepository;
@@ -48,36 +48,36 @@ public class FundingSoonExpireNotificationJobConfig {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLocalDateTime("now", LocalDateTime.now())
                 .toJobParameters();
-        jobLauncher.run(fundingSoonExpireNotificationJob(), jobParameters);
+        jobLauncher.run(fundingExpiredNotificationJob(), jobParameters);
     }
 
     @Bean
-    public Job fundingSoonExpireNotificationJob() {
-        return new JobBuilder("fundingSoonExpireNotificationJob", jobRepository)
-                .start(sendNotificationSoonExpireFundingStep(null))
+    public Job fundingExpiredNotificationJob() {
+        return new JobBuilder("fundingExpiredNotificationJob", jobRepository)
+                .start(fundingExpiredNotificationStep(null))
                 .build();
     }
 
     /**
-     * 만료 하루 전인 펀딩에 대해 알림을 전송한다.
+     * 만료된 펀딩에 대해 알림을 전송한다.
      */
     @Bean
     @JobScope
-    public Step sendNotificationSoonExpireFundingStep(
+    public Step fundingExpiredNotificationStep(
             @Value("#{jobParameters[now]}") LocalDateTime now
     ) {
-        log.info("[만료 임박 펀딩 알림] 배치작업 수행 time: {}]", now);
-        return new StepBuilder("sendNotificationSoonExpireFundingStep", jobRepository)
+        log.info("[만료된 펀딩 알림] 배치작업 수행 time: {}]", now);
+        return new StepBuilder("fundingExpiredNotificationStep", jobRepository)
                 .<Funding, Notification>chunk(100, transactionManager)
-                .reader(soonExpireNotificationTargetFundingReader(null))
-                .processor(soonExpireNotificationTargetFundingProcessor())
-                .writer(soonExpireNotificationTargetFundingWriter())
+                .reader(expiredFundingForNotificationReader(null))
+                .processor(expiredFundingForNotificationProcessor())
+                .writer(expiredFundingForNotificationWriter())
                 .build();
     }
 
     @Bean
     @StepScope
-    public JpaCursorItemReader<Funding> soonExpireNotificationTargetFundingReader(
+    public JpaCursorItemReader<Funding> expiredFundingForNotificationReader(
             @Value("#{jobParameters[now]}") LocalDateTime now
     ) {
         return new JpaCursorItemReaderBuilder<Funding>()
@@ -85,16 +85,17 @@ public class FundingSoonExpireNotificationJobConfig {
                 .entityManagerFactory(entityManagerFactory)
                 .queryString("""
                         SELECT f FROM Funding f
-                        WHERE f.endDate = :tomorrow
+                        WHERE f.status = 'PROCESSING'
+                        AND f.endDate = :yesterday
                         """)
-                .parameterValues(Map.of("tomorrow", now.plusDays(1).toLocalDate()))
+                .parameterValues(Map.of("yesterday", now.minusDays(1).toLocalDate()))
                 .build();
     }
 
     @Bean
     @StepScope
-    public ItemProcessor<Funding, Notification> soonExpireNotificationTargetFundingProcessor() {
-        return funding -> notificationFactory.generateFundingSoonExpireNotification(
+    public ItemProcessor<Funding, Notification> expiredFundingForNotificationProcessor() {
+        return funding -> notificationFactory.generateFundingExpiredNotification(
                 funding.getTitle(),
                 funding.getProduct().getImageUrl(),
                 funding.getId(),
@@ -104,14 +105,14 @@ public class FundingSoonExpireNotificationJobConfig {
 
     @Bean
     @StepScope
-    public ItemWriter<Notification> soonExpireNotificationTargetFundingWriter() {
+    public ItemWriter<Notification> expiredFundingForNotificationWriter() {
         return notifications -> {
             try {
                 for (Notification notification : notifications) {
                     notificationService.push(notification);
                 }
             } catch (Exception e) {
-                log.error("[만료 임박 펀딩 알림] 알림 전송 실패", e);
+                log.error("[만료된 펀딩 알림] 알림 전송 실패", e);
             }
         };
     }
