@@ -86,7 +86,7 @@ public class NotificationFactory {
             Member target
     ) {
         return new Notification(
-                FUNDING_APP_PATH + fundingId,
+                FUNDING_DETAIL_APP_PATH + fundingId,
                 "펀딩 종료 D-1️⃣",
                 "[%s] 펀딩 종료일이 하루밖에 남지 않았어요🤧 펀딩 채우기를 통해 펀딩을 달성해보세요!"
                         .formatted(fundingTitle),

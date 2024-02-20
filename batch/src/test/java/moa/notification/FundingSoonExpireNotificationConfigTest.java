@@ -2,6 +2,7 @@ package moa.notification;
 
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
+import static moa.fixture.ProductFixture.product;
 import static moa.funding.domain.FundingStatus.EXPIRED;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +20,6 @@ import moa.global.domain.Price;
 import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import moa.notification.domain.NotificationRepository;
-import moa.product.domain.Product;
 import moa.product.domain.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -93,7 +93,7 @@ class FundingSoonExpireNotificationConfigTest {
     private Funding 펀딩_생성(Member owner, LocalDate endDate) {
         Funding funding = funding(
                 owner,
-                productRepository.save(new Product("", Price.from("1000000"))),
+                productRepository.save(product("", Price.from("1000000"))),
                 "10000",
                 endDate
         );
