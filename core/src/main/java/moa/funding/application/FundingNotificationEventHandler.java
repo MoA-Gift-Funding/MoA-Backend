@@ -13,8 +13,12 @@ import moa.friend.domain.FriendRepository;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingCreateEvent;
 import moa.funding.domain.FundingFinishEvent;
+import moa.funding.domain.FundingMessage;
+import moa.funding.domain.FundingParticipant;
+import moa.funding.domain.FundingParticipateEvent;
 import moa.funding.domain.FundingRepository;
 import moa.member.domain.Member;
+import moa.member.domain.MemberRepository;
 import moa.notification.application.NotificationService;
 import moa.notification.domain.Notification;
 import moa.notification.domain.NotificationFactory;
@@ -34,6 +38,7 @@ public class FundingNotificationEventHandler {
     private final FriendRepository friendRepository;
     private final NotificationFactory notificationFactory;
     private final NotificationService notificationService;
+    private final MemberRepository memberRepository;
 
     @TransactionalEventListener(value = FundingCreateEvent.class, phase = AFTER_COMMIT)
     public void push(FundingCreateEvent event) {
@@ -55,6 +60,46 @@ public class FundingNotificationEventHandler {
         }
     }
 
+    @TransactionalEventListener(value = FundingFinishEvent.class, phase = AFTER_COMMIT)
+    public void push(FundingFinishEvent event) {
+        Funding funding = fundingRepository.getById(event.fundingId());
+        Product product = funding.getProduct();
+        Notification notification = notificationFactory.generateFundingFinishNotification(
+                funding.getTitle(),
+                product.getImageUrl(),
+                funding.getId(),
+                funding.getMember()
+        );
+        notificationService.push(notification);
+    }
+
+    @TransactionalEventListener(value = FundingParticipateEvent.class, phase = AFTER_COMMIT)
+    public void push(FundingParticipateEvent event) {
+        Funding funding = fundingRepository.getById(event.fundingId());
+        Member fundingOwner = funding.getMember();
+        Member participant = memberRepository.getById(event.participantId());
+        FundingMessage fundingMessage = getFundingMessage(funding, participant);
+        List<Friend> ownersUnblockedFriends = friendRepository.findUnblockedByMemberId(fundingOwner);
+        String participantNickName = getNickName(participant, ownersUnblockedFriends);
+        var notification = notificationFactory.generateFundingParticipateNotification(
+                participantNickName,
+                fundingMessage == null ? null : fundingMessage.getContent(),
+                participant.getProfileImageUrl(),
+                funding.getId(),
+                fundingMessage == null ? null : fundingMessage.getId(),
+                fundingOwner
+        );
+        notificationService.push(notification);
+    }
+
+    private FundingMessage getFundingMessage(Funding funding, Member participant) {
+        return funding.getParticipants().stream()
+                .filter(it -> it.getMember().equals(participant))
+                .findAny()
+                .map(FundingParticipant::getFundingMessage)
+                .orElse(null);
+    }
+
     private List<Member> getUnblockedFriends(List<Friend> friendsUnblockedOwner, List<Friend> ownersUnblockedFriends) {
         List<Member> unblocked = friendsUnblockedOwner.stream()
                 .map(Friend::getMember)
@@ -72,18 +117,5 @@ public class FundingNotificationEventHandler {
                 .findAny()
                 .map(Friend::getNickname)
                 .orElseGet(target::getNickname);
-    }
-
-    @TransactionalEventListener(value = FundingFinishEvent.class, phase = AFTER_COMMIT)
-    public void push(FundingFinishEvent event) {
-        Funding funding = fundingRepository.getById(event.fundingId());
-        Product product = funding.getProduct();
-        Notification notification = notificationFactory.generateFundingFinishNotification(
-                funding.getTitle(),
-                product.getImageUrl(),
-                funding.getId(),
-                funding.getMember()
-        );
-        notificationService.push(notification);
     }
 }

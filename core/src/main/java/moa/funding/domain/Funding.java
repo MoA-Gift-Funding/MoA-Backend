@@ -178,6 +178,7 @@ public class Funding extends RootEntity<Long> {
             this.status = COMPLETE;
             registerEvent(new FundingFinishEvent(id));
         }
+        registerEvent(new FundingParticipateEvent(id, participant.getMember().getId()));
     }
 
     public Price possibleMaxAmount() {

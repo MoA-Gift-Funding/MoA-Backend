@@ -1,6 +1,7 @@
 package moa.notification.domain;
 
 import static moa.notification.domain.NotificationType.CHECK;
+import static moa.notification.domain.NotificationType.MESSAGE;
 import static moa.notification.domain.NotificationType.PARTY;
 
 import moa.member.domain.Member;
@@ -92,6 +93,51 @@ public class NotificationFactory {
                         .formatted(fundingTitle),
                 productImageUrl,
                 CHECK,
+                target
+        );
+    }
+
+    public Notification generateFundingParticipateNotification(
+            String participantName,
+            String fundingMessage,
+            String participantProfileUrl,
+            Long fundingId,
+            Long fundingMessageId,
+            Member target
+    ) {
+        if (fundingMessage == null || fundingMessage.isBlank()) {
+            return generateFundingParticipateWithoutMessageNotification(
+                    participantName,
+                    participantProfileUrl,
+                    fundingId,
+                    target
+            );
+        }
+        return new Notification(
+                "giftMoA://navigation?name=FundDetail&fundingId=%s&messageId=%s"
+                        .formatted(fundingId, fundingMessageId),
+                "펀딩 메세지 도착",
+                "💌 from %s %s"
+                        .formatted(participantName, fundingMessage),
+                participantProfileUrl,
+                MESSAGE,
+                target
+        );
+    }
+
+    public Notification generateFundingParticipateWithoutMessageNotification(
+            String fundingTitle,
+            String participantProfileUrl,
+            Long fundingId,
+            Member target
+    ) {
+        return new Notification(
+                "giftMoA://navigation?name=FundDetail&fundingId=" + fundingId,
+                "친구의 펀딩 참여",
+                "%s 님이 내 펀딩에 참여했어요🤗"
+                        .formatted(fundingTitle),
+                participantProfileUrl,
+                PARTY,
                 target
         );
     }
