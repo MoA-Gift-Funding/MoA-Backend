@@ -32,13 +32,7 @@ public class DeliveryAddressService {
         Member member = memberRepository.getById(command.memberId());
         DeliveryAddress deliveryAddress = deliveryAddressRepository.getById(command.deliveryAddressId());
         deliveryAddress.validateOwner(member);
-        deliveryAddress.update(
-                command.name(),
-                command.recipientName(),
-                command.phoneNumber(),
-                command.toAddress(),
-                command.isDefault()
-        );
+        deliveryAddress.update(command.toAddress(), command.isDefault());
         AddressBook addressBook = deliveryAddressRepository.getAddressBookByMember(member);
         addressBook.update(deliveryAddress);
     }

@@ -19,7 +19,10 @@ public record AddressUpdateCommand(
                 zonecode,
                 roadAddress,
                 jibunAddress,
-                detailAddress
+                detailAddress,
+                name,
+                recipientName,
+                phoneNumber
         );
     }
 }

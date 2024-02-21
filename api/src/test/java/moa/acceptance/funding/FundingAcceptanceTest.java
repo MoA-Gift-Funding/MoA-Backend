@@ -76,27 +76,27 @@ public class FundingAcceptanceTest extends AcceptanceTest {
         상품 = productRepository.save(product("에어팟 맥스", Price.from(700000L)));
         준호_배송_정보 = deliveryRepository.save(new DeliveryAddress(
                 준호,
-                "준호집",
-                "최준호",
-                "010-1111-1111",
                 new Address(
                         "11111",
                         "도로명",
                         "지번",
-                        "상세"
+                        "상세",
+                        "준호집",
+                        "최준호",
+                        "010-1111-1111"
                 ),
                 true
         ));
         말랑_배송_정보 = deliveryRepository.save(new DeliveryAddress(
                 말랑,
-                "말랑집",
-                "말랑",
-                "010-2222-1111",
                 new Address(
                         "11112",
                         "도로명",
                         "지번",
-                        "상세"
+                        "상세",
+                        "말랑집",
+                        "말랑",
+                        "010-2222-1111"
                 ),
                 true
         ));

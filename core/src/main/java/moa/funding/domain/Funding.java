@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import moa.address.domain.DeliveryAddress;
+import moa.address.domain.Address;
 import moa.funding.exception.FundingException;
 import moa.global.domain.Price;
 import moa.global.domain.RootEntity;
@@ -89,9 +89,8 @@ public class Funding extends RootEntity<Long> {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "delivery_address_id")
-    private DeliveryAddress address;
+    @Embedded
+    private Address address;
 
     @Column
     private String deliveryRequestMessage;
@@ -108,7 +107,7 @@ public class Funding extends RootEntity<Long> {
             Price maximumAmount,
             Member member,
             Product product,
-            DeliveryAddress address,
+            Address address,
             String deliveryRequestMessage
     ) {
         this.imageUrl = imageUrl;

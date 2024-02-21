@@ -30,7 +30,7 @@ public record FundingCreateCommand(
                 maximumAmount,
                 member,
                 product,
-                deliveryAddress,
+                deliveryAddress.getAddress(),
                 deliveryRequestMessage
         );
     }

@@ -153,14 +153,14 @@ class DeliveryAddressServiceTest {
         void setUp() {
             defaultDeliveryAddressId = deliveryAddressRepository.save(new DeliveryAddress(
                     member,
-                    "말랑이네 집",
-                    "신동훈",
-                    "010-1111-2222",
                     new Address(
                             "12345",
                             "땡땡시 땡땡구 땡떙로",
                             "땡땡시 땡땡구 떙떙동",
-                            "땡땡아파트 1000동 1001호"
+                            "땡땡아파트 1000동 1001호",
+                            "말랑이네 집",
+                            "신동훈",
+                            "010-1111-2222"
                     ),
                     true
             )).getId();
@@ -195,14 +195,14 @@ class DeliveryAddressServiceTest {
             // given
             DeliveryAddress junos = deliveryAddressRepository.save(new DeliveryAddress(
                     member,
-                    "주노네 집",
-                    "최준호",
-                    "010-2222-2222",
                     new Address(
                             "12345",
                             "땡땡시 땡땡구 땡떙로",
                             "땡땡시 땡땡구 떙떙동",
-                            "땡땡아파트 1000동 1001호"
+                            "땡땡아파트 1000동 1001호",
+                            "주노네 집",
+                            "최준호",
+                            "010-2222-2222"
                     ),
                     false
             ));
@@ -235,14 +235,14 @@ class DeliveryAddressServiceTest {
             // given
             DeliveryAddress junos = deliveryAddressRepository.save(new DeliveryAddress(
                     member,
-                    "주노네 집",
-                    "최준호",
-                    "010-2222-2222",
                     new Address(
                             "12345",
                             "땡땡시 땡땡구 땡떙로",
                             "땡땡시 땡땡구 떙떙동",
-                            "땡땡아파트 1000동 1001호"
+                            "땡땡아파트 1000동 1001호",
+                            "주노네 집",
+                            "최준호",
+                            "010-2222-2222"
                     ),
                     false
             ));
@@ -276,14 +276,14 @@ class DeliveryAddressServiceTest {
         void setUp() {
             defaultDeliveryAddressId = deliveryAddressRepository.save(new DeliveryAddress(
                     member,
-                    "말랑이네 집",
-                    "신동훈",
-                    "010-1111-2222",
                     new Address(
                             "12345",
                             "땡땡시 땡땡구 땡떙로",
                             "땡땡시 땡땡구 떙떙동",
-                            "땡땡아파트 1000동 1001호"
+                            "땡땡아파트 1000동 1001호",
+                            "말랑이네 집",
+                            "신동훈",
+                            "010-1111-2222"
                     ),
                     true
             )).getId();
