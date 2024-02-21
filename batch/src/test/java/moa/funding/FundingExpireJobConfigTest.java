@@ -10,6 +10,7 @@ import static org.springframework.batch.core.BatchStatus.COMPLETED;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import moa.BatchTest;
+import moa.friend.domain.FriendRepository;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingRepository;
 import moa.funding.domain.FundingVisibility;
@@ -18,6 +19,7 @@ import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import moa.member.domain.OauthId;
 import moa.member.domain.OauthId.OauthProvider;
+import moa.notification.domain.NotificationRepository;
 import moa.product.domain.Product;
 import moa.product.domain.ProductRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -48,6 +50,12 @@ class FundingExpireJobConfigTest {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private FriendRepository friendRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     @Test
     void 기간이_지난_펀딩의_상태가_EXPIRED가_된다() throws Exception {

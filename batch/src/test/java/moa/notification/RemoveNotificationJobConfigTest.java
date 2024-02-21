@@ -22,7 +22,6 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @BatchTest
@@ -32,9 +31,6 @@ class RemoveNotificationJobConfigTest {
 
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -52,7 +48,6 @@ class RemoveNotificationJobConfigTest {
 
     @Test
     void 알림_제거_15일이_지난_알림만_제거된다() throws Exception {
-        jobLauncherTestUtils.setJob(removeNotificationJob);
         // given
         var member = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
         LocalDateTime now = LocalDateTime.of(2024, 1, 20, 0, 0, 0);
