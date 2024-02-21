@@ -7,6 +7,7 @@ import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 import static moa.funding.domain.FundingStatus.CANCELLED;
+import static moa.funding.domain.FundingStatus.COMPLETE_ORDER;
 import static moa.funding.domain.FundingStatus.PROCESSING;
 import static moa.funding.domain.FundingStatus.WAITING_ORDER;
 import static moa.funding.exception.FundingExceptionType.DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT;
@@ -216,6 +217,10 @@ public class Funding extends RootEntity<Long> {
             TossPayment tossPayment = participant.getTossPayment();
             tossPayment.pendingCancel("펀딩 생성자의 펀딩 취소로 인한 결제 취소");
         }
+    }
+
+    public void completeOrder() {
+        this.status = COMPLETE_ORDER;
     }
 
     public int getFundingRate() {
