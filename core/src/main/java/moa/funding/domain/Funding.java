@@ -225,6 +225,7 @@ public class Funding extends RootEntity<Long> {
                 participant.canceledByFundingOwner();
             }
         }
+        registerEvent(new FundingCancelEvent(this));
     }
 
     public int getFundingRate() {

@@ -94,7 +94,6 @@ public class NotificationFactory {
                 FUNDING_DETAIL_APP_PATH + fundingId,
                 "펀딩 종료 D-1️⃣",
                 "[%s] 펀딩 종료일이 하루밖에 남지 않았어요🤧 펀딩 채우기를 통해 펀딩을 달성해보세요!"
-                "[%s] 펀딩이 종료됐어요🙀 펀딩 채우기를 통해 펀딩을 달성해보세요. 달성되지 못한 펀딩은 참가자들에게 전액 환불됩니다🥹"
                         .formatted(fundingTitle),
                 productImageUrl,
                 CHECK,

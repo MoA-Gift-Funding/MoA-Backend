@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import moa.friend.domain.Friend;
 import moa.friend.domain.FriendRepository;
 import moa.funding.domain.Funding;
+import moa.funding.domain.FundingCancelEvent;
 import moa.funding.domain.FundingCreateEvent;
 import moa.funding.domain.FundingFinishEvent;
 import moa.funding.domain.FundingMessage;
@@ -90,6 +91,24 @@ public class FundingNotificationEventHandler {
                 fundingOwner
         );
         notificationService.push(notification);
+    }
+
+    @TransactionalEventListener(value = FundingCancelEvent.class, phase = AFTER_COMMIT)
+    public void push(FundingCancelEvent event) {
+        Funding funding = event.funding();
+        Member fundingOwner = funding.getMember();
+        List<Friend> friendsUnblockedOwner = friendRepository.findUnblockedByTargetId(fundingOwner);
+        List<Friend> ownersUnblockedFriends = friendRepository.findUnblockedByMemberId(fundingOwner);
+        List<Member> unblockedFriends = getUnblockedFriends(friendsUnblockedOwner, ownersUnblockedFriends);
+        List<Notification> notifications = unblockedFriends.stream()
+                .map(target -> notificationFactory.generateFundingCancelNotification(
+                        getNickName(target, friendsUnblockedOwner),
+                        funding.getTitle(),
+                        target
+                )).toList();
+        for (Notification notification : notifications) {
+            notificationService.push(notification);
+        }
     }
 
     private FundingMessage getFundingMessage(Funding funding, Member participant) {
