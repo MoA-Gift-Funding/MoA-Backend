@@ -13,6 +13,11 @@ public class NotificationFactory {
     private static final String FUNDING_DETAIL_APP_PATH = "giftMoA://navigation?name=FundDetail&fundingId=";
     private static final String MY_FUNDING_APP_PATH = "giftMoA://navigation?name=MyFunding&fundingId=";
 
+
+    /**
+     * 펀딩 개설 완료 ✅ 펀딩 참여 완료 (메시지 미작성) ✅ 펀딩 참여 완료 (메시지 작성) ✅ 펀딩 달성 ✅ 펀딩 종료(미달성) ✅ - batch 펀딩 달성 하루 전 ✅- batch 펀딩 취소 펀딩 취소
+     * (상품 공급 중지) ✅ - batch 생일 알림
+     */
     public Notification generateFundingCreatedNotification(
             String fundingOwnerName,
             String fundingTitle,
@@ -114,8 +119,8 @@ public class NotificationFactory {
             );
         }
         return new Notification(
-                "giftMoA://navigation?name=FundDetail&fundingId=%s&messageId=%s"
-                        .formatted(fundingId, fundingMessageId),
+                FUNDING_DETAIL_APP_PATH + "&messageId=%s"
+                        .formatted(fundingMessageId),
                 "펀딩 메세지 도착",
                 "💌 from %s %s"
                         .formatted(participantName, fundingMessage),
@@ -125,19 +130,35 @@ public class NotificationFactory {
         );
     }
 
-    public Notification generateFundingParticipateWithoutMessageNotification(
+    private Notification generateFundingParticipateWithoutMessageNotification(
             String fundingTitle,
             String participantProfileUrl,
             Long fundingId,
             Member target
     ) {
         return new Notification(
-                "giftMoA://navigation?name=FundDetail&fundingId=" + fundingId,
+                FUNDING_DETAIL_APP_PATH + fundingId,
                 "친구의 펀딩 참여",
                 "%s 님이 내 펀딩에 참여했어요🤗"
                         .formatted(fundingTitle),
                 participantProfileUrl,
                 PARTY,
+                target
+        );
+    }
+
+    public Notification generateFundingCancelNotification(
+            String fundingOwnerName,
+            String fundingTitle,
+            Member target
+    ) {
+        return new Notification(
+                "giftMoA://navigation?name=MyFunding",
+                "펀딩 취소",
+                "%s님이 [%s] 펀딩을 취소했어요🥲 참여한 펀딩 금액은 3-5 영업일 이내로 환불될 예정입니다."
+                        .formatted(fundingOwnerName, fundingTitle),
+                null,
+                CHECK,
                 target
         );
     }
