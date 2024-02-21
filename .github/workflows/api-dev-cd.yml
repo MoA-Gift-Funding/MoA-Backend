@@ -15,6 +15,7 @@ on:
     paths:
       - "core/**"
       - "api/**"
+      - ".github/workflows/**"
 
 jobs:
   backend-docker-build-and-push:
@@ -60,7 +61,7 @@ jobs:
           context: ./
           file: ./api/Dockerfile
           push: true
-          platforms: linux/arm64
+          platforms: linux/amd64
           tags: ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
   backend-docker-pull-and-run:
