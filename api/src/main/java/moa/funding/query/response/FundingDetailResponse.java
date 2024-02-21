@@ -82,8 +82,12 @@ public record FundingDetailResponse(
             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
             LocalDateTime createAt
     ) {
-        private static Participant of(Funding funding, FundingParticipant participant, Member member,
-                                      List<Friend> friends) {
+        private static Participant of(
+                Funding funding,
+                FundingParticipant participant,
+                Member member,
+                List<Friend> friends
+        ) {
             if (participant.getFundingMessage().getVisible() == PRIVATE
                 && !isFundingOwner(funding, member) && !isMessageOwner(participant, member)) {
                 return new Participant(
