@@ -4,7 +4,7 @@ import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
 import static moa.fixture.ProductFixture.product;
 import static moa.fixture.TossPaymentFixture.tossPayment;
-import static moa.funding.domain.FundingStatus.COMPLETED;
+import static moa.funding.domain.FundingStatus.WAITING_ORDER;
 import static moa.funding.domain.MessageVisibility.PUBLIC;
 import static moa.funding.exception.FundingExceptionType.DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_FUNDING_AMOUNT;
@@ -316,7 +316,7 @@ class FundingTest {
             funding.participate(participant);
 
             // then
-            assertThat(funding.getStatus()).isEqualTo(COMPLETED);
+            assertThat(funding.getStatus()).isEqualTo(WAITING_ORDER);
         }
     }
 
@@ -354,7 +354,7 @@ class FundingTest {
             assertDoesNotThrow(() -> {
                 funding.finish(Price.from("10000"));
             });
-            assertThat(funding.getStatus()).isEqualTo(COMPLETED);
+            assertThat(funding.getStatus()).isEqualTo(WAITING_ORDER);
         }
     }
 }
