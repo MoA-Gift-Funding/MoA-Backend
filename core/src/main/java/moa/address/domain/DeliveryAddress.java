@@ -32,15 +32,6 @@ public class DeliveryAddress extends RootEntity<Long> {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column
-    private String name;
-
-    @Column
-    private String recipientName;
-
-    @Column
-    private String phoneNumber;
-
     @Embedded
     private Address address;
 
@@ -49,16 +40,10 @@ public class DeliveryAddress extends RootEntity<Long> {
 
     public DeliveryAddress(
             Member member,
-            String name,
-            String recipientName,
-            String phoneNumber,
             Address address,
             boolean isDefault
     ) {
         this.member = member;
-        this.name = name;
-        this.recipientName = recipientName;
-        this.phoneNumber = phoneNumber;
         this.address = address;
         this.isDefault = isDefault;
     }
@@ -70,18 +55,12 @@ public class DeliveryAddress extends RootEntity<Long> {
     }
 
     public void update(
-            String name,
-            String recipientName,
-            String phoneNumber,
             Address address,
             boolean isDefault
     ) {
         if (this.isDefault && !isDefault) {
             throw new DeliveryAddressException(REQUIRED_DEFAULT_ADDRESS);
         }
-        this.name = name;
-        this.recipientName = recipientName;
-        this.phoneNumber = phoneNumber;
         this.address = address;
         this.isDefault = isDefault;
     }
@@ -94,5 +73,17 @@ public class DeliveryAddress extends RootEntity<Long> {
         if (isDefault) {
             throw new DeliveryAddressException(REQUIRED_DEFAULT_ADDRESS);
         }
+    }
+
+    public String getName() {
+        return address.name();
+    }
+
+    public String getRecipientName() {
+        return address.recipientName();
+    }
+
+    public String getPhoneNumber() {
+        return address.phoneNumber();
     }
 }

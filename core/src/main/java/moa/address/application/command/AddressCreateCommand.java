@@ -18,10 +18,15 @@ public record AddressCreateCommand(
     public DeliveryAddress toAddress(Member member) {
         return new DeliveryAddress(
                 member,
-                name,
-                recipientName,
-                phoneNumber,
-                new Address(zonecode, roadAddress, jibunAddress, detailAddress),
+                new Address(
+                        zonecode,
+                        roadAddress,
+                        jibunAddress,
+                        detailAddress,
+                        name,
+                        recipientName,
+                        phoneNumber
+                ),
                 isDefault
         );
     }
