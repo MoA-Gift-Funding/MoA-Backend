@@ -53,7 +53,6 @@ public interface FundingApi {
     ResponseEntity<Void> createFunding(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
-            @Schema
             @Valid @RequestBody FundingCreateRequest request
     );
 
@@ -75,7 +74,6 @@ public interface FundingApi {
             @Parameter(in = PATH, required = true, description = "펀딩 ID")
             @PathVariable Long id,
 
-            @Schema
             @Valid @RequestBody FundingParticipateRequest request
     );
 
@@ -97,7 +95,6 @@ public interface FundingApi {
             @Parameter(in = PATH, required = true, description = "펀딩 ID")
             @PathVariable Long id,
 
-            @Schema
             @Valid @RequestBody FundingFinishRequest request
     );
 
@@ -205,7 +202,7 @@ public interface FundingApi {
     )
     @Operation(summary = "펀딩 메세지 목록 조회")
     @GetMapping("/messages")
-    public ResponseEntity<PageResponse<FundingMessageResponse>> findFundingMessages(
+    ResponseEntity<PageResponse<FundingMessageResponse>> findFundingMessages(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @ParameterObject

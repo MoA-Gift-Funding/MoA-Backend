@@ -58,8 +58,7 @@ public interface MemberApi {
     ResponseEntity<Void> sendPhoneVerificationNumber(
             @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId,
 
-            @Schema
-            @RequestBody SendPhoneVerificationNumberRequest request
+            @Valid @RequestBody SendPhoneVerificationNumberRequest request
     );
 
     @ApiResponses(
@@ -77,8 +76,7 @@ public interface MemberApi {
     ResponseEntity<Void> verifyPhone(
             @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId,
 
-            @Schema
-            @RequestBody VerifyPhoneRequest request
+            @Valid @RequestBody VerifyPhoneRequest request
     );
 
     @ApiResponses(
@@ -94,8 +92,7 @@ public interface MemberApi {
     ResponseEntity<Void> signup(
             @Auth(permit = {PRESIGNED_UP}) Long memberId,
 
-            @Schema
-            @RequestBody SignupRequest request
+            @Valid @RequestBody SignupRequest request
     );
 
     @ApiResponses(
@@ -127,7 +124,6 @@ public interface MemberApi {
     ResponseEntity<Void> permitNotification(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
-            @Schema
             @Valid @RequestBody NotificationPermitRequest request
     );
 
@@ -160,7 +156,6 @@ public interface MemberApi {
     ResponseEntity<Void> update(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
-            @Schema
-            @RequestBody MemberUpdateRequest request
+            @Valid @RequestBody MemberUpdateRequest request
     );
 }
