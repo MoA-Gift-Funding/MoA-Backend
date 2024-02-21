@@ -3,10 +3,10 @@ package moa.product;
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
 import static moa.funding.domain.FundingStatus.CANCELLED;
-import static moa.funding.domain.FundingStatus.COMPLETED;
 import static moa.funding.domain.FundingStatus.EXPIRED;
 import static moa.funding.domain.FundingStatus.PROCESSING;
 import static moa.funding.domain.FundingStatus.STOPPED;
+import static moa.funding.domain.FundingStatus.WAITING_ORDER;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.product.client.dto.WincubeProductResponse.SUCCESS_CODE;
 import static moa.product.domain.ProductId.ProductProvider.WINCUBE;
@@ -177,7 +177,7 @@ class WincubeProductUpdateJobConfigTest {
         Funding processing = fundingRepository.save(funding(member, product, PROCESSING));
         Funding expired = fundingRepository.save(funding(member, product, EXPIRED));
         Funding canceled = fundingRepository.save(funding(member, product, CANCELLED));
-        Funding completed = fundingRepository.save(funding(member, product, COMPLETED));
+        Funding completed = fundingRepository.save(funding(member, product, WAITING_ORDER));
         given(wincubeClient.getProductList())
                 .willReturn(new WincubeProductResponse(
                         new Result(SUCCESS_CODE, "2"),
@@ -214,7 +214,7 @@ class WincubeProductUpdateJobConfigTest {
             assertThat(nonUpdateCanceled.getStatus()).isEqualTo(CANCELLED);
 
             Funding nonUpdateCompleted = fundingRepository.getById(completed.getId());
-            assertThat(nonUpdateCompleted.getStatus()).isEqualTo(COMPLETED);
+            assertThat(nonUpdateCompleted.getStatus()).isEqualTo(WAITING_ORDER);
 
             assertThat(notificationRepository.findAll())
                     .hasSize(1)

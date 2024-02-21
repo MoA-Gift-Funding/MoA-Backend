@@ -41,7 +41,6 @@ public interface FriendApi {
     ResponseEntity<Void> syncContact(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
-            @Schema
             @RequestBody SyncContactRequest request
     );
 
@@ -62,7 +61,6 @@ public interface FriendApi {
             @Parameter(description = "친구 id (친구의 회원 id가 아니라 '친구' id)", in = ParameterIn.PATH, required = true)
             @PathVariable("id") Long friendId,
 
-            @Schema
             @RequestBody UpdateFriendRequest request
     );
 

@@ -47,7 +47,6 @@ public interface DeliveryAddressApi {
     ResponseEntity<Void> create(
             @Auth(permit = SIGNED_UP) Long memberId,
 
-            @Schema
             @Valid @RequestBody AddressCreateRequest request
     );
 
@@ -68,7 +67,6 @@ public interface DeliveryAddressApi {
             @Parameter(description = "배송지 id", in = ParameterIn.PATH, required = true)
             @PathVariable("id") Long id,
 
-            @Schema
             @RequestBody AddressUpdateRequest request
     );
 

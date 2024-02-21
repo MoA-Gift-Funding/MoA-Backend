@@ -43,7 +43,7 @@ public class MemberController implements MemberApi {
     @PostMapping("/verification/phone/send-number")
     public ResponseEntity<Void> sendPhoneVerificationNumber(
             @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId,
-            @RequestBody SendPhoneVerificationNumberRequest request
+            @Valid @RequestBody SendPhoneVerificationNumberRequest request
     ) {
         memberService.sendPhoneVerificationNumber(memberId, request.phoneNumber());
         return ResponseEntity.ok().build();
@@ -52,7 +52,7 @@ public class MemberController implements MemberApi {
     @PostMapping("/verification/phone/verify")
     public ResponseEntity<Void> verifyPhone(
             @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId,
-            @RequestBody VerifyPhoneRequest request
+            @Valid @RequestBody VerifyPhoneRequest request
     ) {
         memberService.verifyPhone(request.toCommand(memberId));
         return ResponseEntity.ok().build();
@@ -61,7 +61,7 @@ public class MemberController implements MemberApi {
     @PostMapping
     public ResponseEntity<Void> signup(
             @Auth(permit = {PRESIGNED_UP}) Long memberId,
-            @RequestBody SignupRequest request
+            @Valid @RequestBody SignupRequest request
     ) {
         memberService.signup(request.toCommand(memberId));
         return ResponseEntity.ok().build();
@@ -94,7 +94,7 @@ public class MemberController implements MemberApi {
     @PutMapping
     public ResponseEntity<Void> update(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @RequestBody MemberUpdateRequest request
+            @Valid @RequestBody MemberUpdateRequest request
     ) {
         memberService.update(request.toCommand(memberId));
         return ResponseEntity.ok().build();
