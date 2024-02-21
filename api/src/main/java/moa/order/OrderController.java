@@ -1,4 +1,4 @@
-package moa.order.presentation;
+package moa.order;
 
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 
@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import moa.auth.Auth;
 import moa.order.application.OrderService;
 import moa.order.application.command.CouponReissueCommand;
-import moa.order.presentation.request.OrderPlaceRequest;
+import moa.order.request.OrderPlaceRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
