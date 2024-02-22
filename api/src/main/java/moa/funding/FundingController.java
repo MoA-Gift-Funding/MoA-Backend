@@ -15,7 +15,7 @@ import moa.funding.query.FundingQueryService;
 import moa.funding.query.response.FundingDetailResponse;
 import moa.funding.query.response.FundingMessageResponse;
 import moa.funding.query.response.FundingResponse;
-import moa.funding.query.response.MyFundingsResponse.MyFundingDetail;
+import moa.funding.query.response.MyFundingsResponse.MyFundingResponse;
 import moa.funding.request.FundingCreateRequest;
 import moa.funding.request.FundingFinishRequest;
 import moa.funding.request.FundingParticipateRequest;
@@ -87,7 +87,7 @@ public class FundingController implements FundingApi {
     }
 
     @GetMapping("/my")
-    public ResponseEntity<PageResponse<MyFundingDetail>> findMyFundings(
+    public ResponseEntity<PageResponse<MyFundingResponse>> findMyFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
             @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
     ) {
@@ -115,11 +115,11 @@ public class FundingController implements FundingApi {
     }
 
     @GetMapping("/messages")
-    public ResponseEntity<PageResponse<FundingMessageResponse>> findFundingMessages(
+    public ResponseEntity<PageResponse<FundingMessageResponse>> findReceivedFundingMessages(
             @Auth(permit = {SIGNED_UP}) Long memberId,
             @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
     ) {
-        var result = fundingQueryService.findMessages(memberId, pageable);
+        var result = fundingQueryService.findReceivedMessages(memberId, pageable);
         return ResponseEntity.ok(PageResponse.from(result));
     }
 }

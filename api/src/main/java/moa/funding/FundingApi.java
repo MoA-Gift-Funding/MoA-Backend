@@ -20,7 +20,7 @@ import moa.funding.domain.FundingStatus;
 import moa.funding.query.response.FundingDetailResponse;
 import moa.funding.query.response.FundingMessageResponse;
 import moa.funding.query.response.FundingResponse;
-import moa.funding.query.response.MyFundingsResponse.MyFundingDetail;
+import moa.funding.query.response.MyFundingsResponse.MyFundingResponse;
 import moa.funding.request.FundingCreateRequest;
 import moa.funding.request.FundingFinishRequest;
 import moa.funding.request.FundingParticipateRequest;
@@ -145,7 +145,7 @@ public interface FundingApi {
     )
     @Operation(summary = "내가 개설한 펀딩 조회")
     @GetMapping("/my")
-    ResponseEntity<PageResponse<MyFundingDetail>> findMyFundings(
+    ResponseEntity<PageResponse<MyFundingResponse>> findMyFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @ParameterObject
@@ -200,9 +200,9 @@ public interface FundingApi {
                     @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
             }
     )
-    @Operation(summary = "펀딩 메세지 목록 조회")
+    @Operation(summary = "내가 받은 펀딩 메세지 목록 조회")
     @GetMapping("/messages")
-    ResponseEntity<PageResponse<FundingMessageResponse>> findFundingMessages(
+    ResponseEntity<PageResponse<FundingMessageResponse>> findReceivedFundingMessages(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @ParameterObject
