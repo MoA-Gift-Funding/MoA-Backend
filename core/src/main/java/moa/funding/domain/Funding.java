@@ -97,7 +97,7 @@ public class Funding extends RootEntity<Long> {
     private String deliveryRequestMessage;
 
     @Enumerated
-    @AttributeOverride(name = "value", column = @Column(name = "maximum_amount"))
+    @AttributeOverride(name = "value", column = @Column(name = "my_finished_payment_amount"))
     private Price myFinishedPaymentAmount = ZERO;
 
     @OneToMany(fetch = LAZY, mappedBy = "funding", cascade = {PERSIST, MERGE})
