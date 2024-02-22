@@ -26,6 +26,9 @@ public record FundingResponse(
         @Schema(example = "2024-02-21")
         @JsonFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
 
+        @Schema(description = "펀딩 달성 퍼센트", example = "56")
+        int fundingRate,
+
         @Schema(description = "펀딩 상태", example = "진행중")
         String status,
 
@@ -56,6 +59,7 @@ public record FundingResponse(
                 funding.getTitle(),
                 funding.getCreatedDate(),
                 funding.getEndDate(),
+                funding.getFundingRate(),
                 funding.getStatus().getDescription(),
                 funding.getMember().getId(),
                 fundingMemberNickname,

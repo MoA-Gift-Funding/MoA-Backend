@@ -22,13 +22,13 @@ public record MyFundingsResponse(
             @Schema(example = "2024-02-04")
             @JsonFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
 
-            @Schema(example = "56")
+            @Schema(description = "펀딩 달성 퍼센트", example = "56")
             int fundingRate,
 
             @Schema(description = "펀딩 상태", example = "진행중")
             String status,
 
-            @Schema(example = "50000")
+            @Schema(description = "지금까지 펀딩된 금액", example = "50000")
             Long fundedAmount,
 
             @Schema(example = "17")
