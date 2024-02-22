@@ -12,6 +12,7 @@ import java.util.Objects;
 import moa.friend.domain.Friend;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingParticipant;
+import moa.funding.domain.FundingStatus;
 import moa.member.domain.Member;
 import moa.product.domain.Product;
 
@@ -50,8 +51,8 @@ public record FundingDetailResponse(
         @Schema(description = "펀딩 달성 퍼센트", example = "56")
         int fundingRate,
 
-        @Schema(description = "펀딩 상태", example = "진행중")
-        String status,
+        @Schema(description = "펀딩 상태", example = "PROCESSING")
+        FundingStatus status,
 
         @Schema(description = "지금까지 펀딩된 금액", example = "50000")
         Long fundedAmount,
@@ -82,8 +83,12 @@ public record FundingDetailResponse(
             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
             LocalDateTime createAt
     ) {
-        private static Participant of(Funding funding, FundingParticipant participant, Member member,
-                                      List<Friend> friends) {
+        private static Participant of(
+                Funding funding,
+                FundingParticipant participant,
+                Member member,
+                List<Friend> friends
+        ) {
             if (participant.getFundingMessage().getVisible() == PRIVATE
                 && !isFundingOwner(funding, member) && !isMessageOwner(participant, member)) {
                 return new Participant(
@@ -131,7 +136,7 @@ public record FundingDetailResponse(
                 funding.possibleMaxAmount().longValue(),
                 funding.remainAmount().longValue(),
                 funding.getFundingRate(),
-                funding.getStatus().getDescription(),
+                funding.getStatus(),
                 funding.getFundedAmount().longValue(),
                 funding.getParticipants().size(),
                 product.getImageUrl(),

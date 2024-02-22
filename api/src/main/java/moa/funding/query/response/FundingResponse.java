@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import moa.friend.domain.Friend;
 import moa.funding.domain.Funding;
+import moa.funding.domain.FundingStatus;
 
 public record FundingResponse(
         @Schema(example = "3")
@@ -29,8 +30,8 @@ public record FundingResponse(
         @Schema(description = "펀딩 달성 퍼센트", example = "56")
         int fundingRate,
 
-        @Schema(description = "펀딩 상태", example = "진행중")
-        String status,
+        @Schema(description = "펀딩 상태", example = "PROCESSING")
+        FundingStatus status,
 
         @Schema(example = "1")
         Long memberId,
@@ -60,7 +61,7 @@ public record FundingResponse(
                 funding.getCreatedDate(),
                 funding.getEndDate(),
                 funding.getFundingRate(),
-                funding.getStatus().getDescription(),
+                funding.getStatus(),
                 funding.getMember().getId(),
                 fundingMemberNickname,
                 funding.getMember().getProfileImageUrl(),
