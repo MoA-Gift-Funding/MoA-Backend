@@ -21,10 +21,11 @@ import moa.funding.domain.FundingStatus;
 import moa.funding.query.response.FundingDetailResponse;
 import moa.funding.query.response.FundingMessageResponse;
 import moa.funding.query.response.FundingResponse;
-import moa.funding.query.response.ParticipatedFundingResponse;
 import moa.funding.query.response.MyFundingsResponse.MyFundingResponse;
+import moa.funding.query.response.ParticipatedFundingResponse;
 import moa.funding.request.FundingCreateRequest;
 import moa.funding.request.FundingFinishRequest;
+import moa.funding.request.FundingParticipateCancelRequest;
 import moa.funding.request.FundingParticipateRequest;
 import moa.global.presentation.PageResponse;
 import org.springdoc.core.annotations.ParameterObject;
@@ -132,8 +133,7 @@ public interface FundingApi {
     ResponseEntity<Void> participateCancel(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
-            @Parameter(in = PATH, required = true, description = "펀딩 ID")
-            @PathVariable Long id
+            @Valid @RequestBody FundingParticipateCancelRequest request
     );
 
     @ApiResponses(
