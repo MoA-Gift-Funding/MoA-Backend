@@ -7,9 +7,9 @@ import java.util.List;
 import moa.funding.domain.Funding;
 
 public record MyFundingsResponse(
-        List<MyFundingDetail> fundings
+        List<MyFundingResponse> fundings
 ) {
-    public record MyFundingDetail(
+    public record MyFundingResponse(
             @Schema(example = "1")
             Long id,
 
@@ -22,13 +22,13 @@ public record MyFundingsResponse(
             @Schema(example = "2024-02-04")
             @JsonFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
 
-            @Schema(example = "56")
+            @Schema(description = "펀딩 달성 퍼센트", example = "56")
             int fundingRate,
 
             @Schema(description = "펀딩 상태", example = "진행중")
             String status,
 
-            @Schema(example = "50000")
+            @Schema(description = "지금까지 펀딩된 금액", example = "50000")
             Long fundedAmount,
 
             @Schema(example = "17")
@@ -37,8 +37,8 @@ public record MyFundingsResponse(
             @Schema(description = "상품 이미지", example = "https://imageurl.example")
             String productImageUrl
     ) {
-        public static MyFundingDetail from(Funding funding) {
-            return new MyFundingDetail(
+        public static MyFundingResponse from(Funding funding) {
+            return new MyFundingResponse(
                     funding.getId(),
                     funding.getImageUrl(),
                     funding.getTitle(),
@@ -55,7 +55,7 @@ public record MyFundingsResponse(
     public static MyFundingsResponse from(List<Funding> fundings) {
         return new MyFundingsResponse(
                 fundings.stream()
-                        .map(MyFundingDetail::from)
+                        .map(MyFundingResponse::from)
                         .toList()
         );
     }

@@ -38,7 +38,7 @@ public class OrderService {
         Member member = memberRepository.getById(command.memberId());
         order.validateOwner(member);
         // TODO 윈큐브 기존 쿠폰 비활성화
-        // TODO 윈큐브 쿠폰 발행 API 호출해서 쿠폰 발행하기
-        order.reIssueCoupon();
+        // TODO 윈큐브 쿠폰 발행 API 호출해서 쿠폰 발행하기(바뀐 번호로)
+        order.reIssueCoupon(command.phoneNumber());
     }
 }

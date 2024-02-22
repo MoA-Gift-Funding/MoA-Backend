@@ -13,4 +13,15 @@ public record Address(
         @Column(name = "recipient_name") String recipientName,
         @Column(name = "phone_number") String phoneNumber
 ) {
+    public Address changePhone(String phoneNumber) {
+        return new Address(
+                zonecode,
+                roadAddress,
+                jibunAddress,
+                detailAddress,
+                name,
+                recipientName,
+                phoneNumber
+        );
+    }
 }

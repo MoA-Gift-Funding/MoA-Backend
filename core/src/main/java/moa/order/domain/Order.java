@@ -7,6 +7,7 @@ import static lombok.AccessLevel.PROTECTED;
 import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_FOR_FUNDING;
 import static moa.order.domain.OrderStatus.RECEIVED;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
@@ -45,6 +46,9 @@ public class Order extends RootEntity<Long> {
     @Embedded
     private Address address;
 
+    @Column
+    private String deliveryRequestMessage;
+
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -59,6 +63,7 @@ public class Order extends RootEntity<Long> {
         this.funding = funding;
         this.product = funding.getProduct();
         this.address = funding.getAddress();
+        this.deliveryRequestMessage = funding.getDeliveryRequestMessage();
         this.member = funding.getMember();
         this.status = RECEIVED;
     }
@@ -70,7 +75,8 @@ public class Order extends RootEntity<Long> {
     }
 
     // TODO 이거 윈큐브 상품(or 쿠폰형 상품에 특화된 로직이라 나중에 상품 종류 추가되면 구조 변경)
-    public void reIssueCoupon() {
+    public void reIssueCoupon(String phoneNumber) {
+        address = address.changePhone(phoneNumber);
         this.possibleReissueCouponCount--;
     }
 }
