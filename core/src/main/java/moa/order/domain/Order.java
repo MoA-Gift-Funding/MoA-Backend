@@ -75,7 +75,8 @@ public class Order extends RootEntity<Long> {
     }
 
     // TODO 이거 윈큐브 상품(or 쿠폰형 상품에 특화된 로직이라 나중에 상품 종류 추가되면 구조 변경)
-    public void reIssueCoupon() {
+    public void reIssueCoupon(String phoneNumber) {
+        address = address.changePhone(phoneNumber);
         this.possibleReissueCouponCount--;
     }
 }

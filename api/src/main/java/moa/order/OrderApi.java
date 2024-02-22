@@ -18,6 +18,7 @@ import moa.global.presentation.PageResponse;
 import moa.order.query.response.OrderDetailResponse;
 import moa.order.query.response.OrderResponse;
 import moa.order.request.OrderPlaceRequest;
+import moa.order.request.ReissueCouponRequest;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -63,7 +64,9 @@ public interface OrderApi {
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @Parameter(in = PATH, required = true, description = "주문 ID")
-            @PathVariable("orderId") Long orderId
+            @PathVariable("orderId") Long orderId,
+
+            @Valid @RequestBody ReissueCouponRequest request
     );
 
     @ApiResponses(
