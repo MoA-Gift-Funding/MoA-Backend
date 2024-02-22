@@ -179,9 +179,9 @@ public interface FundingApi {
                     @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
             }
     )
-    @Operation(summary = "펀딩 목록 조회")
+    @Operation(summary = "친구들의 펀딩 목록 조회", description = "내 펀딩은 조회되지 않음")
     @GetMapping
-    ResponseEntity<PageResponse<FundingResponse>> findFundings(
+    ResponseEntity<PageResponse<FundingResponse>> findFriendsFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @Parameter(in = QUERY, description = "조회될 펀딩 상태들 (기본값 PROCESSING)", example = "PROCESSING,DELIVERY_WAITING")
