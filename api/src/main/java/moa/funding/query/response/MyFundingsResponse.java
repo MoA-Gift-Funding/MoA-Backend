@@ -7,9 +7,9 @@ import java.util.List;
 import moa.funding.domain.Funding;
 
 public record MyFundingsResponse(
-        List<MyFundingDetail> fundings
+        List<MyFundingResponse> fundings
 ) {
-    public record MyFundingDetail(
+    public record MyFundingResponse(
             @Schema(example = "1")
             Long id,
 
@@ -37,8 +37,8 @@ public record MyFundingsResponse(
             @Schema(description = "상품 이미지", example = "https://imageurl.example")
             String productImageUrl
     ) {
-        public static MyFundingDetail from(Funding funding) {
-            return new MyFundingDetail(
+        public static MyFundingResponse from(Funding funding) {
+            return new MyFundingResponse(
                     funding.getId(),
                     funding.getImageUrl(),
                     funding.getTitle(),
@@ -55,7 +55,7 @@ public record MyFundingsResponse(
     public static MyFundingsResponse from(List<Funding> fundings) {
         return new MyFundingsResponse(
                 fundings.stream()
-                        .map(MyFundingDetail::from)
+                        .map(MyFundingResponse::from)
                         .toList()
         );
     }

@@ -11,7 +11,7 @@ import moa.funding.domain.FundingValidator;
 import moa.funding.query.response.FundingDetailResponse;
 import moa.funding.query.response.FundingMessageResponse;
 import moa.funding.query.response.FundingResponse;
-import moa.funding.query.response.MyFundingsResponse.MyFundingDetail;
+import moa.funding.query.response.MyFundingsResponse.MyFundingResponse;
 import moa.funding.query.response.ParticipatedFundingResponse;
 import moa.member.domain.Member;
 import moa.member.query.MemberQueryRepository;
@@ -32,9 +32,9 @@ public class FundingQueryService {
     private final FundingMessageQueryRepository fundingMessageQueryRepository;
     private final FundingParticipantQueryRepository fundingParticipantQueryRepository;
 
-    public Page<MyFundingDetail> findMyFundings(Long memberId, Pageable pageable) {
+    public Page<MyFundingResponse> findMyFundings(Long memberId, Pageable pageable) {
         return fundingQueryRepository.findAllByMemberId(memberId, pageable)
-                .map(MyFundingDetail::from);
+                .map(MyFundingResponse::from);
     }
 
     public FundingDetailResponse findFundingById(Long memberId, Long fundingId) {
@@ -57,7 +57,7 @@ public class FundingQueryService {
                 .map(it -> ParticipatedFundingResponse.of(it, myFriends));
     }
 
-    public Page<FundingMessageResponse> findMessages(Long memberId, Pageable pageable) {
+    public Page<FundingMessageResponse> findReceivedMessages(Long memberId, Pageable pageable) {
         Page<FundingMessage> messages = fundingMessageQueryRepository.findAllByReceiverId(memberId, pageable);
         List<Friend> friends = friendQueryRepository.findAllByMemberId(memberId);
         return messages.map(message -> FundingMessageResponse.of(message, friends));
