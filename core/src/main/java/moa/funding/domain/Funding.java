@@ -96,6 +96,10 @@ public class Funding extends RootEntity<Long> {
     @Column
     private String deliveryRequestMessage;
 
+    @Enumerated
+    @AttributeOverride(name = "value", column = @Column(name = "maximum_amount"))
+    private Price myFinishedPaymentAmount = ZERO;
+
     @OneToMany(fetch = LAZY, mappedBy = "funding", cascade = {PERSIST, MERGE})
     private List<FundingParticipant> participants = new ArrayList<>();
 
@@ -191,7 +195,7 @@ public class Funding extends RootEntity<Long> {
     public Price getFundedAmount() {
         return participants.stream()
                 .map(FundingParticipant::getAmount)
-                .reduce(ZERO, Price::add);
+                .reduce(myFinishedPaymentAmount, Price::add);
     }
 
     public void validateOwner(Member member) {
@@ -205,6 +209,7 @@ public class Funding extends RootEntity<Long> {
             throw new FundingException(DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT);
         }
         this.status = WAITING_ORDER;
+        myFinishedPaymentAmount = price;
         registerEvent(new FundingFinishEvent(id));
     }
 
