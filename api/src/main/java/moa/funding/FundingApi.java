@@ -3,6 +3,7 @@ package moa.funding;
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
+import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,6 +21,7 @@ import moa.funding.domain.FundingStatus;
 import moa.funding.query.response.FundingDetailResponse;
 import moa.funding.query.response.FundingMessageResponse;
 import moa.funding.query.response.FundingResponse;
+import moa.funding.query.response.ParticipatedFundingResponse;
 import moa.funding.query.response.MyFundingsResponse.MyFundingResponse;
 import moa.funding.request.FundingCreateRequest;
 import moa.funding.request.FundingFinishRequest;
@@ -149,7 +151,7 @@ public interface FundingApi {
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @ParameterObject
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
     );
 
     @ApiResponses(
@@ -179,16 +181,34 @@ public interface FundingApi {
                     @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
             }
     )
-    @Operation(summary = "펀딩 목록 조회")
+    @Operation(summary = "친구들의 펀딩 목록 조회", description = "내 펀딩은 조회되지 않음")
     @GetMapping
-    ResponseEntity<PageResponse<FundingResponse>> findFundings(
+    ResponseEntity<PageResponse<FundingResponse>> findFriendsFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @Parameter(in = QUERY, description = "조회될 펀딩 상태들 (기본값 PROCESSING)", example = "PROCESSING,DELIVERY_WAITING")
             @RequestParam(value = "statuses", defaultValue = "PROCESSING") List<FundingStatus> statuses,
 
             @ParameterObject
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(size = 10, sort = "endDate", direction = ASC) Pageable pageable
+    );
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+            }
+    )
+    @Operation(summary = "내가 참여한 펀딩 목록 조회")
+    @GetMapping("/participated")
+    ResponseEntity<PageResponse<ParticipatedFundingResponse>> findParticipatedFundings(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+
+            @ParameterObject
+            @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
     );
 
     @ApiResponses(
