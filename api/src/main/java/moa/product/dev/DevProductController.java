@@ -27,15 +27,15 @@ public class DevProductController {
     private final ProductRepository productRepository;
 
     @PostMapping
-    public void create(@RequestBody ProductCreateReuqest reuqest) {
+    public void create(@RequestBody ProductCreateRequest request) {
         String string = UUID.randomUUID().toString();
         productRepository.save(new Product(
                 new ProductId(string, WINCUBE),
                 "imageUrl",
                 "brand",
                 "category",
-                reuqest.name,
-                Price.from(reuqest.price),
+                request.name,
+                Price.from(request.price),
                 "desc",
                 LocalDate.now().plusDays(1000),
                 0,
@@ -52,7 +52,7 @@ public class DevProductController {
         return ResponseEntity.ok(list);
     }
 
-    record ProductCreateReuqest(
+    record ProductCreateRequest(
             String name,
             String price
     ) {
