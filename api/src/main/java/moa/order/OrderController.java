@@ -9,11 +9,11 @@ import lombok.RequiredArgsConstructor;
 import moa.auth.Auth;
 import moa.global.presentation.PageResponse;
 import moa.order.application.OrderService;
-import moa.order.application.command.CouponReissueCommand;
 import moa.order.query.OrderQueryService;
 import moa.order.query.response.OrderDetailResponse;
 import moa.order.query.response.OrderResponse;
 import moa.order.request.OrderPlaceRequest;
+import moa.order.request.ReissueCouponRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -46,9 +46,10 @@ public class OrderController implements OrderApi {
     @PostMapping("/{orderId}/reissue-coupon")
     public ResponseEntity<Void> reissueCoupon(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @PathVariable("orderId") Long orderId
+            @PathVariable("orderId") Long orderId,
+            @Valid @RequestBody ReissueCouponRequest request
     ) {
-        orderService.reissueCoupon(new CouponReissueCommand(memberId, orderId));
+        orderService.reissueCoupon(request.toCommand(memberId, orderId));
         return ResponseEntity.ok().build();
     }
 
