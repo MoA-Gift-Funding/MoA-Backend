@@ -9,6 +9,7 @@ import java.util.List;
 import moa.friend.domain.Friend;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingParticipant;
+import moa.funding.domain.FundingStatus;
 import moa.funding.domain.ParticipantStatus;
 
 public record ParticipatedFundingResponse(
@@ -24,8 +25,8 @@ public record ParticipatedFundingResponse(
         @Schema(example = "2024-02-21")
         @JsonFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
 
-        @Schema(description = "펀딩 상태", example = "진행중")
-        String status,
+        @Schema(description = "펀딩 상태", example = "PROCESSING")
+        FundingStatus status,
 
         @Schema(example = "1")
         Long memberId,
@@ -63,7 +64,7 @@ public record ParticipatedFundingResponse(
                 funding.getImageUrl(),
                 funding.getTitle(),
                 funding.getEndDate(),
-                funding.getStatus().getDescription(),
+                funding.getStatus(),
                 funding.getMember().getId(),
                 fundingMemberNickname,
                 funding.getMember().getProfileImageUrl(),
