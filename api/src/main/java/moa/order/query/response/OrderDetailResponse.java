@@ -20,6 +20,8 @@ public record OrderDetailResponse(
         String category,
         String productName,
         Long price,
+        // TODO 이거 윈큐브 상품(or 쿠폰형 상품에 특화된 로직이라 나중에 상품 종류 추가되면 구조 변경)
+        int possibleReissueCouponCount,
         Address address,
         String deliveryRequestMessage,
         PaymentResponse payment
@@ -36,6 +38,7 @@ public record OrderDetailResponse(
                 product.getCategory(),
                 product.getProductName(),
                 product.getPrice().longValue(),
+                order.getPossibleReissueCouponCount(),
                 order.getAddress(),
                 order.getDeliveryRequestMessage(),
                 PaymentResponse.of(funding, friends)
