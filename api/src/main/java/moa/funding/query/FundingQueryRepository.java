@@ -32,15 +32,13 @@ public interface FundingQueryRepository extends JpaRepository<Funding, Long> {
             WHERE
             f.status IN (:statuses)
             AND (
-                f.member.id = :memberId
-                OR (
-                    f.member.id = friend.target.id
-                    AND NOT EXISTS (
-                        SELECT 1
-                        FROM Friend blockedFriend
-                        WHERE f.member.id = blockedFriend.member.id
-                            AND blockedFriend.target.id = :memberId
-                            AND blockedFriend.isBlocked = TRUE)
+                f.member.id = friend.target.id
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM Friend blockedFriend
+                    WHERE f.member.id = blockedFriend.member.id
+                        AND blockedFriend.target.id = :memberId
+                        AND blockedFriend.isBlocked = TRUE
                     )
                 )
             AND f.member.id != :memberId
