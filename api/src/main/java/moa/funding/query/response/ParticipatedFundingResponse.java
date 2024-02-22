@@ -43,6 +43,9 @@ public record ParticipatedFundingResponse(
         @Schema(example = "https://example.url")
         String productImageUrl,
 
+        @Schema(example = "참가자 id(회원 id가 아님, 참여 취소 시 사용)")
+        Long fundingParticipantId,
+
         @Schema(example = "2024-02-20")
         @JsonFormat(pattern = "yyyy-MM-dd HH-mm-ss") LocalDateTime participatedDate,
 
@@ -70,6 +73,7 @@ public record ParticipatedFundingResponse(
                 funding.getMember().getProfileImageUrl(),
                 funding.getProduct().getId(),
                 funding.getProduct().getImageUrl(),
+                participant.getId(),
                 participant.getCreatedDate(),
                 participant.getAmount().longValue(),
                 participant.getStatus()
