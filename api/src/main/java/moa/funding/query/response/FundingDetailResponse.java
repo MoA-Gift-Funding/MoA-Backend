@@ -48,7 +48,7 @@ public record FundingDetailResponse(
         @Schema(description = "남은 금액", example = "140000")
         Long remainAmount,
 
-        @Schema(example = "56")
+        @Schema(description = "펀딩 달성 퍼센트", example = "56")
         int fundingRate,
 
         @Schema(description = "펀딩 상태", example = "PROCESSING")
