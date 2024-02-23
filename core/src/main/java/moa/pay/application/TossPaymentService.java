@@ -38,7 +38,7 @@ public class TossPaymentService {
         payment.pendingCancel(reason);
         paymentRepository.save(payment);
         tossClient.cancelPayment(payment);
-        payment.cancel();
+        payment.cancel(reason);
         paymentRepository.save(payment);
     }
 }

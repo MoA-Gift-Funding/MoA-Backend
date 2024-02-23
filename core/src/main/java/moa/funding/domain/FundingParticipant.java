@@ -7,6 +7,7 @@ import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 import static moa.funding.domain.ParticipantStatus.CANCEL;
+import static moa.funding.domain.ParticipantStatus.CANCELLED_BY_FUND_OWNER;
 import static moa.funding.domain.ParticipantStatus.PARTICIPATING;
 import static moa.funding.exception.FundingExceptionType.ALREADY_CANCEL_PARTICIPATING;
 import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_CANCEL_PARTICIPATE;
@@ -82,11 +83,25 @@ public class FundingParticipant extends RootEntity<Long> {
         }
     }
 
+    public boolean isParticipating() {
+        return status == PARTICIPATING;
+    }
+
     public void cancel() {
-        if (status == CANCEL) {
+        validateCancel();
+        this.status = CANCEL;
+        tossPayment.cancel("펀딩 참여를 희망하지 않음");
+    }
+
+    public void canceledByFundingOwner() {
+        validateCancel();
+        this.status = CANCELLED_BY_FUND_OWNER;
+        tossPayment.cancel("펀딩 생성자의 펀딩 취소로 인한 결제 취소");
+    }
+
+    private void validateCancel() {
+        if (status == CANCEL || status == CANCELLED_BY_FUND_OWNER) {
             throw new FundingException(ALREADY_CANCEL_PARTICIPATING);
         }
-        this.status = CANCEL;
-        tossPayment.cancel();
     }
 }

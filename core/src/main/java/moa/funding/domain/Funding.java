@@ -7,9 +7,10 @@ import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 import static moa.funding.domain.FundingStatus.CANCELLED;
-import static moa.funding.domain.FundingStatus.COMPLETE_ORDER;
+import static moa.funding.domain.FundingStatus.COMPLETE;
 import static moa.funding.domain.FundingStatus.PROCESSING;
-import static moa.funding.domain.FundingStatus.WAITING_ORDER;
+import static moa.funding.domain.FundingStatus.STOPPED;
+import static moa.funding.domain.ParticipantStatus.PARTICIPATING;
 import static moa.funding.exception.FundingExceptionType.DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_FUNDING_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.EXCEED_FUNDING_MAX_PERIOD;
@@ -45,7 +46,6 @@ import moa.funding.exception.FundingException;
 import moa.global.domain.Price;
 import moa.global.domain.RootEntity;
 import moa.member.domain.Member;
-import moa.pay.domain.TossPayment;
 import moa.product.domain.Product;
 
 @Entity
@@ -175,7 +175,7 @@ public class Funding extends RootEntity<Long> {
 
         participants.add(participant);
         if (participant.getAmount().equals(remainAmount)) {
-            this.status = WAITING_ORDER;
+            this.status = COMPLETE;
             registerEvent(new FundingFinishEvent(id));
         }
     }
@@ -194,6 +194,7 @@ public class Funding extends RootEntity<Long> {
 
     public Price getFundedAmount() {
         return participants.stream()
+                .filter(it -> it.getStatus().equals(PARTICIPATING))
                 .map(FundingParticipant::getAmount)
                 .reduce(myFinishedPaymentAmount, Price::add);
     }
@@ -208,24 +209,21 @@ public class Funding extends RootEntity<Long> {
         if (!remainAmount().equals(price)) {
             throw new FundingException(DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT);
         }
-        this.status = WAITING_ORDER;
+        this.status = COMPLETE;
         myFinishedPaymentAmount = price;
         registerEvent(new FundingFinishEvent(id));
     }
 
     public void cancel() {
-        if (status != PROCESSING) {
+        if (status != PROCESSING && status != STOPPED) {
             throw new FundingException(ONLY_PROCESSING_FUNDING_CAN_BE_CANCELLED);
         }
         this.status = CANCELLED;
         for (FundingParticipant participant : participants) {
-            TossPayment tossPayment = participant.getTossPayment();
-            tossPayment.pendingCancel("펀딩 생성자의 펀딩 취소로 인한 결제 취소");
+            if (participant.isParticipating()) {
+                participant.canceledByFundingOwner();
+            }
         }
-    }
-
-    public void completeOrder() {
-        this.status = COMPLETE_ORDER;
     }
 
     public int getFundingRate() {

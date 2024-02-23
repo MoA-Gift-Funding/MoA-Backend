@@ -25,7 +25,6 @@ public class OrderService {
         Funding funding = fundingRepository.getWithLockById(command.memberId());
         Member member = memberRepository.getById(command.memberId());
         funding.validateOwner(member);
-        funding.completeOrder();
         Order order = new Order(funding);
         // TODO 윈큐브 쿠폰 발행 API 호출해서 쿠폰 발행하기
         return orderRepository.save(order)
