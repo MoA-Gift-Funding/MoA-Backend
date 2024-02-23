@@ -72,3 +72,7 @@ tosspayment:
 wincube:
   mdCode: "test"
   token: "token"
+  auth:
+    aut-key: "test"
+    cust-id: "test"
+    pwd: "test"
