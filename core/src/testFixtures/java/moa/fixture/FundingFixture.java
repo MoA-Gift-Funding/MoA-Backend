@@ -1,5 +1,7 @@
 package moa.fixture;
 
+import static org.springframework.test.util.ReflectionTestUtils.setField;
+
 import java.time.LocalDate;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingStatus;
@@ -7,7 +9,6 @@ import moa.funding.domain.FundingVisibility;
 import moa.global.domain.Price;
 import moa.member.domain.Member;
 import moa.product.domain.Product;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class FundingFixture {
 
@@ -57,7 +58,7 @@ public class FundingFixture {
                 null,
                 ""
         );
-        ReflectionTestUtils.setField(funding, "status", status);
+        setField(funding, "status", status);
         return funding;
     }
 }

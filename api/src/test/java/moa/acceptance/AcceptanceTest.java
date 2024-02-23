@@ -1,6 +1,7 @@
 package moa.acceptance;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import io.restassured.RestAssured;
 import java.util.List;
@@ -22,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @Import(TestPaymentConfig.class)
 @ExtendWith(DataClearExtension.class)
@@ -57,7 +57,7 @@ public abstract class AcceptanceTest {
                 null,
                 phone
         );
-        ReflectionTestUtils.setField(member, "status", MemberStatus.SIGNED_UP);
+        setField(member, "status", MemberStatus.SIGNED_UP);
         return memberRepository.save(member);
     }
 
