@@ -29,8 +29,9 @@ public class FAQ extends RootEntity<Long> {
     private String content;
     private String answer;
 
-    public FAQ(QuestionCategory category, String content) {
+    public FAQ(QuestionCategory category, String content, String answer) {
         this.category = category;
         this.content = content;
+        this.answer = answer;
     }
 }
