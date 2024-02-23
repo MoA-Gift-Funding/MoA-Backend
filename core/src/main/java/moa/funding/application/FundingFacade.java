@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moa.funding.application.command.FundingCreateCommand;
 import moa.funding.application.command.FundingFinishCommand;
+import moa.funding.application.command.FundingParticipateCancelCommand;
 import moa.funding.application.command.FundingParticipateCommand;
 import moa.pay.application.TossPaymentService;
 import org.springframework.stereotype.Service;
@@ -44,8 +45,8 @@ public class FundingFacade {
         }
     }
 
-    public void participateCancel(Long fundingId, Long memberId) {
-        fundingService.participateCancel(fundingId, memberId);
+    public void participateCancel(FundingParticipateCancelCommand command) {
+        fundingService.participateCancel(command);
     }
 
     public void cancel(Long fundingId, Long memberId) {

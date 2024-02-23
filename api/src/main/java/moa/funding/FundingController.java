@@ -15,10 +15,11 @@ import moa.funding.query.FundingQueryService;
 import moa.funding.query.response.FundingDetailResponse;
 import moa.funding.query.response.FundingMessageResponse;
 import moa.funding.query.response.FundingResponse;
-import moa.funding.query.response.ParticipatedFundingResponse;
 import moa.funding.query.response.MyFundingsResponse.MyFundingResponse;
+import moa.funding.query.response.ParticipatedFundingResponse;
 import moa.funding.request.FundingCreateRequest;
 import moa.funding.request.FundingFinishRequest;
+import moa.funding.request.FundingParticipateCancelRequest;
 import moa.funding.request.FundingParticipateRequest;
 import moa.global.presentation.PageResponse;
 import org.springframework.data.domain.Pageable;
@@ -78,12 +79,12 @@ public class FundingController implements FundingApi {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{id}/participate/cancel")
+    @PostMapping("/cancel-participate")
     public ResponseEntity<Void> participateCancel(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @PathVariable Long id
+            @Valid @RequestBody FundingParticipateCancelRequest request
     ) {
-        fundingFacade.participateCancel(id, memberId);
+        fundingFacade.participateCancel(request.toCommand(memberId));
         return ResponseEntity.ok().build();
     }
 

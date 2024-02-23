@@ -9,6 +9,7 @@ import static lombok.AccessLevel.PROTECTED;
 import static moa.funding.domain.ParticipantStatus.CANCEL;
 import static moa.funding.domain.ParticipantStatus.PARTICIPATING;
 import static moa.funding.exception.FundingExceptionType.ALREADY_CANCEL_PARTICIPATING;
+import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_CANCEL_PARTICIPATE;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -73,6 +74,12 @@ public class FundingParticipant extends RootEntity<Long> {
         this.amount = payment.getTotalAmount();
         this.fundingMessage = new FundingMessage(member, funding.getMember(), message, messageVisible);
         this.status = PARTICIPATING;
+    }
+
+    public void validateMember(Member member) {
+        if (!this.member.equals(member)) {
+            throw new FundingException(NO_AUTHORITY_CANCEL_PARTICIPATE);
+        }
     }
 
     public void cancel() {

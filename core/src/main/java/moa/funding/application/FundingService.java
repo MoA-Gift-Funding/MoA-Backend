@@ -6,6 +6,7 @@ import moa.address.domain.DeliveryAddress;
 import moa.address.domain.DeliveryAddressRepository;
 import moa.funding.application.command.FundingCreateCommand;
 import moa.funding.application.command.FundingFinishCommand;
+import moa.funding.application.command.FundingParticipateCancelCommand;
 import moa.funding.application.command.FundingParticipateCommand;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingParticipant;
@@ -64,10 +65,10 @@ public class FundingService {
         fundingRepository.save(funding);
     }
 
-    public void participateCancel(Long fundingId, Long memberId) {
-        Funding funding = fundingRepository.getById(fundingId);
-        Member member = memberRepository.getById(memberId);
-        FundingParticipant participant = fundingParticipateRepository.getByFundingAndMember(funding, member);
+    public void participateCancel(FundingParticipateCancelCommand command) {
+        Member member = memberRepository.getById(command.memberId());
+        FundingParticipant participant = fundingParticipateRepository.getById(command.fundingParticipantId());
+        participant.validateMember(member);
         participant.cancel();
     }
 
