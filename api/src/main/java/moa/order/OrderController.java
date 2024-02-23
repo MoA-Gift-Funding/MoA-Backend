@@ -4,7 +4,6 @@ import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import jakarta.validation.Valid;
-import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import moa.auth.Auth;
 import moa.global.presentation.PageResponse;
@@ -12,7 +11,6 @@ import moa.order.application.OrderService;
 import moa.order.query.OrderQueryService;
 import moa.order.query.response.OrderDetailResponse;
 import moa.order.query.response.OrderResponse;
-import moa.order.request.OrderPlaceRequest;
 import moa.order.request.ReissueCouponRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,15 +30,6 @@ public class OrderController implements OrderApi {
 
     private final OrderService orderService;
     private final OrderQueryService orderQueryService;
-
-    @PostMapping
-    public ResponseEntity<Void> place(
-            @Auth(permit = {SIGNED_UP}) Long memberId,
-            @Valid @RequestBody OrderPlaceRequest request
-    ) {
-        Long orderId = orderService.place(request.toCommand(memberId));
-        return ResponseEntity.created(URI.create("/orders/" + orderId)).build();
-    }
 
     // TODO 이거 윈큐브 상품(or 쿠폰형 상품에 특화된 로직이라 나중에 상품 종류 추가되면 구조 변경)
     @PostMapping("/{orderId}/reissue-coupon")

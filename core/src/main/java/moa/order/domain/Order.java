@@ -5,7 +5,7 @@ import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_FOR_FUNDING;
-import static moa.order.domain.OrderStatus.RECEIVED;
+import static moa.order.domain.OrderStatus.COMPLETE_RECEIVE;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -65,7 +65,7 @@ public class Order extends RootEntity<Long> {
         this.address = funding.getAddress();
         this.deliveryRequestMessage = funding.getDeliveryRequestMessage();
         this.member = funding.getMember();
-        this.status = RECEIVED;
+        this.status = COMPLETE_RECEIVE;
     }
 
     public void validateOwner(Member member) {
