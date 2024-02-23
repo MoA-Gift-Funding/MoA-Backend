@@ -1,4 +1,4 @@
-package moa.product.dev;
+package moa.dev;
 
 import static moa.product.domain.ProductId.ProductProvider.WINCUBE;
 
