@@ -83,11 +83,10 @@ public class TossPayment extends RootEntity<Long> {
         this.cancel = new TossPaymentCancel(reason);
     }
 
-    public void cancel(String reason) {
+    public void cancel() {
         if (status != PENDING_CANCEL) {
             throw new TossPaymentException(ONLY_CANCEL_PENDING_PAYMENT);
         }
-        this.cancel = new TossPaymentCancel(reason);
         this.status = CANCELED;
     }
 

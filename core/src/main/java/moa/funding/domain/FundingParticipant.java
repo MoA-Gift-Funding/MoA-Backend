@@ -90,13 +90,13 @@ public class FundingParticipant extends RootEntity<Long> {
     public void cancel() {
         validateCancel();
         this.status = CANCEL;
-        tossPayment.cancel("펀딩 참여를 희망하지 않음");
+        tossPayment.pendingCancel("펀딩 참여를 희망하지 않음");
     }
 
     public void canceledByFundingOwner() {
         validateCancel();
         this.status = CANCELLED_BY_FUND_OWNER;
-        tossPayment.cancel("펀딩 생성자의 펀딩 취소로 인한 결제 취소");
+        tossPayment.pendingCancel("펀딩 생성자의 펀딩 취소로 인한 결제 취소");
     }
 
     private void validateCancel() {
