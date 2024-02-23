@@ -31,6 +31,51 @@ public class NotificationFactory {
         );
     }
 
+    private Notification generateFundingParticipateWithoutMessageNotification(
+            String fundingTitle,
+            String participantProfileUrl,
+            Long fundingId,
+            Member target
+    ) {
+        return new Notification(
+                FUNDING_DETAIL_APP_PATH + fundingId,
+                "친구의 펀딩 참여",
+                "%s 님이 내 펀딩에 참여했어요🤗"
+                        .formatted(fundingTitle),
+                participantProfileUrl,
+                PARTY,
+                target
+        );
+    }
+
+    public Notification generateFundingParticipateNotification(
+            String participantName,
+            String fundingMessage,
+            String participantProfileUrl,
+            Long fundingId,
+            Long fundingMessageId,
+            Member target
+    ) {
+        if (fundingMessage == null || fundingMessage.isBlank()) {
+            return generateFundingParticipateWithoutMessageNotification(
+                    participantName,
+                    participantProfileUrl,
+                    fundingId,
+                    target
+            );
+        }
+        return new Notification(
+                FUNDING_DETAIL_APP_PATH + "&messageId=%s"
+                        .formatted(fundingMessageId),
+                "펀딩 메세지 도착",
+                "💌 from %s %s"
+                        .formatted(participantName, fundingMessage),
+                participantProfileUrl,
+                MESSAGE,
+                target
+        );
+    }
+
     public Notification generateFundingFinishNotification(
             String fundingTitle,
             String productImageUrl,
@@ -40,24 +85,10 @@ public class NotificationFactory {
         return new Notification(
                 FUNDING_DETAIL_APP_PATH + fundingId,
                 "펀딩 달성",
-                "[%s] 펀딩이 달성 완료됐어요. 내 펀딩에서 상품 수령 버튼을 눌러주세요🎁"
+                "[%s] 펀딩이 달성 완료되어 상품이 전송이 완료됐어요🎁"
                         .formatted(fundingTitle),
                 productImageUrl,
                 PARTY,
-                target
-        );
-    }
-
-    public Notification generateFundingStoppedNotification(
-            Long fundingId,
-            Member target
-    ) {
-        return new Notification(
-                MY_FUNDING_APP_PATH + fundingId,
-                "펀딩 중단",
-                "입점사의 펀딩 상품 공급 중단 이슈로 펀딩이 취소되었어요🥲 마이페이지에서 입금받을 계좌 번호를 입력해주세요.",
-                null,
-                CHECK,
                 target
         );
     }
@@ -96,51 +127,6 @@ public class NotificationFactory {
         );
     }
 
-    public Notification generateFundingParticipateNotification(
-            String participantName,
-            String fundingMessage,
-            String participantProfileUrl,
-            Long fundingId,
-            Long fundingMessageId,
-            Member target
-    ) {
-        if (fundingMessage == null || fundingMessage.isBlank()) {
-            return generateFundingParticipateWithoutMessageNotification(
-                    participantName,
-                    participantProfileUrl,
-                    fundingId,
-                    target
-            );
-        }
-        return new Notification(
-                FUNDING_DETAIL_APP_PATH + "&messageId=%s"
-                        .formatted(fundingMessageId),
-                "펀딩 메세지 도착",
-                "💌 from %s %s"
-                        .formatted(participantName, fundingMessage),
-                participantProfileUrl,
-                MESSAGE,
-                target
-        );
-    }
-
-    private Notification generateFundingParticipateWithoutMessageNotification(
-            String fundingTitle,
-            String participantProfileUrl,
-            Long fundingId,
-            Member target
-    ) {
-        return new Notification(
-                FUNDING_DETAIL_APP_PATH + fundingId,
-                "친구의 펀딩 참여",
-                "%s 님이 내 펀딩에 참여했어요🤗"
-                        .formatted(fundingTitle),
-                participantProfileUrl,
-                PARTY,
-                target
-        );
-    }
-
     public Notification generateFundingCancelNotification(
             String fundingOwnerName,
             String fundingTitle,
@@ -157,11 +143,25 @@ public class NotificationFactory {
         );
     }
 
+    public Notification generateFundingStoppedNotification(
+            Long fundingId,
+            Member target
+    ) {
+        return new Notification(
+                MY_FUNDING_APP_PATH + fundingId,
+                "펀딩 중단",
+                "입점사의 펀딩 상품 공급 중단 이슈로 펀딩이 취소되었어요🥲 마이페이지에서 입금받을 계좌 번호를 입력해주세요.",
+                null,
+                CHECK,
+                target
+        );
+    }
+
     public Notification generateBirthdayNotification(
             Member target
     ) {
         return new Notification(
-                "giftMoA://navigation?name=MyFunding",
+                "giftMoA://navigation?name=Home",
                 "친구 생일",
                 "내일 생일인 친구가 있어요 펀딩을 확인해보세요🎉",
                 null,
