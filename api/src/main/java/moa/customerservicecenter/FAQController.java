@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/faqs")
-public class FAQController {
+public class FAQController implements FAQControllerApi {
 
     private final FAQQueryService faqQueryService;
 

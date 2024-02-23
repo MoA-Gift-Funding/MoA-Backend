@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/personal-inquiries")
-public class PersonalInquiryController {
+public class PersonalInquiryController implements PersonalInquiryApi {
 
     private final PersonalInquiryService personalInquiryService;
     private final PersonalInquireQueryService personalInquireQueryService;
