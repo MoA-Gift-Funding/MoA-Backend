@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.util.List;
 import moa.product.domain.Product;
+import moa.product.domain.ProductExchangeRefundPolicy;
 import moa.product.domain.ProductId;
 import moa.product.domain.ProductOption;
 import moa.product.domain.ProductOptionStatus;
@@ -35,7 +36,10 @@ public record ProductDetailResponse(
         @Schema(description = "상품의 상태")
         ProductStatus status,
 
-        List<ProductOptionResponse> options
+        List<ProductOptionResponse> options,
+
+        @Schema(description = "상품 교환 / 환불 규정")
+        ProductExchangeRefundPolicy productExchangeRefundPolicy
 ) {
     public static ProductDetailResponse from(Product product) {
         return new ProductDetailResponse(
@@ -51,7 +55,8 @@ public record ProductDetailResponse(
                 product.getDiscountRate(),
                 product.getLimitDate(),
                 product.getStatus(),
-                ProductOptionResponse.from(product.getOptions())
+                ProductOptionResponse.from(product.getOptions()),
+                new ProductExchangeRefundPolicy()
         );
     }
 
