@@ -14,12 +14,11 @@ import moa.funding.domain.Funding;
 import moa.funding.domain.FundingCancelEvent;
 import moa.funding.domain.FundingCreateEvent;
 import moa.funding.domain.FundingFinishEvent;
-import moa.funding.domain.FundingMessage;
 import moa.funding.domain.FundingParticipant;
 import moa.funding.domain.FundingParticipateEvent;
+import moa.funding.domain.FundingParticipateRepository;
 import moa.funding.domain.FundingRepository;
 import moa.member.domain.Member;
-import moa.member.domain.MemberRepository;
 import moa.notification.application.NotificationService;
 import moa.notification.domain.Notification;
 import moa.notification.domain.NotificationFactory;
@@ -39,7 +38,7 @@ public class FundingNotificationEventHandler {
     private final FriendRepository friendRepository;
     private final NotificationFactory notificationFactory;
     private final NotificationService notificationService;
-    private final MemberRepository memberRepository;
+    private final FundingParticipateRepository fundingParticipateRepository;
 
     @TransactionalEventListener(value = FundingCreateEvent.class, phase = AFTER_COMMIT)
     public void push(FundingCreateEvent event) {
@@ -78,16 +77,15 @@ public class FundingNotificationEventHandler {
     public void push(FundingParticipateEvent event) {
         Funding funding = fundingRepository.getById(event.fundingId());
         Member fundingOwner = funding.getMember();
-        Member participant = memberRepository.getById(event.participantId());
-        FundingMessage fundingMessage = getFundingMessage(funding, participant);
+        FundingParticipant participant = fundingParticipateRepository.getById(event.participant().getId());
+        Member participantMember = participant.getMember();
         List<Friend> ownersUnblockedFriends = friendRepository.findUnblockedByMemberId(fundingOwner);
-        String participantNickName = getNickName(participant, ownersUnblockedFriends);
+        String participantNickName = getNickName(participantMember, ownersUnblockedFriends);
         var notification = notificationFactory.generateFundingParticipateNotification(
                 participantNickName,
-                fundingMessage == null ? null : fundingMessage.getContent(),
-                participant.getProfileImageUrl(),
+                participant.getFundingMessage().getContent(),
+                participantMember.getProfileImageUrl(),
                 funding.getId(),
-                fundingMessage == null ? null : fundingMessage.getId(),
                 fundingOwner
         );
         notificationService.push(notification);
@@ -109,14 +107,6 @@ public class FundingNotificationEventHandler {
         for (Notification notification : notifications) {
             notificationService.push(notification);
         }
-    }
-
-    private FundingMessage getFundingMessage(Funding funding, Member participant) {
-        return funding.getParticipants().stream()
-                .filter(it -> it.getMember().equals(participant))
-                .findAny()
-                .map(FundingParticipant::getFundingMessage)
-                .orElse(null);
     }
 
     private List<Member> getUnblockedFriends(List<Friend> friendsUnblockedOwner, List<Friend> ownersUnblockedFriends) {

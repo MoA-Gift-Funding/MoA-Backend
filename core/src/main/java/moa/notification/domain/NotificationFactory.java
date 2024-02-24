@@ -31,39 +31,13 @@ public class NotificationFactory {
         );
     }
 
-    private Notification generateFundingParticipateWithoutMessageNotification(
-            String fundingTitle,
-            String participantProfileUrl,
-            Long fundingId,
-            Member target
-    ) {
-        return new Notification(
-                FUNDING_DETAIL_APP_PATH + fundingId,
-                "친구의 펀딩 참여",
-                "%s 님이 내 펀딩에 참여했어요🤗"
-                        .formatted(fundingTitle),
-                participantProfileUrl,
-                PARTY,
-                target
-        );
-    }
-
     public Notification generateFundingParticipateNotification(
             String participantName,
             String fundingMessage,
             String participantProfileUrl,
-            Long fundingId,
             Long fundingMessageId,
             Member target
     ) {
-        if (fundingMessage == null || fundingMessage.isBlank()) {
-            return generateFundingParticipateWithoutMessageNotification(
-                    participantName,
-                    participantProfileUrl,
-                    fundingId,
-                    target
-            );
-        }
         return new Notification(
                 FUNDING_DETAIL_APP_PATH + "&messageId=%s"
                         .formatted(fundingMessageId),

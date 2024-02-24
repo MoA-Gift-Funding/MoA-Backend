@@ -56,7 +56,7 @@ public class FundingParticipant extends RootEntity<Long> {
     private Price amount;
 
     @OneToOne(cascade = {PERSIST, MERGE})
-    @JoinColumn(name = "funding_message_id")
+    @JoinColumn(name = "funding_message_id", nullable = false)
     private FundingMessage fundingMessage;
 
     @Enumerated(STRING)
@@ -73,8 +73,13 @@ public class FundingParticipant extends RootEntity<Long> {
         this.funding = funding;
         this.tossPayment = payment;
         this.amount = payment.getTotalAmount();
-        this.fundingMessage = new FundingMessage(member, funding.getMember(), message, messageVisible);
         this.status = PARTICIPATING;
+        this.fundingMessage = new FundingMessage(
+                member,
+                funding.getMember(),
+                message,
+                messageVisible
+        );
     }
 
     public void validateMember(Member member) {
