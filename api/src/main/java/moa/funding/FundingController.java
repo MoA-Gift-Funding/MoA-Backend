@@ -10,6 +10,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import moa.auth.Auth;
 import moa.funding.application.FundingFacade;
+import moa.funding.domain.FundingExchangeRefundPolicy;
 import moa.funding.domain.FundingStatus;
 import moa.funding.query.FundingQueryService;
 import moa.funding.query.response.FundingDetailResponse;
@@ -87,6 +88,13 @@ public class FundingController implements FundingApi {
     ) {
         fundingFacade.participateCancel(request.toCommand(memberId, id));
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/exchange-refund-policy")
+    public ResponseEntity<FundingExchangeRefundPolicy> getExchangeRefundPolicy(
+            @Auth(permit = {SIGNED_UP}) Long memberId
+    ) {
+        return ResponseEntity.ok(new FundingExchangeRefundPolicy());
     }
 
     @GetMapping("/my")
