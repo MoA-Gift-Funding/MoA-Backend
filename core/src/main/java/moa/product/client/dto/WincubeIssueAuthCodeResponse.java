@@ -1,6 +1,6 @@
 package moa.product.client.dto;
 
-public record WincubeAuthResponse(
+public record WincubeIssueAuthCodeResponse(
         Integer resultCode,
         String codeId,
         String expireDate,

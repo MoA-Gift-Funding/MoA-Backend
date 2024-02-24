@@ -1,24 +1,44 @@
 package moa.product.client.auth;
 
-import moa.product.client.dto.WincubeAuthResponse;
+import moa.product.client.dto.WincubeIssueAuthCodeResponse;
+import moa.product.client.dto.WincubeIssueAuthTokenResponse;
 import moa.product.client.dto.WincubeTokenResponse;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.PostExchange;
 
 public interface WincubeAuthApiClient {
 
+    /**
+     * 계정 코드 발행
+     * <p/>
+     */
     @PostExchange("/auth/code/issue")
-    WincubeAuthResponse getAuthToken(
-            @RequestParam("custId") String custId, // 아이디 정보
-            @RequestParam("pwd") String pwd,
-            @RequestParam("autKey") String autKey,
-            @RequestParam("aesKey") String aesKey,
-            @RequestParam("aesIv") String aesIv
+    WincubeIssueAuthCodeResponse issueAuthCode(
+            @RequestParam("custId") String custId,  // 업체 AES256 암호화
+            @RequestParam("pwd") String pwd,  // 업체 AES256 암호화
+            @RequestParam("autKey") String autKey,  // 업체 AES256 암호화
+            @RequestParam("aesKey") String aesKey,  // RSA 암호화
+            @RequestParam("aesIv") String aesIv  // RSA 암호화
     );
 
+    /**
+     * 계정 토큰 발행
+     * <p/>
+     * codeId는 `계정 코드 발행`의 응답으로 받은 codeId 그대로 전송
+     */
+    @PostExchange("/auth/token/issue")
+    WincubeIssueAuthTokenResponse issueAuthToken(
+            @RequestParam("codeId") String codeId
+    );
+
+    /**
+     * 계정 토큰 인증
+     * <p/>
+     * `계정 토큰 발행` 에서 발행된 토큰 정보(jwt)와 업체 아이디(custId, RSA 암호화 필요)를 전달한다.
+     */
     @PostExchange("/auth/token/check")
     WincubeTokenResponse checkToken(
-            @RequestParam("tokenId") String token,
+            @RequestParam("tokenId") String tokenId,
             @RequestParam("custId") String custId
     );
 

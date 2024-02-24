@@ -1,8 +1,8 @@
 package moa.product.client.dto;
 
-public record WincubeTokenResponse(
+public record WincubeIssueAuthTokenResponse(
         Integer resultCode,
-        String status,  // 값이 A 이면 사용 가능 토큰
+        String tokenId,
         String expireDate,
         String expireTime,
         String message

@@ -9,15 +9,8 @@ public class WincubeAuthClient {
 
     private final WincubeAuthProperty wincubeProperty;
     private final WincubeAuthApiClient authClient;
+    private final Aes256 aes256;
+    private final Rsa rsa;
 
-//    public WincubeAuthResponse getAuth() {
-//        Aes256 aes256 = new Aes256();
-//        return authClient.getAuthToken(
-//                aes256.aes256Enc(wincubeProperty.custId(), ),
-//                wincubeProperty.pwd(),
-//                wincubeProperty.autKey(),
-//                wincubeProperty.aesKey(),
-//                wincubeProperty.aesIv()
-//        );
-//    }
+
 }

@@ -1,4 +1,4 @@
-package moa.product.client;
+package moa.product.client.auth;
 
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -13,14 +13,22 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.crypto.Cipher;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 /**
  * 윈큐브 AUTH 문서 - 4. RSA 암호화 클래스 코드
  */
 @Slf4j
-public class RsaUtils {
+@Component
+public class Rsa {
 
     private static final int KEY_SIZE = 2048;
+
+    private final String rsaPublicKey;
+
+    public Rsa(WincubeAuthProperty property) {
+        this.rsaPublicKey = property.rsaPublicKey();
+    }
 
     /**
      * 키페어 생성
@@ -51,12 +59,12 @@ public class RsaUtils {
     /**
      * 암호화
      */
-    public String encode(String plainData, String stringPublicKey) {
+    public String encode(String plainData) {
         String encryptedData = null;
         try {
             // 평문으로 전달받은 공개키를 공개키객체로 만드는 과정
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            byte[] bytePublicKey = Base64.getDecoder().decode(stringPublicKey.getBytes());
+            byte[] bytePublicKey = Base64.getDecoder().decode(rsaPublicKey.getBytes());
             X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(bytePublicKey);
             PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
 

@@ -1,4 +1,4 @@
-package moa.product.client;
+package moa.product.client.auth;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -7,16 +7,26 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 /**
  * 윈큐브 AUTH 문서 - 3. AES256 클래스 코드
  */
 @Slf4j
+@Component
 public class Aes256 {
 
     private static final String alg = "AES/CBC/PKCS5Padding";
 
-    public String aes256Enc(String info, String aesKey, String aesIv) {
+    private final String aesKey;
+    private final String aesIv;
+
+    public Aes256(WincubeAuthProperty property) {
+        this.aesKey = property.aesKey();
+        this.aesIv = property.aesIv();
+    }
+
+    public String aes256Enc(String info) {
         // 암호화된 정보
         String result = null;
 
