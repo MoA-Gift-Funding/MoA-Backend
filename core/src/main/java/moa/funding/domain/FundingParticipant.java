@@ -6,10 +6,12 @@ import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
+import static moa.funding.domain.FundingStatus.PROCESSING;
 import static moa.funding.domain.ParticipantStatus.CANCEL;
 import static moa.funding.domain.ParticipantStatus.CANCELLED_BY_FUND_OWNER;
 import static moa.funding.domain.ParticipantStatus.PARTICIPATING;
 import static moa.funding.exception.FundingExceptionType.ALREADY_CANCEL_PARTICIPATING;
+import static moa.funding.exception.FundingExceptionType.FUNDING_IS_NOT_PROCESSING;
 import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_CANCEL_PARTICIPATE;
 
 import jakarta.persistence.AttributeOverride;
@@ -89,8 +91,16 @@ public class FundingParticipant extends RootEntity<Long> {
 
     public void cancel() {
         validateCancel();
+        validateFundingIsProcessing();
         this.status = CANCEL;
         tossPayment.pendingCancel("펀딩 참여를 희망하지 않음");
+    }
+
+    private void validateFundingIsProcessing() {
+        if (funding.getStatus() == PROCESSING) {
+            return;
+        }
+        throw new FundingException(FUNDING_IS_NOT_PROCESSING);
     }
 
     public void canceledByFundingOwner() {
