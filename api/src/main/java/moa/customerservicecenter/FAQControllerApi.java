@@ -15,7 +15,7 @@ import moa.customerservicecenter.query.response.FAQResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@Tag(name = "FAQ API", description = "공지 관련 API")
+@Tag(name = "FAQ API", description = "자주 묻는 질문 관련 API")
 @SecurityRequirement(name = "JWT")
 public interface FAQControllerApi {
 
@@ -28,7 +28,7 @@ public interface FAQControllerApi {
                     @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
             }
     )
-    @Operation(summary = "공지 전체 조회")
+    @Operation(summary = "FAQ 전체 조회")
     @GetMapping
     ResponseEntity<List<FAQResponse>> findMy(
             @Auth(permit = SIGNED_UP) Long memberId
