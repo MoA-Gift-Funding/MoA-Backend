@@ -1,12 +1,12 @@
-package moa.customerservicecenter;
+package moa.cs;
 
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import moa.auth.Auth;
-import moa.customerservicecenter.query.FAQQueryService;
-import moa.customerservicecenter.query.response.FAQResponse;
+import moa.cs.query.FAQQueryService;
+import moa.cs.query.response.FAQResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

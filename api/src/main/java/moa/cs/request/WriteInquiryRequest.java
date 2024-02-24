@@ -1,9 +1,9 @@
-package moa.customerservicecenter.request;
+package moa.cs.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import moa.customerservicecenter.application.command.WriteInquiryCommand;
-import moa.customerservicecenter.domain.QuestionCategory;
+import moa.cs.application.command.WriteInquiryCommand;
+import moa.cs.domain.QuestionCategory;
 
 public record WriteInquiryRequest(
         @NotNull QuestionCategory category,

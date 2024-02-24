@@ -1,7 +1,7 @@
-package moa.customerservicecenter.query.response;
+package moa.cs.query.response;
 
-import moa.customerservicecenter.domain.FAQ;
-import moa.customerservicecenter.domain.QuestionCategory;
+import moa.cs.domain.FAQ;
+import moa.cs.domain.QuestionCategory;
 
 public record FAQResponse(
         Long id,

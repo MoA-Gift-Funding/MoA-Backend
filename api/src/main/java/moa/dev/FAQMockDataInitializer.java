@@ -1,16 +1,16 @@
 package moa.dev;
 
-import static moa.customerservicecenter.domain.QuestionCategory.CANCEL_REFUND;
-import static moa.customerservicecenter.domain.QuestionCategory.CREATE_FUNDING;
-import static moa.customerservicecenter.domain.QuestionCategory.DELIVERY;
-import static moa.customerservicecenter.domain.QuestionCategory.ETC;
-import static moa.customerservicecenter.domain.QuestionCategory.MEMBER;
-import static moa.customerservicecenter.domain.QuestionCategory.PARTICIPATE_FUNDING;
+import static moa.cs.domain.QuestionCategory.CANCEL_REFUND;
+import static moa.cs.domain.QuestionCategory.CREATE_FUNDING;
+import static moa.cs.domain.QuestionCategory.DELIVERY;
+import static moa.cs.domain.QuestionCategory.ETC;
+import static moa.cs.domain.QuestionCategory.MEMBER;
+import static moa.cs.domain.QuestionCategory.PARTICIPATE_FUNDING;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import moa.customerservicecenter.domain.FAQ;
-import moa.customerservicecenter.query.FAQQueryRepository;
+import moa.cs.domain.FAQ;
+import moa.cs.query.FAQQueryRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
