@@ -105,7 +105,7 @@ class FundingServiceTest {
         friendRepository.save(new Friend(part, owner, "1"));
         Funding funding = funding(
                 owner,
-                productRepository.save(new Product("", Price.from("100000"))),
+                productRepository.save(product("prod", Price.from("100000"))),
                 "10000"
         );
         fundingRepository.save(funding);

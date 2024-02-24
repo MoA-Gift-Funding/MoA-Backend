@@ -19,7 +19,15 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     List<Friend> findByMemberAndTargetIn(Member member, List<Member> targets);
 
+    default Friend getByMemberAndTarget(Member member, Member target) {
+        return findByMemberAndTarget(member, target)
+                .orElseThrow(() -> new FriendException(NOT_FOUND_FRIEND));
+    }
+
     Optional<Friend> findByMemberAndTarget(Member member, Member target);
+
+    @Query("SELECT f FROM Friend f JOIN FETCH f.member WHERE f.target = :member")
+    List<Friend> findAllByTargetId(@Param("member") Member member);
 
     @Query("SELECT f FROM Friend f JOIN FETCH f.member WHERE f.member = :member AND f.isBlocked = FALSE")
     List<Friend> findUnblockedByMemberId(@Param("member") Member member);

@@ -60,6 +60,17 @@ public class FundingNotificationEventHandler {
         }
     }
 
+    private List<Member> getUnblockedFriends(List<Friend> friendsUnblockedOwner, List<Friend> ownersUnblockedFriends) {
+        List<Member> unblocked = friendsUnblockedOwner.stream()
+                .map(Friend::getMember)
+                .collect(Collectors.toList());
+        List<Member> myUnblockedFriendsTarget = ownersUnblockedFriends.stream()
+                .map(Friend::getTarget)
+                .toList();
+        unblocked.retainAll(myUnblockedFriendsTarget);
+        return unblocked;
+    }
+
     @TransactionalEventListener(value = FundingFinishEvent.class, phase = AFTER_COMMIT)
     public void push(FundingFinishEvent event) {
         Funding funding = fundingRepository.getById(event.fundingId());
@@ -79,10 +90,9 @@ public class FundingNotificationEventHandler {
         Member fundingOwner = funding.getMember();
         FundingParticipant participant = fundingParticipateRepository.getById(event.participant().getId());
         Member participantMember = participant.getMember();
-        List<Friend> ownersUnblockedFriends = friendRepository.findUnblockedByMemberId(fundingOwner);
-        String participantNickName = getNickName(participantMember, ownersUnblockedFriends);
+        Friend friend = friendRepository.getByMemberAndTarget(fundingOwner, participantMember);
         var notification = notificationFactory.generateFundingParticipateNotification(
-                participantNickName,
+                friend.getNickname(),
                 participant.getFundingMessage().getContent(),
                 participantMember.getProfileImageUrl(),
                 funding.getId(),
@@ -93,14 +103,14 @@ public class FundingNotificationEventHandler {
 
     @TransactionalEventListener(value = FundingCancelEvent.class, phase = AFTER_COMMIT)
     public void push(FundingCancelEvent event) {
-        Funding funding = event.funding();
+        Funding funding = fundingRepository.getById(event.fundingId());
         Member fundingOwner = funding.getMember();
-        List<Friend> friendsUnblockedOwner = friendRepository.findUnblockedByTargetId(fundingOwner);
-        List<Friend> ownersUnblockedFriends = friendRepository.findUnblockedByMemberId(fundingOwner);
-        List<Member> unblockedFriends = getUnblockedFriends(friendsUnblockedOwner, ownersUnblockedFriends);
-        List<Notification> notifications = unblockedFriends.stream()
+        List<FundingParticipant> participants = funding.getParticipants();
+        List<Friend> friendsTargetOwner = friendRepository.findAllByTargetId(fundingOwner);
+        List<Notification> notifications = participants.stream()
+                .map(FundingParticipant::getMember)
                 .map(target -> notificationFactory.generateFundingCancelNotification(
-                        getNickName(target, friendsUnblockedOwner),
+                        getNickName(target, friendsTargetOwner),
                         funding.getTitle(),
                         target
                 )).toList();
@@ -109,22 +119,11 @@ public class FundingNotificationEventHandler {
         }
     }
 
-    private List<Member> getUnblockedFriends(List<Friend> friendsUnblockedOwner, List<Friend> ownersUnblockedFriends) {
-        List<Member> unblocked = friendsUnblockedOwner.stream()
-                .map(Friend::getMember)
-                .collect(Collectors.toList());
-        List<Member> myUnblockedFriendsTarget = ownersUnblockedFriends.stream()
-                .map(Friend::getTarget)
-                .toList();
-        unblocked.retainAll(myUnblockedFriendsTarget);
-        return unblocked;
-    }
-
-    private String getNickName(Member target, List<Friend> friendsUnblockedOwner) {
-        return friendsUnblockedOwner.stream()
-                .filter(friend -> friend.getMember().equals(target))
+    private String getNickName(Member member, List<Friend> friendsTargetOwner) {
+        return friendsTargetOwner.stream()
+                .filter(friend -> friend.getMember().equals(member))
                 .findAny()
                 .map(Friend::getNickname)
-                .orElseGet(target::getNickname);
+                .orElseGet(member::getNickname);
     }
 }
