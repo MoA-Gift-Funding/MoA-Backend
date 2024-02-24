@@ -13,6 +13,9 @@ public class NotificationFactory {
     private static final String FUNDING_DETAIL_APP_PATH = "giftMoA://navigation?name=FundDetail&fundingId=";
     private static final String MY_FUNDING_APP_PATH = "giftMoA://navigation?name=MyFunding&fundingId=";
 
+    /**
+     * 펀딩 개설 완료
+     */
     public Notification generateFundingCreatedNotification(
             String fundingOwnerName,
             String fundingTitle,
@@ -31,6 +34,9 @@ public class NotificationFactory {
         );
     }
 
+    /**
+     * 펀딩 참여 완료
+     */
     public Notification generateFundingParticipateNotification(
             String participantName,
             String fundingMessage,
@@ -50,6 +56,9 @@ public class NotificationFactory {
         );
     }
 
+    /**
+     * 펀딩 달성
+     */
     public Notification generateFundingFinishNotification(
             String fundingTitle,
             String productImageUrl,
@@ -67,6 +76,9 @@ public class NotificationFactory {
         );
     }
 
+    /**
+     * 펀딩 종료(미달성)
+     */
     public Notification generateFundingExpiredNotification(
             String fundingTitle,
             String productImageUrl,
@@ -84,6 +96,9 @@ public class NotificationFactory {
         );
     }
 
+    /**
+     * 펀딩 달성 하루 전
+     */
     public Notification generateFundingSoonExpireNotification(
             String fundingTitle,
             String productImageUrl,
@@ -101,6 +116,9 @@ public class NotificationFactory {
         );
     }
 
+    /**
+     * 펀딩 취소
+     */
     public Notification generateFundingCancelNotification(
             String fundingOwnerName,
             String fundingTitle,
@@ -117,6 +135,9 @@ public class NotificationFactory {
         );
     }
 
+    /**
+     * 펀딩 중단
+     */
     public Notification generateFundingStoppedNotification(
             Long fundingId,
             Member target
@@ -131,6 +152,9 @@ public class NotificationFactory {
         );
     }
 
+    /**
+     * 친구 생일 알림
+     */
     public Notification generateBirthdayNotification(
             Member target
     ) {
