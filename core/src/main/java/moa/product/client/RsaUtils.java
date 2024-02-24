@@ -14,11 +14,17 @@ import java.util.Map;
 import javax.crypto.Cipher;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 윈큐브 AUTH 문서 - 4. RSA 암호화 클래스 코드
+ */
 @Slf4j
 public class RsaUtils {
 
     private static final int KEY_SIZE = 2048;
 
+    /**
+     * 키페어 생성
+     */
     public Map<String, String> createKeypairAsString() {
         HashMap<String, String> stringKeypair = new HashMap<>();
         try {
@@ -84,8 +90,8 @@ public class RsaUtils {
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
             // 암호문을 평문화하는 과정
-            byte[] byteEncyptedData = Base64.getDecoder().decode(encryptedData.getBytes());
-            byte[] byteDecryptedData = cipher.doFinal(byteEncyptedData);
+            byte[] byteEncryptedData = Base64.getDecoder().decode(encryptedData.getBytes());
+            byte[] byteDecryptedData = cipher.doFinal(byteEncryptedData);
             decryptedData = new String(byteDecryptedData);
         } catch (Exception e) {
             log.error("RSA 복호화 과정에서 문제가 발생했습니다. {}", e.getMessage());
