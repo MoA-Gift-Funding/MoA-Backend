@@ -15,6 +15,7 @@ import static moa.product.domain.ProductStatus.SALES;
 import static moa.product.domain.ProductStatus.SALES_DISCONTINUED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -49,7 +50,6 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @BatchTest
@@ -261,8 +261,8 @@ class WincubeProductUpdateJobConfigTest {
     private ProductOption productOption(String name, String code, Product product) {
         ProductOption productOption = new ProductOption(name, code, product);
         LocalDateTime now = LocalDateTime.now();
-        ReflectionTestUtils.setField(productOption, "createdDate", now);
-        ReflectionTestUtils.setField(productOption, "updatedDate", now);
+        setField(productOption, "createdDate", now);
+        setField(productOption, "updatedDate", now);
         return productOption;
     }
 }

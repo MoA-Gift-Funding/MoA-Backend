@@ -20,6 +20,7 @@ import moa.friend.domain.FriendRepository;
 import moa.funding.application.command.FundingParticipateCommand;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingFinishEvent;
+import moa.funding.domain.FundingParticipateEvent;
 import moa.funding.domain.FundingRepository;
 import moa.funding.exception.FundingException;
 import moa.global.domain.Price;
@@ -93,6 +94,29 @@ class FundingServiceTest {
         Funding after = fundingRepository.getById(funding.getId());
         assertThat(after.getStatus()).isEqualTo(COMPLETE);
         assertThat(events.stream(FundingFinishEvent.class).count()).isEqualTo(1);
+    }
+
+    @Test
+    void 펀딩_참여_테스트_펀딩_참여시_알림_발송_이벤트_발행() {
+        // given
+        Member owner = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
+        Member part = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
+        friendRepository.save(new Friend(owner, part, "1"));
+        friendRepository.save(new Friend(part, owner, "1"));
+        Funding funding = funding(
+                owner,
+                productRepository.save(product("prod", Price.from("100000"))),
+                "10000"
+        );
+        fundingRepository.save(funding);
+        tossPaymentRepository.save(new TossPayment("key", "1", "order", "10000", part.getId()));
+        var command = new FundingParticipateCommand(funding.getId(), part.getId(), "1", "hi", PUBLIC);
+
+        // when
+        fundingService.participate(command);
+
+        // then
+        assertThat(events.stream(FundingParticipateEvent.class).count()).isEqualTo(1);
     }
 
     @Test

@@ -2,20 +2,20 @@ package moa.notification;
 
 import static moa.fixture.MemberFixture.member;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
-import static moa.notification.domain.NotificationType.PARTY;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import static org.springframework.batch.core.BatchStatus.COMPLETED;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.time.LocalDateTime;
 import moa.BatchTest;
+import moa.friend.domain.Friend;
+import moa.friend.domain.FriendRepository;
 import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
-import moa.notification.domain.Notification;
 import moa.notification.domain.NotificationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -25,35 +25,46 @@ import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @BatchTest
-@SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class RemoveNotificationJobConfigTest {
+@SuppressWarnings("NonAsciiCharacters")
+class BirthdayNotificationJobConfigTest {
 
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
+    private Job birthdayNotificationJob;
+
+    @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private FriendRepository friendRepository;
 
     @Autowired
     private NotificationRepository notificationRepository;
 
-    @Autowired
-    private Job removeNotificationJob;
-
     @BeforeEach
     void setUp() {
-        jobLauncherTestUtils.setJob(removeNotificationJob);
+        jobLauncherTestUtils.setJob(birthdayNotificationJob);
     }
 
     @Test
-    void 알림_제거_15일이_지난_알림만_제거된다() throws Exception {
+    void 다음날_생일인_사람의_친구들에게_알림_발송() throws Exception {
         // given
-        var member = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
-        LocalDateTime now = LocalDateTime.of(2024, 1, 20, 0, 0, 0);
-        알림_저장(member, LocalDateTime.of(2024, 1, 4, 0, 0, 0)); // 삭제 대상
-        알림_저장(member, LocalDateTime.of(2024, 1, 5, 0, 0, 0));
-        알림_저장(member, LocalDateTime.of(2024, 1, 6, 0, 0, 0));
+        Member member = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
+        Member friend = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
+        Member friend2 = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
+        friendRepository.save(new Friend(member, friend, "1"));
+        friendRepository.save(new Friend(friend, member, "1"));
+        friendRepository.save(new Friend(member, friend2, "1"));
+        friendRepository.save(new Friend(friend2, member, "1"));
+
+        // 24년 1월 20일 20시 00분 기준
+        LocalDateTime now = LocalDateTime.of(2024, 1, 20, 20, 0, 0);
+        setField(member, "birthyear", "2000");
+        setField(member, "birthday", "0121");
+        memberRepository.save(member);
 
         // when
         JobParameters jobParameters = new JobParametersBuilder()
@@ -66,12 +77,5 @@ class RemoveNotificationJobConfigTest {
         assertThat(jobExecution.getStatus()).isEqualTo(COMPLETED);
         Integer count = notificationRepository.findAll().size();
         assertThat(count).isEqualTo(2);
-    }
-
-    private void 알림_저장(Member member, LocalDateTime createDate) {
-        var notification = new Notification("url", "title", "message", "imageUrl", PARTY, member);
-        notificationRepository.save(notification);
-        setField(notification, "createdDate", createDate);
-        notificationRepository.save(notification);
     }
 }

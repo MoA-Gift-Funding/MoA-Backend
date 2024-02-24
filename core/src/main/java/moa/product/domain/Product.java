@@ -92,8 +92,4 @@ public class Product extends RootEntity<Long> {
         this.discountRate = discountRate;
         this.limitDate = limitDate;
     }
-
-    public void addOption(ProductOption productOption) {
-        this.options.add(productOption);
-    }
 }

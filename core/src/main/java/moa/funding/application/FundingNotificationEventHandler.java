@@ -11,8 +11,12 @@ import lombok.RequiredArgsConstructor;
 import moa.friend.domain.Friend;
 import moa.friend.domain.FriendRepository;
 import moa.funding.domain.Funding;
+import moa.funding.domain.FundingCancelEvent;
 import moa.funding.domain.FundingCreateEvent;
 import moa.funding.domain.FundingFinishEvent;
+import moa.funding.domain.FundingParticipant;
+import moa.funding.domain.FundingParticipateEvent;
+import moa.funding.domain.FundingParticipateRepository;
 import moa.funding.domain.FundingRepository;
 import moa.member.domain.Member;
 import moa.notification.application.NotificationService;
@@ -34,6 +38,7 @@ public class FundingNotificationEventHandler {
     private final FriendRepository friendRepository;
     private final NotificationFactory notificationFactory;
     private final NotificationService notificationService;
+    private final FundingParticipateRepository fundingParticipateRepository;
 
     @TransactionalEventListener(value = FundingCreateEvent.class, phase = AFTER_COMMIT)
     public void push(FundingCreateEvent event) {
@@ -66,14 +71,6 @@ public class FundingNotificationEventHandler {
         return unblocked;
     }
 
-    private String getNickName(Member target, List<Friend> friendsUnblockedOwner) {
-        return friendsUnblockedOwner.stream()
-                .filter(friend -> friend.getMember().equals(target))
-                .findAny()
-                .map(Friend::getNickname)
-                .orElseGet(target::getNickname);
-    }
-
     @TransactionalEventListener(value = FundingFinishEvent.class, phase = AFTER_COMMIT)
     public void push(FundingFinishEvent event) {
         Funding funding = fundingRepository.getById(event.fundingId());
@@ -85,5 +82,48 @@ public class FundingNotificationEventHandler {
                 funding.getMember()
         );
         notificationService.push(notification);
+    }
+
+    @TransactionalEventListener(value = FundingParticipateEvent.class, phase = AFTER_COMMIT)
+    public void push(FundingParticipateEvent event) {
+        Funding funding = fundingRepository.getById(event.fundingId());
+        Member fundingOwner = funding.getMember();
+        FundingParticipant participant = fundingParticipateRepository.getById(event.participant().getId());
+        Member participantMember = participant.getMember();
+        Friend friend = friendRepository.getByMemberAndTarget(fundingOwner, participantMember);
+        var notification = notificationFactory.generateFundingParticipateNotification(
+                friend.getNickname(),
+                participant.getFundingMessage().getContent(),
+                participantMember.getProfileImageUrl(),
+                funding.getId(),
+                fundingOwner
+        );
+        notificationService.push(notification);
+    }
+
+    @TransactionalEventListener(value = FundingCancelEvent.class, phase = AFTER_COMMIT)
+    public void push(FundingCancelEvent event) {
+        Funding funding = fundingRepository.getById(event.fundingId());
+        Member fundingOwner = funding.getMember();
+        List<FundingParticipant> participants = funding.getParticipants();
+        List<Friend> friendsTargetOwner = friendRepository.findAllByTargetId(fundingOwner);
+        List<Notification> notifications = participants.stream()
+                .map(FundingParticipant::getMember)
+                .map(target -> notificationFactory.generateFundingCancelNotification(
+                        getNickName(target, friendsTargetOwner),
+                        funding.getTitle(),
+                        target
+                )).toList();
+        for (Notification notification : notifications) {
+            notificationService.push(notification);
+        }
+    }
+
+    private String getNickName(Member member, List<Friend> friendsTargetOwner) {
+        return friendsTargetOwner.stream()
+                .filter(friend -> friend.getMember().equals(member))
+                .findAny()
+                .map(Friend::getNickname)
+                .orElseGet(member::getNickname);
     }
 }
