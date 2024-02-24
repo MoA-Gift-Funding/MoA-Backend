@@ -145,7 +145,7 @@ public class NotificationFactory {
         return new Notification(
                 MY_FUNDING_APP_PATH + fundingId,
                 "펀딩 중단",
-                "입점사의 펀딩 상품 공급 중단 이슈로 펀딩이 취소되었어요🥲 마이페이지에서 입금받을 계좌 번호를 입력해주세요.",
+                "입점사의 펀딩 상품 공급 중단 이슈로 펀딩이 취소되었어요🥲 문의하기를 통해 취소 또는 환불을 진행해주세요🙏",
                 null,
                 CHECK,
                 target
