@@ -62,7 +62,7 @@ class BirthdayNotificationJobConfigTest {
 
         // 24년 1월 20일 20시 00분 기준
         LocalDateTime now = LocalDateTime.of(2024, 1, 20, 20, 0, 0);
-        setField(member, "birthyear", "2024");
+        setField(member, "birthyear", "2000");
         setField(member, "birthday", "0121");
         memberRepository.save(member);
 

@@ -89,11 +89,9 @@ public class BirthdayNotificationJobConfig {
                 .entityManagerFactory(entityManagerFactory)
                 .queryString("""
                         SELECT m FROM Member m
-                        WHERE m.birthyear = :year
-                        AND m.birthday = :day
+                        WHERE m.birthday = :day
                         """)
                 .parameterValues(Map.of(
-                        "year", now.getYear(),
                         "day", String.format("%02d%d", targetDate.getMonthValue(), targetDate.getDayOfMonth())
                 ))
                 .build();
