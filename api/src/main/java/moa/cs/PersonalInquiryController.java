@@ -1,4 +1,4 @@
-package moa.customerservicecenter;
+package moa.cs;
 
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 
@@ -7,10 +7,10 @@ import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import moa.auth.Auth;
-import moa.customerservicecenter.application.PersonalInquiryService;
-import moa.customerservicecenter.query.PersonalInquireQueryService;
-import moa.customerservicecenter.query.response.PersonalInquiryResponse;
-import moa.customerservicecenter.request.WriteInquiryRequest;
+import moa.cs.application.PersonalInquiryService;
+import moa.cs.query.PersonalInquireQueryService;
+import moa.cs.query.response.PersonalInquiryResponse;
+import moa.cs.request.WriteInquiryRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

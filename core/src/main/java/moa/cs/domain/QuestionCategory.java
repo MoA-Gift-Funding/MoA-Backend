@@ -1,4 +1,4 @@
-package moa.customerservicecenter.domain;
+package moa.cs.domain;
 
 import lombok.Getter;
 

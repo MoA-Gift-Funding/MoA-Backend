@@ -1,8 +1,8 @@
-package moa.customerservicecenter.query;
+package moa.cs.query;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import moa.customerservicecenter.query.response.PersonalInquiryResponse;
+import moa.cs.query.response.PersonalInquiryResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

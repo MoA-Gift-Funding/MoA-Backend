@@ -1,7 +1,7 @@
-package moa.customerservicecenter.application.command;
+package moa.cs.application.command;
 
-import moa.customerservicecenter.domain.PersonalInquiry;
-import moa.customerservicecenter.domain.QuestionCategory;
+import moa.cs.domain.PersonalInquiry;
+import moa.cs.domain.QuestionCategory;
 import moa.member.domain.Member;
 
 public record WriteInquiryCommand(

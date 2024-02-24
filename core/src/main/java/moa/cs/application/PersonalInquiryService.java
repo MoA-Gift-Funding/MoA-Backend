@@ -1,9 +1,9 @@
-package moa.customerservicecenter.application;
+package moa.cs.application;
 
 import lombok.RequiredArgsConstructor;
-import moa.customerservicecenter.application.command.WriteInquiryCommand;
-import moa.customerservicecenter.domain.PersonalInquiry;
-import moa.customerservicecenter.domain.PersonalInquiryRepository;
+import moa.cs.application.command.WriteInquiryCommand;
+import moa.cs.domain.PersonalInquiry;
+import moa.cs.domain.PersonalInquiryRepository;
 import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import org.springframework.stereotype.Service;
