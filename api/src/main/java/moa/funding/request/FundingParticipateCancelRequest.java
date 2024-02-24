@@ -8,9 +8,10 @@ public record FundingParticipateCancelRequest(
         @Schema(example = "참가자 id")
         @NotNull Long fundingParticipantId
 ) {
-    public FundingParticipateCancelCommand toCommand(Long memberId) {
+    public FundingParticipateCancelCommand toCommand(Long memberId, Long fundingId) {
         return new FundingParticipateCancelCommand(
                 memberId,
+                fundingId,
                 fundingParticipantId
         );
     }

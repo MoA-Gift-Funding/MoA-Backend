@@ -66,6 +66,7 @@ public class FundingService {
     }
 
     public void participateCancel(FundingParticipateCancelCommand command) {
+        Funding funding = fundingRepository.getWithLockById(command.fundingId());
         Member member = memberRepository.getById(command.memberId());
         FundingParticipant participant = fundingParticipateRepository.getById(command.fundingParticipantId());
         participant.validateMember(member);
@@ -73,7 +74,7 @@ public class FundingService {
     }
 
     public void cancel(Long fundingId, Long memberId) {
-        Funding funding = fundingRepository.getById(fundingId);
+        Funding funding = fundingRepository.getWithLockById(fundingId);
         Member member = memberRepository.getById(memberId);
         funding.validateOwner(member);
         funding.cancel();

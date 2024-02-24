@@ -133,6 +133,9 @@ public interface FundingApi {
     ResponseEntity<Void> participateCancel(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
+            @Parameter(in = PATH, required = true, description = "펀딩 ID")
+            @PathVariable Long id,
+
             @Valid @RequestBody FundingParticipateCancelRequest request
     );
 
