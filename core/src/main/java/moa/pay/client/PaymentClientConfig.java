@@ -24,7 +24,7 @@ public class PaymentClientConfig {
         RestClient build = RestClient.builder()
                 .defaultStatusHandler(HttpStatusCode::isError, (request, response) -> {
                     String responseData = new String(response.getBody().readAllBytes());
-                    log.error("Toss API ERROR", responseData);
+                    log.error("Toss API ERROR {}", responseData);
                     throw new TossPaymentException(TOSS_API_ERROR
                             .withDetail(responseData)
                             .setStatus(HttpStatus.valueOf(response.getStatusCode().value())));

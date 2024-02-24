@@ -28,7 +28,7 @@ public class WincubeAuthClientConfig {
                 .baseUrl(baseUrl())
                 .defaultStatusHandler(HttpStatusCode::isError, (request, response) -> {
                     String responseData = new String(response.getBody().readAllBytes());
-                    log.error("Wincube AUTH API ERROR", responseData);
+                    log.error("Wincube AUTH API ERROR {}", responseData);
                     throw new ProductException(PRODUCT_EXTERNAL_API_ERROR
                             .withDetail(responseData)
                             .setStatus(HttpStatus.valueOf(response.getStatusCode().value())));

@@ -8,7 +8,6 @@ public record WincubeAuthProperty(
         String pwd,
         String autKey,
         String aesKey,
-        String aesIv,
         String rsaPublicKey
 ) {
 }

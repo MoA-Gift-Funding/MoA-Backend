@@ -19,14 +19,12 @@ public class Aes256 {
     private static final String alg = "AES/CBC/PKCS5Padding";
 
     private final String aesKey;
-    private final String aesIv;
 
     public Aes256(WincubeAuthProperty property) {
         this.aesKey = property.aesKey();
-        this.aesIv = property.aesIv();
     }
 
-    public String aes256Enc(String info) {
+    public String aes256Enc(String info, String aesIv) {
         // 암호화된 정보
         String result = null;
 

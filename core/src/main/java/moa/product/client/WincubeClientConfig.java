@@ -28,7 +28,7 @@ public class WincubeClientConfig {
                 .baseUrl(baseUrl())
                 .defaultStatusHandler(HttpStatusCode::isError, (request, response) -> {
                     String responseData = new String(response.getBody().readAllBytes());
-                    log.error("Wincube API ERROR", responseData);
+                    log.error("Wincube API ERROR {}", responseData);
                     throw new ProductException(PRODUCT_EXTERNAL_API_ERROR
                             .withDetail(responseData)
                             .setStatus(HttpStatus.valueOf(response.getStatusCode().value())));
