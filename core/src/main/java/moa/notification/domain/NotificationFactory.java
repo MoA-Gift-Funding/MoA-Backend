@@ -12,6 +12,7 @@ public class NotificationFactory {
 
     private static final String FUNDING_DETAIL_APP_PATH = "giftMoA://navigation?name=FundDetail&fundingId=";
     private static final String MY_FUNDING_APP_PATH = "giftMoA://navigation?name=MyFunding&fundingId=";
+    private static final String ORDER_DETAIL_APP_PATH = "giftMoA://navigation?name=MyOrder&orderId=";
 
     /**
      * 펀딩 개설 완료
@@ -41,12 +42,12 @@ public class NotificationFactory {
             String participantName,
             String fundingMessage,
             String participantProfileUrl,
+            Long fundingId,
             Long fundingMessageId,
             Member target
     ) {
         return new Notification(
-                FUNDING_DETAIL_APP_PATH + "&messageId=%s"
-                        .formatted(fundingMessageId),
+                FUNDING_DETAIL_APP_PATH + fundingId + "&messageId=" + fundingMessageId,
                 "펀딩 메세지 도착",
                 "💌 from %s %s"
                         .formatted(participantName, fundingMessage),
@@ -62,11 +63,11 @@ public class NotificationFactory {
     public Notification generateFundingFinishNotification(
             String fundingTitle,
             String productImageUrl,
-            Long fundingId,
+            Long orderId,
             Member target
     ) {
         return new Notification(
-                FUNDING_DETAIL_APP_PATH + fundingId,
+                ORDER_DETAIL_APP_PATH + orderId,
                 "펀딩 달성",
                 "[%s] 펀딩이 달성 완료되어 상품이 전송이 완료됐어요🎁"
                         .formatted(fundingTitle),
