@@ -1,9 +1,9 @@
 package moa.notification.application;
 
 import lombok.RequiredArgsConstructor;
+import moa.client.fcm.FcmClient;
 import moa.notification.domain.Notification;
 import moa.notification.domain.NotificationRepository;
-import moa.notification.fcm.FcmClient;
 import org.springframework.stereotype.Service;
 
 @Service

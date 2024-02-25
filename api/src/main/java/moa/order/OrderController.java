@@ -18,7 +18,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,7 +31,8 @@ public class OrderController implements OrderApi {
     private final OrderQueryService orderQueryService;
 
     // TODO 이거 윈큐브 상품(or 쿠폰형 상품에 특화된 로직이라 나중에 상품 종류 추가되면 구조 변경)
-    @PostMapping("/{orderId}/reissue-coupon")
+    // TODO 2차때 회의 후 구변
+    // @PostMapping("/{orderId}/reissue-coupon")
     public ResponseEntity<Void> reissueCoupon(
             @Auth(permit = {SIGNED_UP}) Long memberId,
             @PathVariable("orderId") Long orderId,

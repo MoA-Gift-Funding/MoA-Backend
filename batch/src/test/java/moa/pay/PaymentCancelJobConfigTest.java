@@ -12,7 +12,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.time.LocalDateTime;
 import moa.BatchTest;
-import moa.pay.client.TossClient;
+import moa.client.toss.TossClient;
 import moa.pay.domain.TossPayment;
 import moa.pay.domain.TossPaymentCancel;
 import moa.pay.domain.TossPaymentRepository;

@@ -13,7 +13,6 @@ import moa.friend.domain.FriendRepository;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingCancelEvent;
 import moa.funding.domain.FundingCreateEvent;
-import moa.funding.domain.FundingFinishEvent;
 import moa.funding.domain.FundingParticipant;
 import moa.funding.domain.FundingParticipateEvent;
 import moa.funding.domain.FundingParticipateRepository;
@@ -22,7 +21,6 @@ import moa.member.domain.Member;
 import moa.notification.application.NotificationService;
 import moa.notification.domain.Notification;
 import moa.notification.domain.NotificationFactory;
-import moa.product.domain.Product;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,19 +69,6 @@ public class FundingNotificationEventHandler {
         return unblocked;
     }
 
-    @TransactionalEventListener(value = FundingFinishEvent.class, phase = AFTER_COMMIT)
-    public void push(FundingFinishEvent event) {
-        Funding funding = fundingRepository.getById(event.fundingId());
-        Product product = funding.getProduct();
-        Notification notification = notificationFactory.generateFundingFinishNotification(
-                funding.getTitle(),
-                product.getImageUrl(),
-                funding.getId(),
-                funding.getMember()
-        );
-        notificationService.push(notification);
-    }
-
     @TransactionalEventListener(value = FundingParticipateEvent.class, phase = AFTER_COMMIT)
     public void push(FundingParticipateEvent event) {
         Funding funding = fundingRepository.getById(event.fundingId());
@@ -96,6 +81,7 @@ public class FundingNotificationEventHandler {
                 participant.getFundingMessage().getContent(),
                 participantMember.getProfileImageUrl(),
                 funding.getId(),
+                participant.getFundingMessage().getId(),
                 fundingOwner
         );
         notificationService.push(notification);

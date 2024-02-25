@@ -1,14 +1,27 @@
 package moa.order.application;
 
+import static moa.global.config.async.AsyncConfig.VIRTUAL_THREAD_EXECUTOR;
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
+import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
+
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import moa.client.wincube.WincubeClient;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingFinishEvent;
 import moa.funding.domain.FundingRepository;
+import moa.notification.application.NotificationService;
+import moa.notification.domain.Notification;
+import moa.notification.domain.NotificationFactory;
 import moa.order.domain.Order;
+import moa.order.domain.OrderReadyEvent;
 import moa.order.domain.OrderRepository;
+import moa.sms.SmsMessageFactory;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Service
 @Transactional
@@ -17,13 +30,45 @@ public class OrderEventHandler {
 
     private final OrderRepository orderRepository;
     private final FundingRepository fundingRepository;
+    private final WincubeClient wincubeClient;
+    private final SmsMessageFactory smsMessageFactory;
+    private final NotificationFactory notificationFactory;
+    private final NotificationService notificationService;
 
     @EventListener(value = FundingFinishEvent.class)
     public void createOrder(FundingFinishEvent event) {
-        Funding funding = fundingRepository.getWithLockById(event.fundingId());
+        Funding funding = fundingRepository.getById(event.fundingId());
         Order order = new Order(funding);
         orderRepository.save(order);
-        // TODO 윈큐브 쿠폰 발행 API 호출해서 쿠폰 발행하기
-        // TODO 실패된 경우 수령대기 상태로 변경
+    }
+
+    @Async(VIRTUAL_THREAD_EXECUTOR)
+    @Transactional(propagation = REQUIRES_NEW)
+    @TransactionalEventListener(value = OrderReadyEvent.class, phase = AFTER_COMMIT)
+    public void issueCoupon(OrderReadyEvent event) {
+        Order order = orderRepository.getById(event.order().getId());
+        String message = smsMessageFactory.generateFundingFinishMessage(
+                order.getMember().getNickname(),
+                order.getProduct().getProductName(),
+                LocalDate.now().plusDays(order.getProduct().getLimitDate()).toString(),
+                order.getProduct().getDescription()
+        );
+        wincubeClient.issueCoupon(
+                order.getId(),
+                "[MoA] 모아 펀딩 달성 상품",
+                message,
+                order.getProduct().getProductId().getProductId(),
+                order.getMember().getPhoneNumber(),
+                null
+        );
+        order.complete();
+        Funding funding = order.getFunding();
+        Notification notification = notificationFactory.generateFundingFinishNotification(
+                funding.getTitle(),
+                funding.getProduct().getImageUrl(),
+                order.getId(),
+                order.getMember()
+        );
+        notificationService.push(notification);
     }
 }

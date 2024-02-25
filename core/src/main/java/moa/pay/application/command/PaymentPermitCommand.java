@@ -1,6 +1,6 @@
 package moa.pay.application.command;
 
-import moa.pay.client.dto.TossPaymentConfirmRequest;
+import moa.client.toss.dto.TossPaymentConfirmRequest;
 
 public record PaymentPermitCommand(
         Long memberId,

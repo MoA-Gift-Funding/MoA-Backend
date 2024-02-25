@@ -21,14 +21,21 @@ import org.springframework.web.util.WebUtils;
 @RequiredArgsConstructor
 public class ExceptionControllerAdvice {
 
-    @ExceptionHandler({MoaException.class, MethodArgumentNotValidException.class})
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    ResponseEntity<ExceptionResponse> handleException(HttpServletRequest request, MethodArgumentNotValidException e) {
+        log.info("[{}] 잘못된 요청이 들어왔습니다. uri: {} {},  내용:  {}",
+                MDC.get(REQUEST_ID), request.getMethod(), request.getRequestURI(), e.getMessage());
+        requestLogging(request);
+        return ResponseEntity.badRequest()
+                .body(new ExceptionResponse("MethodArgumentNotValid", e.getMessage()));
+    }
+
+    @ExceptionHandler({MoaException.class})
     ResponseEntity<ExceptionResponse> handleException(HttpServletRequest request, MoaException e) {
         MoaExceptionType type = e.getExceptionType();
         log.info("[{}] 잘못된 요청이 들어왔습니다. uri: {} {},  내용:  {}",
                 MDC.get(REQUEST_ID), request.getMethod(), request.getRequestURI(), type.getMessage());
-        log.info("[{}] request header: {}", MDC.get(REQUEST_ID), getHeaders(request));
-        log.info("[{}] request query string: {}", MDC.get(REQUEST_ID), getQueryString(request));
-        log.info("[{}] request body: {}", MDC.get(REQUEST_ID), getRequestBody(request));
+        requestLogging(request);
         return ResponseEntity.status(type.getHttpStatus())
                 .body(new ExceptionResponse(type.name(), type.getMessage()));
     }
@@ -37,10 +44,15 @@ public class ExceptionControllerAdvice {
     ResponseEntity<ExceptionResponse> handleException(HttpServletRequest request, Exception e) {
         log.error("[{}] 예상하지 못한 예외가 발생했습니다. uri: {} {}, ",
                 MDC.get(REQUEST_ID), request.getMethod(), request.getRequestURI(), e);
-        log.info("[{}] request header: {}", MDC.get(REQUEST_ID), getHeaders(request));
-        log.info("[{}] request body: {}", MDC.get(REQUEST_ID), getRequestBody(request));
+        requestLogging(request);
         return ResponseEntity.internalServerError()
                 .body(new ExceptionResponse("INTERNAL_EXCEPTION", "알 수 없는 오류가 발생했습니다."));
+    }
+
+    private void requestLogging(HttpServletRequest request) {
+        log.info("[{}] request header: {}", MDC.get(REQUEST_ID), getHeaders(request));
+        log.info("[{}] request query string: {}", MDC.get(REQUEST_ID), getQueryString(request));
+        log.info("[{}] request body: {}", MDC.get(REQUEST_ID), getRequestBody(request));
     }
 
     private Map<String, Object> getHeaders(HttpServletRequest request) {

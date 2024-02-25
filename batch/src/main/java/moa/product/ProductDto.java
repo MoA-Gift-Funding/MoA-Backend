@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import moa.product.client.dto.WincubeProductResponse.Value.WincubeGoods;
+import moa.client.wincube.dto.WincubeProductResponse.Value.WincubeGoods;
 
 public record ProductDto(
         String productId,

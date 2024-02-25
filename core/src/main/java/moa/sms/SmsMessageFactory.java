@@ -12,16 +12,19 @@ public class SmsMessageFactory {
     }
 
     public String generateFundingFinishMessage(
-            String title,
+            String receiverName,
             String productName,
-            String link
+            String expirationPeriod,
+            String productDescription
     ) {
         return PREFIX + """
-                등록하신 펀딩 [%s]이 달성 완료됐어요!
-                다음 링크를 통해 정보를 입력하고 [%s]을(를) 수령해주세요 🥰
+                %s님의 선물 펀딩이 달성되어 주문 상품이 도착했어요🎁
+                앞으로도 모아를 통해 모두가 행복한 새로운 선물 문화를 누려보세요🤗
+                행복한 하루 보내세요🍀
                                 
-                수령하러 가기 🎁
-                %s
-                """.formatted(title, productName, link);
+                - 상품 이름: %s
+                - 유효 기간: ~ %s
+                - 유의 사항: %s
+                """.formatted(receiverName, productName, expirationPeriod, productDescription);
     }
 }

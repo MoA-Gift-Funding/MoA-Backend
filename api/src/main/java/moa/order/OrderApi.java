@@ -12,43 +12,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import moa.auth.Auth;
 import moa.global.presentation.PageResponse;
 import moa.order.query.response.OrderDetailResponse;
 import moa.order.query.response.OrderResponse;
-import moa.order.request.ReissueCouponRequest;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "주문 API", description = "주문 관련 API")
 @SecurityRequirement(name = "JWT")
 public interface OrderApi {
-
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200"),
-                    @ApiResponse(responseCode = "400"),
-                    @ApiResponse(responseCode = "401"),
-                    @ApiResponse(responseCode = "403"),
-                    @ApiResponse(responseCode = "404"),
-                    @ApiResponse(responseCode = "500"),
-            }
-    )
-    @Operation(summary = "쿠폰 재발행")
-    ResponseEntity<Void> reissueCoupon(
-            @Auth(permit = {SIGNED_UP}) Long memberId,
-
-            @Parameter(in = PATH, required = true, description = "주문 ID")
-            @PathVariable("orderId") Long orderId,
-
-            @Valid @RequestBody ReissueCouponRequest request
-    );
 
     @ApiResponses(
             value = {

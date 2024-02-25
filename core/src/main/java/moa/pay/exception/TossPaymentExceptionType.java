@@ -28,14 +28,14 @@ public enum TossPaymentExceptionType implements MoaExceptionType {
         this.message = message;
     }
 
-    @Override
-    public TossPaymentExceptionType withDetail(String detailMessage) {
-        this.detailMessage = detailMessage;
+    public TossPaymentExceptionType setStatus(HttpStatus status) {
+        this.httpStatus = status;
         return this;
     }
 
-    public TossPaymentExceptionType setStatus(HttpStatus status) {
-        this.httpStatus = status;
+    @Override
+    public TossPaymentExceptionType withDetail(String detailMessage) {
+        this.detailMessage = detailMessage;
         return this;
     }
 

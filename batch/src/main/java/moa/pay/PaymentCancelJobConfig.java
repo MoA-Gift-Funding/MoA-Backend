@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import moa.pay.client.TossClient;
+import moa.client.toss.TossClient;
 import moa.pay.domain.TossPayment;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;

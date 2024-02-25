@@ -4,12 +4,12 @@ import static moa.member.exception.MemberExceptionType.FAILED_SEND_PHONE_VERIFIC
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moa.client.sms.SmsClient;
 import moa.member.domain.phone.Phone;
 import moa.member.domain.phone.PhoneVerificationNumber;
 import moa.member.domain.phone.PhoneVerificationNumberSender;
 import moa.member.exception.MemberException;
 import moa.sms.SmsMessageFactory;
-import moa.sms.client.SmsClient;
 import org.springframework.stereotype.Component;
 
 @Slf4j
