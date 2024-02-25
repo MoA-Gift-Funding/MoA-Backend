@@ -10,12 +10,11 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moa.client.wincube.WincubeClient;
 import moa.funding.domain.Funding;
 import moa.notification.application.NotificationService;
 import moa.notification.domain.Notification;
 import moa.notification.domain.NotificationFactory;
-import moa.product.client.WincubeClient;
-import moa.product.client.dto.WincubeProductResponse;
 import moa.product.client.dto.WincubeProductResponse.Value.WincubeGoods;
 import moa.product.client.dto.WincubeProductResponse.Value.WincubeGoods.Option;
 import moa.product.domain.Product;
@@ -110,7 +109,7 @@ public class WincubeProductUpdateJobConfig {
     @StepScope
     public ListItemReader<WincubeGoods> wincubeProductReader() {
         log.info("[윈큐브 상품 업데이트 배치] 윈큐브 api 호출");
-        WincubeProductResponse response = wincubeClient.getProductList();
+        moa.product.client.dto.WincubeProductResponse response = wincubeClient.getProductList();
         if (!response.isSuccess()) {
             log.error("Wincube 상품 조회 API 실패", response.result());
             throw new RuntimeException("Wincube 상품 조회 API 실패 " + response.result());

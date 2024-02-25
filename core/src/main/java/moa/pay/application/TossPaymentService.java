@@ -1,10 +1,10 @@
 package moa.pay.application;
 
 import lombok.RequiredArgsConstructor;
+import moa.client.toss.TossClient;
+import moa.client.toss.dto.TossPaymentResponse;
 import moa.pay.application.command.PaymentPermitCommand;
 import moa.pay.application.command.TempPaymentSaveCommand;
-import moa.pay.client.TossClient;
-import moa.pay.client.dto.TossPaymentResponse;
 import moa.pay.domain.TemporaryTossPayment;
 import moa.pay.domain.TemporaryTossPaymentRepository;
 import moa.pay.domain.TossPayment;

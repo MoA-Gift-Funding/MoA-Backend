@@ -12,9 +12,9 @@ import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 
 import moa.ApplicationTest;
+import moa.client.toss.TossClient;
+import moa.client.toss.dto.TossPaymentResponse;
 import moa.global.exception.MoaExceptionType;
-import moa.pay.client.TossClient;
-import moa.pay.client.dto.TossPaymentResponse;
 import moa.pay.domain.TossPayment;
 import moa.pay.domain.TossPaymentRepository;
 import moa.pay.exception.TossPaymentException;

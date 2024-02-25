@@ -2,7 +2,7 @@ package moa.config;
 
 import static org.mockito.Mockito.mock;
 
-import moa.pay.client.TossClient;
+import moa.client.toss.TossClient;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
