@@ -2,13 +2,13 @@ package moa.client.wincube.auth;
 
 import static moa.product.exception.ProductExceptionType.PRODUCT_EXTERNAL_API_ERROR;
 
-import java.util.UUID;
+import java.security.SecureRandom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moa.client.wincube.dto.WincubeIssueAuthCodeResponse;
+import moa.client.wincube.dto.WincubeIssueAuthTokenResponse;
+import moa.client.wincube.dto.WincubeTokenSignature;
 import moa.global.jwt.JwtService;
-import moa.product.client.dto.WincubeIssueAuthCodeResponse;
-import moa.product.client.dto.WincubeIssueAuthTokenResponse;
-import moa.product.client.dto.WincubeTokenSignature;
 import moa.product.exception.ProductException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -18,10 +18,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class WincubeAuthClient {
 
-    private final moa.product.client.auth.WincubeAuthProperty wincubeProperty;
-    private final moa.product.client.auth.WincubeAuthApiClient wincubeAuthApiClient;
-    private final moa.product.client.auth.Aes256 aes256;
-    private final moa.product.client.auth.Rsa rsa;
+    private static final int AES_IV_BYTE = 16;
+
+    private final WincubeAuthProperty wincubeProperty;
+    private final WincubeAuthApiClient wincubeAuthApiClient;
+    private final Aes256 aes256;
+    private final Rsa rsa;
     private final JwtService jwtService;
 
     // TODO 캐시
@@ -44,9 +46,18 @@ public class WincubeAuthClient {
     }
 
     private String generateAesIv() {
-        return UUID.randomUUID().toString()
-                .replace("-", "")
-                .substring(8, 24);
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] key = new byte[AES_IV_BYTE];
+        secureRandom.nextBytes(key);
+        return bytesToHex(key);
+    }
+
+    private String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 
     private void validateCodeResponse(WincubeIssueAuthCodeResponse response, String aesIv) {
@@ -72,7 +83,8 @@ public class WincubeAuthClient {
     }
 
     private void validateToken(String token, String aesIv) {
-        WincubeTokenSignature sig = jwtService.decodePayload(token, WincubeTokenSignature.class);
+        WincubeTokenSignature sig = jwtService.decodePayload(token,
+                WincubeTokenSignature.class);
         String decodedSig = aes256.aes256Denc(sig.signature(), wincubeProperty.aesKey(), aesIv);
         if (decodedSig.equals("wincube")) {
             log.error("윈큐브 Token 무결성 오류 발생");
