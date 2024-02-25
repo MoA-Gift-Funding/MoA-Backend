@@ -1,7 +1,7 @@
 package moa.product;
 
 import java.time.LocalDateTime;
-import moa.product.client.dto.WincubeProductResponse.Value.WincubeGoods.Option;
+import moa.client.wincube.dto.WincubeProductResponse.Value.WincubeGoods.Option;
 
 public record ProductOptionDto(
         String optionName,

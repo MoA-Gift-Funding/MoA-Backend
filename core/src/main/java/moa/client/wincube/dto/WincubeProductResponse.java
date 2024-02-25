@@ -1,4 +1,4 @@
-package moa.product.client.dto;
+package moa.client.wincube.dto;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import moa.product.client.dto.WincubeProductResponse.Value.WincubeGoods.Option;
+import moa.client.wincube.dto.WincubeProductResponse.Value.WincubeGoods.Option;
 
 public record WincubeProductResponse(
         Result result,

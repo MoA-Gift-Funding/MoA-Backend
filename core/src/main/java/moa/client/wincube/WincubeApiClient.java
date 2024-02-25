@@ -1,9 +1,9 @@
 package moa.client.wincube;
 
-import moa.product.client.dto.WincubeCancelCouponResponse;
-import moa.product.client.dto.WincubeCheckCouponStatusResponse;
-import moa.product.client.dto.WincubeIssueCouponResponse;
-import moa.product.client.dto.WincubeProductResponse;
+import moa.client.wincube.dto.WincubeCancelCouponResponse;
+import moa.client.wincube.dto.WincubeCheckCouponStatusResponse;
+import moa.client.wincube.dto.WincubeIssueCouponResponse;
+import moa.client.wincube.dto.WincubeProductResponse;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.PostExchange;
 

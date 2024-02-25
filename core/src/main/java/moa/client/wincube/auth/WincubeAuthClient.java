@@ -1,4 +1,4 @@
-package moa.product.client.auth;
+package moa.client.wincube.auth;
 
 import static moa.product.exception.ProductExceptionType.PRODUCT_EXTERNAL_API_ERROR;
 

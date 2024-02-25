@@ -5,12 +5,11 @@ import static moa.product.exception.ProductExceptionType.COUPONS_CANNOT_BE_REISS
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import moa.order.domain.OrderTransactionId;
-import moa.product.client.auth.WincubeAuthClient;
-import moa.product.client.dto.WincubeCancelCouponResponse;
-import moa.product.client.dto.WincubeCheckCouponStatusResponse;
-import moa.product.client.dto.WincubeIssueCouponResponse;
-import moa.product.client.dto.WincubeProductResponse;
+import moa.client.wincube.auth.WincubeAuthClient;
+import moa.client.wincube.dto.WincubeCancelCouponResponse;
+import moa.client.wincube.dto.WincubeCheckCouponStatusResponse;
+import moa.client.wincube.dto.WincubeIssueCouponResponse;
+import moa.client.wincube.dto.WincubeProductResponse;
 import moa.product.exception.ProductException;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class WincubeClient {
 
+    private static final String TR_ID_PREFIX = "giftmoa_";
     private static final String JSON = "JSON";
 
     private final WincubeProperty wincubeProperty;
@@ -31,7 +31,7 @@ public class WincubeClient {
     }
 
     public void issueCoupon(
-            OrderTransactionId orderTransactionId,
+            Long orderId,
             String title,
             String message,
             String productId,
@@ -46,7 +46,7 @@ public class WincubeClient {
                 wincubeProperty.callback(),
                 productId,
                 phoneNumber,
-                orderTransactionId.id(),
+                TR_ID_PREFIX + orderId,
                 optionId,
                 JSON,
                 authToken
@@ -54,8 +54,9 @@ public class WincubeClient {
         loggingIssueCoupon(response);
     }
 
+    // TODO 2차때 회의 후, trId 어케할지 결정하고 처리
     public void reissueCoupon(
-            OrderTransactionId orderTransactionId,
+            Long orderId,
             String title,
             String message,
             String productId,
@@ -65,14 +66,14 @@ public class WincubeClient {
         String authToken = authClient.getAuthToken();
         WincubeCheckCouponStatusResponse status = client.checkCouponStatus(
                 wincubeProperty.mdCode(),
-                orderTransactionId.id(),
+                TR_ID_PREFIX + orderId,
                 JSON,
                 authToken
         );
         validateCancellable(status);
         WincubeCancelCouponResponse cancelResponse = client.cancelCoupon(
                 wincubeProperty.mdCode(),
-                orderTransactionId.id(),
+                TR_ID_PREFIX + orderId,
                 JSON,
                 authToken
         );
@@ -84,7 +85,7 @@ public class WincubeClient {
                 wincubeProperty.callback(),
                 productId,
                 phoneNumber,
-                orderTransactionId.id(),
+                TR_ID_PREFIX + orderId,
                 optionId,
                 JSON,
                 authToken

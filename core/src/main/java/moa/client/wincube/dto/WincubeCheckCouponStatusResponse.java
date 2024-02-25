@@ -1,4 +1,4 @@
-package moa.product.client.dto;
+package moa.client.wincube.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
