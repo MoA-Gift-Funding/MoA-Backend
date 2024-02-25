@@ -8,7 +8,7 @@ public class AuthException extends MoaException {
     private final AuthExceptionType authExceptionType;
 
     public AuthException(AuthExceptionType authExceptionType) {
-        super(authExceptionType.name());
+        super(authExceptionType);
         this.authExceptionType = authExceptionType;
     }
 

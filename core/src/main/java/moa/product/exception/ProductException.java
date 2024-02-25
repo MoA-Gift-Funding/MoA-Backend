@@ -8,7 +8,7 @@ public class ProductException extends MoaException {
     private final ProductExceptionType productExceptionType;
 
     public ProductException(ProductExceptionType productExceptionType) {
-        super(productExceptionType.name());
+        super(productExceptionType);
         this.productExceptionType = productExceptionType;
     }
 
