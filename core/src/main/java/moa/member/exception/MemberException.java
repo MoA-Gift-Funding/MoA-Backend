@@ -8,7 +8,7 @@ public class MemberException extends MoaException {
     private final MemberExceptionType memberExceptionType;
 
     public MemberException(MemberExceptionType memberExceptionType) {
-        super(memberExceptionType.name());
+        super(memberExceptionType);
         this.memberExceptionType = memberExceptionType;
     }
 

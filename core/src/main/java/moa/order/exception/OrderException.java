@@ -7,7 +7,7 @@ public class OrderException extends MoaException {
     private final OrderExceptionType exceptionType;
 
     public OrderException(OrderExceptionType exceptionType) {
-        super(exceptionType.name());
+        super(exceptionType);
         this.exceptionType = exceptionType;
     }
 

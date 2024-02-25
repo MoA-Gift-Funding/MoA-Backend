@@ -8,7 +8,7 @@ public class ExternalApiException extends MoaException {
     private final ExternalApiExceptionType externalApiExceptionType;
 
     public ExternalApiException(ExternalApiExceptionType externalApiExceptionType) {
-        super(externalApiExceptionType.name());
+        super(externalApiExceptionType);
         this.externalApiExceptionType = externalApiExceptionType;
     }
 

@@ -8,7 +8,7 @@ public class DeliveryAddressException extends MoaException {
     private final DeliveryAddressExceptionType deliveryAddressExceptionType;
 
     public DeliveryAddressException(DeliveryAddressExceptionType deliveryAddressExceptionType) {
-        super(deliveryAddressExceptionType.name());
+        super(deliveryAddressExceptionType);
         this.deliveryAddressExceptionType = deliveryAddressExceptionType;
     }
 

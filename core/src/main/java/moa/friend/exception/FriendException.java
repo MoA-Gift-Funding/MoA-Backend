@@ -8,7 +8,7 @@ public class FriendException extends MoaException {
     private final FriendExceptionType friendExceptionType;
 
     public FriendException(FriendExceptionType friendExceptionType) {
-        super(friendExceptionType.name());
+        super(friendExceptionType);
         this.friendExceptionType = friendExceptionType;
     }
 
