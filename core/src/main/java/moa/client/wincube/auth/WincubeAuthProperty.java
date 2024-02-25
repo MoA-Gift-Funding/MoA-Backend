@@ -1,4 +1,4 @@
-package moa.product.client.auth;
+package moa.client.wincube.auth;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

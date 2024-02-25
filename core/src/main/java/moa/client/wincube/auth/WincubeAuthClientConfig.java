@@ -1,4 +1,4 @@
-package moa.product.client.auth;
+package moa.client.wincube.auth;
 
 import static moa.global.config.ProfileConfig.PROD_PROFILE;
 import static moa.product.exception.ProductExceptionType.PRODUCT_EXTERNAL_API_ERROR;
@@ -23,7 +23,7 @@ public class WincubeAuthClientConfig {
     private final Environment environment;
 
     @Bean
-    public moa.product.client.auth.WincubeAuthApiClient wincubeAuthApiClient() {
+    public WincubeAuthApiClient wincubeAuthApiClient() {
         RestClient build = RestClient.builder()
                 .baseUrl(baseUrl())
                 .defaultStatusHandler(HttpStatusCode::isError, (request, response) -> {
@@ -34,7 +34,7 @@ public class WincubeAuthClientConfig {
                             .setStatus(HttpStatus.valueOf(response.getStatusCode().value())));
                 })
                 .build();
-        return HttpInterfaceUtil.createHttpInterface(build, moa.product.client.auth.WincubeAuthApiClient.class);
+        return HttpInterfaceUtil.createHttpInterface(build, WincubeAuthApiClient.class);
     }
 
     private String baseUrl() {

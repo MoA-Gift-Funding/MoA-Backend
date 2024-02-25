@@ -1,4 +1,4 @@
-package moa.product.client.auth;
+package moa.client.wincube.auth;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -20,7 +20,7 @@ public class Aes256 {
 
     private final String aesKey;
 
-    public Aes256(moa.product.client.auth.WincubeAuthProperty property) {
+    public Aes256(WincubeAuthProperty property) {
         this.aesKey = property.aesKey();
     }
 

@@ -1,8 +1,8 @@
-package moa.product.client.auth;
+package moa.client.wincube.auth;
 
-import moa.product.client.dto.WincubeIssueAuthCodeResponse;
-import moa.product.client.dto.WincubeIssueAuthTokenResponse;
-import moa.product.client.dto.WincubeTokenResponse;
+import moa.client.wincube.dto.WincubeIssueAuthCodeResponse;
+import moa.client.wincube.dto.WincubeIssueAuthTokenResponse;
+import moa.client.wincube.dto.WincubeTokenResponse;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.PostExchange;
 

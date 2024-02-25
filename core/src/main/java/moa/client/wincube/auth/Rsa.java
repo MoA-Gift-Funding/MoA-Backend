@@ -1,4 +1,4 @@
-package moa.product.client.auth;
+package moa.client.wincube.auth;
 
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -26,7 +26,7 @@ public class Rsa {
 
     private final String rsaPublicKey;
 
-    public Rsa(moa.product.client.auth.WincubeAuthProperty property) {
+    public Rsa(WincubeAuthProperty property) {
         this.rsaPublicKey = property.rsaPublicKey();
     }
 
