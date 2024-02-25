@@ -23,7 +23,7 @@ public class WincubeAuthClientConfig {
     private final Environment environment;
 
     @Bean
-    public WincubeAuthApiClient wincubeApiClient() {
+    public WincubeAuthApiClient wincubeAuthApiClient() {
         RestClient build = RestClient.builder()
                 .baseUrl(baseUrl())
                 .defaultStatusHandler(HttpStatusCode::isError, (request, response) -> {

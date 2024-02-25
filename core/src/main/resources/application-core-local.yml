@@ -71,8 +71,9 @@ tosspayment:
 
 wincube:
   mdCode: "test"
-  token: "token"
+  callback: ""  # 발신자 번호(우리 번호)
   auth:
-    aut-key: "test"
-    cust-id: "test"
+    custId: ""
     pwd: "test"
+    autKey: ""
+    aesKey: ""
