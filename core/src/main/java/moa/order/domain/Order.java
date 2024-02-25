@@ -6,6 +6,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_FOR_FUNDING;
 import static moa.order.domain.OrderStatus.COMPLETE_RECEIVE;
+import static moa.order.domain.OrderStatus.WAITING_RECEIVE;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -65,13 +66,18 @@ public class Order extends RootEntity<Long> {
         this.address = funding.getAddress();
         this.deliveryRequestMessage = funding.getDeliveryRequestMessage();
         this.member = funding.getMember();
-        this.status = COMPLETE_RECEIVE;
+        this.status = WAITING_RECEIVE;
+        registerEvent(new OrderReadyEvent(this));
     }
 
     public void validateOwner(Member member) {
         if (!this.member.equals(member)) {
             throw new FundingException(NO_AUTHORITY_FOR_FUNDING);
         }
+    }
+
+    public void complete() {
+        this.status = COMPLETE_RECEIVE;
     }
 
     // TODO 이거 윈큐브 상품(or 쿠폰형 상품에 특화된 로직이라 나중에 상품 종류 추가되면 구조 변경)
