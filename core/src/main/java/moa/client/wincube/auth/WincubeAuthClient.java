@@ -5,6 +5,8 @@ import static moa.product.exception.ProductExceptionType.PRODUCT_EXTERNAL_API_ER
 import java.security.SecureRandom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moa.client.wincube.auth.request.WincubeIssueAuthCodeRequest;
+import moa.client.wincube.auth.request.WincubeIssueAuthTokenRequest;
 import moa.client.wincube.dto.WincubeIssueAuthCodeResponse;
 import moa.client.wincube.dto.WincubeIssueAuthTokenResponse;
 import moa.client.wincube.dto.WincubeTokenSignature;
@@ -30,24 +32,28 @@ public class WincubeAuthClient {
     public String getAuthToken() {
         String aesIv = generateAesIv();
         log.debug("AES IV 생성 완료");
+        log.info("윈큐브 Auth Code 요청 호출");
         WincubeIssueAuthCodeResponse codeResponse = wincubeAuthApiClient.issueAuthCode(
-                aes256.aes256Enc(wincubeProperty.custId(), aesIv),
-                aes256.aes256Enc(wincubeProperty.pwd(), aesIv),
-                aes256.aes256Enc(wincubeProperty.autKey(), aesIv),
-                rsa.encode(wincubeProperty.aesKey()),
-                rsa.encode(aesIv)
+                new WincubeIssueAuthCodeRequest(
+                        aes256.aes256Enc(wincubeProperty.custId(), aesIv),
+                        aes256.aes256Enc(wincubeProperty.pwd(), aesIv),
+                        aes256.aes256Enc(wincubeProperty.autKey(), aesIv),
+                        rsa.encode(wincubeProperty.aesKey()),
+                        rsa.encode(aesIv))
         );
-        log.info("윈큐브 Auth Code 받아오기 완료");
+        log.info("윈큐브 Auth Code 받아오기 완료: {}", codeResponse);
         validateCodeResponse(codeResponse, aesIv);
-        WincubeIssueAuthTokenResponse tokenResponse = wincubeAuthApiClient.issueAuthToken(codeResponse.codeId());
-        log.info("윈큐브 Auth Token 받아오기 완료");
+        WincubeIssueAuthTokenResponse tokenResponse = wincubeAuthApiClient.issueAuthToken(
+                new WincubeIssueAuthTokenRequest(codeResponse.codeId())
+        );
+        log.info("윈큐브 Auth Token 받아오기 완료: {}", tokenResponse);
         validateTokenResponse(tokenResponse, aesIv);
         return tokenResponse.tokenId();
     }
 
     private String generateAesIv() {
         SecureRandom secureRandom = new SecureRandom();
-        byte[] key = new byte[AES_IV_BYTE];
+        byte[] key = new byte[AES_IV_BYTE / 2];  // 16진수로 암호화하는 과정에서 길이가 2배가 됨
         secureRandom.nextBytes(key);
         return bytesToHex(key);
     }

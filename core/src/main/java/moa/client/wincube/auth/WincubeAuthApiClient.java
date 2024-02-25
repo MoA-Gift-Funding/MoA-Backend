@@ -1,8 +1,13 @@
 package moa.client.wincube.auth;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import moa.client.wincube.auth.request.WincubeIssueAuthCodeRequest;
+import moa.client.wincube.auth.request.WincubeIssueAuthTokenRequest;
 import moa.client.wincube.dto.WincubeIssueAuthCodeResponse;
 import moa.client.wincube.dto.WincubeIssueAuthTokenResponse;
 import moa.client.wincube.dto.WincubeTokenResponse;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.PostExchange;
 
@@ -12,13 +17,9 @@ public interface WincubeAuthApiClient {
      * 계정 코드 발행
      * <p/>
      */
-    @PostExchange("/auth/code/issue")
+    @PostExchange(value = "/auth/code/issue", contentType = APPLICATION_JSON_VALUE)
     WincubeIssueAuthCodeResponse issueAuthCode(
-            @RequestParam("custId") String custId,  // 업체 AES256 암호화
-            @RequestParam("pwd") String pwd,  // 업체 AES256 암호화
-            @RequestParam("autKey") String autKey,  // 업체 AES256 암호화
-            @RequestParam("aesKey") String aesKey,  // RSA 암호화
-            @RequestParam("aesIv") String aesIv  // RSA 암호화
+            @RequestBody WincubeIssueAuthCodeRequest request
     );
 
     /**
@@ -28,7 +29,7 @@ public interface WincubeAuthApiClient {
      */
     @PostExchange("/auth/token/issue")
     WincubeIssueAuthTokenResponse issueAuthToken(
-            @RequestParam("codeId") String codeId
+            @RequestBody WincubeIssueAuthTokenRequest request
     );
 
     /**

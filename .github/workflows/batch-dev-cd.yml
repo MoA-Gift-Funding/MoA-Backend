@@ -1,12 +1,12 @@
-name: ✨ MoA backend API DEV CD ✨
+name: ✨ MoA backend Batch DEV CD ✨
 
 env:
   PROFILE: dev
-  IMAGE_TAG: back-dev-api-${{ secrets.APP_VERSION_TAG }}
-  DOCKER_CONTAINER_NAME: backend-api
+  IMAGE_TAG: back-dev-batch-${{ secrets.APP_VERSION_TAG }}
+  DOCKER_CONTAINER_NAME: backend-batch
   DOCKER_CONTAINER_NETWORK: moa-server
   DOCKER_HUB_REPOSITORY: moagift/moa_server
-  APPLICATION: api
+  APPLICATION: batch
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ on:
       - develop
     paths:
       - "core/**"
-      - "api/**"
+      - "batch/**"
       - ".github/workflows/**"
 
 jobs:
@@ -84,6 +84,6 @@ jobs:
             -d \
             --name ${{ env.DOCKER_CONTAINER_NAME }} \
             --network ${{ env.DOCKER_CONTAINER_NETWORK }} \
-            -p 8080:8080 \
+            -p 18080:8080 \
             -e "SPRING_PROFILES_ACTIVE=${{ env.PROFILE }}" \
             ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}

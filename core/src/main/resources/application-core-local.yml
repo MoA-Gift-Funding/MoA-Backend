@@ -77,3 +77,4 @@ wincube:
     pwd: "test"
     autKey: ""
     aesKey: ""
+    rsaPublicKey: ""

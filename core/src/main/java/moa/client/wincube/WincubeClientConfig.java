@@ -33,6 +33,10 @@ public class WincubeClientConfig {
                             .withDetail(responseData)
                             .setStatus(HttpStatus.valueOf(response.getStatusCode().value())));
                 })
+                .defaultStatusHandler(HttpStatusCode::is2xxSuccessful, (request, response) -> {
+                    String responseData = new String(response.getBody().readAllBytes());
+                    log.info("Wincube API Response {}", responseData);
+                })
                 .build();
         return HttpInterfaceUtil.createHttpInterface(build, WincubeApiClient.class);
     }
