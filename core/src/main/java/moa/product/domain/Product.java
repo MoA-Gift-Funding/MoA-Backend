@@ -57,7 +57,7 @@ public class Product extends RootEntity<Long> {
     private Price price;
 
     @Lob
-    @Column(name = "photo", columnDefinition = "BLOB")
+    @Column(columnDefinition = "BLOB")
     private String description;
 
     private LocalDate saleEndDate;
