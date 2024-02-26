@@ -7,7 +7,7 @@ import static moa.fixture.TossPaymentFixture.tossPayment;
 import static moa.funding.domain.FundingStatus.CANCELLED;
 import static moa.funding.domain.FundingStatus.EXPIRED;
 import static moa.funding.domain.MessageVisibility.PUBLIC;
-import static moa.funding.domain.ParticipantStatus.CANCEL;
+import static moa.funding.domain.ParticipantStatus.CANCELLED_BY_FUND_OWNER;
 import static moa.funding.domain.ParticipantStatus.PARTICIPATING;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.pay.domain.TossPaymentStatus.PENDING_CANCEL;
@@ -148,7 +148,7 @@ class FundingCancelJobConfigTest {
             assertThat(find.getStatus()).isEqualTo(CANCELLED);
             assertThat(find.getParticipants())
                     .extracting(FundingParticipant::getStatus)
-                    .containsOnly(CANCEL);
+                    .containsOnly(CANCELLED_BY_FUND_OWNER);
             for (FundingParticipant participant : find.getParticipants()) {
                 assertThat(participant.getTossPayment().getStatus())
                         .isEqualTo(PENDING_CANCEL);

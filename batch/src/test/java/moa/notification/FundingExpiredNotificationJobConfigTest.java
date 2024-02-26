@@ -64,7 +64,7 @@ class FundingExpiredNotificationJobConfigTest {
     }
 
     @Test
-    void 다음날_만료될_펀딩에_대해_알림_발송() throws Exception {
+    void 오늘_만료된_펀딩들에_대해_알림_발송() throws Exception {
         // given
         Member owner = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
         Member part = memberRepository.save(member(null, "1", "010-1111-1111", SIGNED_UP));
