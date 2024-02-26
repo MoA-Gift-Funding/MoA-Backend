@@ -1,7 +1,6 @@
 package moa.product.exception;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import moa.global.exception.MoaExceptionType;
@@ -10,7 +9,6 @@ import org.springframework.http.HttpStatus;
 public enum ProductExceptionType implements MoaExceptionType {
 
     NOT_FOUND_PRODUCT(NOT_FOUND, "상품을 찾을 수 없습니다."),
-    PRODUCT_EXTERNAL_API_ERROR(INTERNAL_SERVER_ERROR, "상품 관련 외부 API 호출 시 문제 발생"),
     COUPONS_CANNOT_BE_REISSUED(BAD_REQUEST, "쿠폰을 재발급할 수 없습니다.");
 
     private final String message;

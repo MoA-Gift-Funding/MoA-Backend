@@ -2,7 +2,6 @@ package moa.client.wincube.auth;
 
 import static moa.client.exception.ExternalApiExceptionType.EXTERNAL_API_EXCEPTION;
 import static moa.client.wincube.auth.Aes256Iv.generateIv;
-import static moa.product.exception.ProductExceptionType.PRODUCT_EXTERNAL_API_ERROR;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +15,6 @@ import moa.client.wincube.dto.WincubeIssueAuthCodeResponse;
 import moa.client.wincube.dto.WincubeIssueAuthTokenResponse;
 import moa.client.wincube.dto.WincubeTokenSignature;
 import moa.global.jwt.JwtService;
-import moa.product.exception.ProductException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -91,7 +89,7 @@ public class WincubeAuthClient {
         String decodedSig = aes256.aes256Denc(sig.signature(), wincubeProperty.aesKey(), aesIv);
         if (!decodedSig.equals("wincube")) {
             log.error("윈큐브 Token 무결성 오류 발생");
-            throw new ProductException(PRODUCT_EXTERNAL_API_ERROR.withDetail("윈큐브 Token 무결성 오류"));
+            throw new ExternalApiException(EXTERNAL_API_EXCEPTION.withDetail("윈큐브 Token 무결성 오류"));
         }
     }
 

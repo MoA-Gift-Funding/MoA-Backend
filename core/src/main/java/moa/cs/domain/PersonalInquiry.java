@@ -42,5 +42,6 @@ public class PersonalInquiry extends RootEntity<Long> {
         this.category = category;
         this.content = content;
         this.member = member;
+        registerEvent(new PersonalInquiryCreateEvent(this));
     }
 }
