@@ -55,6 +55,9 @@ public class BirthdayNotificationJobConfig {
         jobLauncher.run(birthdayNotificationJob(), jobParameters);
     }
 
+    /**
+     * 다음날 생일인 친구에 대한 알림을 전송한다.
+     */
     @Bean
     public Job birthdayNotificationJob() {
         return new JobBuilder("birthdayNotificationJob", jobRepository)
@@ -62,9 +65,6 @@ public class BirthdayNotificationJobConfig {
                 .build();
     }
 
-    /**
-     * 다음날 생일인 친구에 대한 알림을 전송한다.
-     */
     @Bean
     @JobScope
     public Step birthdayNotificationStep(
@@ -78,6 +78,9 @@ public class BirthdayNotificationJobConfig {
                 .build();
     }
 
+    /**
+     * 내일 생일인 회원들을 읽는다.
+     */
     @Bean
     @StepScope
     public JpaCursorItemReader<Member> birthdayNotificationReader(
@@ -97,6 +100,9 @@ public class BirthdayNotificationJobConfig {
                 .build();
     }
 
+    /**
+     * 읽어온 회원의 친구들 중 상호간에 차단하지 않는 친구들에게 `오늘 생일인 친구가 있다`는 푸쉬알림을 보낸다.
+     */
     @Bean
     @StepScope
     public ItemWriter<Member> birthdayNotificationWriter() {
