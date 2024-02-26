@@ -1,12 +1,12 @@
-package moa.client.webhook;
+package moa.client.discord;
 
 import lombok.RequiredArgsConstructor;
-import moa.client.webhook.dto.DiscordSendMessageRequest;
+import moa.client.discord.dto.DiscordSendMessageRequest;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class WebHookClient {
+public class DiscordWebHookClient {
 
     private final DiscordWebHookProperty discordWebHookProperty;
     private final DiscordWebHookApiClient webHookApiClient;

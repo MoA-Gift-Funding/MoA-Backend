@@ -1,4 +1,4 @@
-package moa.client.webhook;
+package moa.client.discord;
 
 
 import static moa.client.exception.ExternalApiExceptionType.EXTERNAL_API_EXCEPTION;
@@ -18,10 +18,10 @@ import org.springframework.web.client.RestClient;
 @Configuration
 @Profile("!test")
 @RequiredArgsConstructor
-public class WebHookClientConfig {
+public class DiscordWebHookClientConfig {
 
     @Bean
-    public DiscordWebHookApiClient webHookApiClient() {
+    public DiscordWebHookApiClient discordWebHookApiClient() {
         RestClient build = RestClient.builder()
                 .defaultStatusHandler(HttpStatusCode::isError, (request, response) -> {
                     String responseData = new String(response.getBody().readAllBytes());

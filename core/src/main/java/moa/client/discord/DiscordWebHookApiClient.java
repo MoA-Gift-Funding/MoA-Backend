@@ -1,8 +1,8 @@
-package moa.client.webhook;
+package moa.client.discord;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import moa.client.webhook.dto.DiscordSendMessageRequest;
+import moa.client.discord.dto.DiscordSendMessageRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.service.annotation.HttpExchange;

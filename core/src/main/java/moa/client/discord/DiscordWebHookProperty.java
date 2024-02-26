@@ -1,4 +1,4 @@
-package moa.client.webhook;
+package moa.client.discord;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
