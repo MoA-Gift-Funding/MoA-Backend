@@ -13,7 +13,7 @@ public interface WincubeAuthApiClient {
 
     /**
      * 계정 코드 발행
-     * <p/>
+     * TODO 이것도 예외 형식까지 응답 다 보고 변경
      */
     @PostExchange(value = "/auth/code/issue", contentType = APPLICATION_JSON_VALUE)
     String issueAuthCode(
@@ -24,6 +24,8 @@ public interface WincubeAuthApiClient {
      * 계정 토큰 발행
      * <p/>
      * codeId는 `계정 코드 발행`의 응답으로 받은 codeId 그대로 전송
+     * <p/>
+     * TODO 이것도 예외 형식까지 응답 다 보고 변경
      */
     @PostExchange("/auth/token/issue")
     String issueAuthToken(

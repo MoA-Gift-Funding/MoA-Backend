@@ -2,6 +2,7 @@ package moa.client.wincube;
 
 import moa.client.wincube.dto.WincubeCancelCouponResponse;
 import moa.client.wincube.dto.WincubeCheckCouponStatusResponse;
+import moa.client.wincube.dto.WincubeIssueCouponResponse;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.PostExchange;
 
@@ -21,7 +22,7 @@ public interface WincubeApiClient {
      * 쿠폰 발행
      */
     @PostExchange("/request.do")
-    String issueCoupon(
+    WincubeIssueCouponResponse issueCoupon(
             @RequestParam("mdcode") String mdCode,  // 매체코드, 윈큐브에서 발급 후 전달
             @RequestParam("msg") String msg,  // MMS 전송할 메시지
             @RequestParam("title") String title,  // MMS 제목

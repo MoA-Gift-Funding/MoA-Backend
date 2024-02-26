@@ -32,6 +32,7 @@ public class WincubeClient {
         String authToken = authClient.getAuthToken();
         String productList = client.getProductList(wincubeProperty.mdCode(), JSON, authToken);
         log.info("윈큐브 상품 정보 조회 완료: {}", productList);
+        // TODO 나중에 응답 보고 json 형식 맞춘뒤 변경
         return readValue(productList, WincubeProductResponse.class);
     }
 
@@ -52,7 +53,7 @@ public class WincubeClient {
             @Nullable String optionId
     ) {
         String authToken = authClient.getAuthToken();
-        String response = client.issueCoupon(
+        WincubeIssueCouponResponse response = client.issueCoupon(
                 wincubeProperty.mdCode(),
                 message,
                 title,
@@ -65,8 +66,7 @@ public class WincubeClient {
                 authToken
         );
         log.info("윈큐브 쿠폰 발행 API 호출 완료.\n -> 응답: {}", response);
-        WincubeIssueCouponResponse couponResponse = readValue(response, WincubeIssueCouponResponse.class);
-        loggingIssueCoupon(couponResponse);
+        loggingIssueCoupon(response);
     }
 
     // TODO 2차때 회의 후, trId 어케할지 결정하고 처리
