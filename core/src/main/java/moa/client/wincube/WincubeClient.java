@@ -52,7 +52,7 @@ public class WincubeClient {
             @Nullable String optionId
     ) {
         String authToken = authClient.getAuthToken();
-        WincubeIssueCouponResponse response = client.issueCoupon(
+        String response = client.issueCoupon(
                 wincubeProperty.mdCode(),
                 message,
                 title,
@@ -64,7 +64,9 @@ public class WincubeClient {
                 JSON,
                 authToken
         );
-        loggingIssueCoupon(response);
+        log.info("윈큐브 쿠폰 발행 API 호출 완료.\n -> 응답: {}", response);
+        WincubeIssueCouponResponse couponResponse = readValue(response, WincubeIssueCouponResponse.class);
+        loggingIssueCoupon(couponResponse);
     }
 
     // TODO 2차때 회의 후, trId 어케할지 결정하고 처리
@@ -76,34 +78,34 @@ public class WincubeClient {
             String phoneNumber,
             @Nullable String optionId
     ) {
-        String authToken = authClient.getAuthToken();
-        WincubeCheckCouponStatusResponse status = client.checkCouponStatus(
-                wincubeProperty.mdCode(),
-                TR_ID_PREFIX + orderId,
-                JSON,
-                authToken
-        );
-        validateCancellable(status);
-        WincubeCancelCouponResponse cancelResponse = client.cancelCoupon(
-                wincubeProperty.mdCode(),
-                TR_ID_PREFIX + orderId,
-                JSON,
-                authToken
-        );
-        validateCancelSuccess(cancelResponse);
-        WincubeIssueCouponResponse issueResponse = client.issueCoupon(
-                wincubeProperty.mdCode(),
-                message,
-                title,
-                wincubeProperty.callback(),
-                productId,
-                phoneNumber,
-                TR_ID_PREFIX + orderId,
-                optionId,
-                JSON,
-                authToken
-        );
-        loggingIssueCoupon(issueResponse);
+//        String authToken = authClient.getAuthToken();
+//        WincubeCheckCouponStatusResponse status = client.checkCouponStatus(
+//                wincubeProperty.mdCode(),
+//                TR_ID_PREFIX + orderId,
+//                JSON,
+//                authToken
+//        );
+//        validateCancellable(status);
+//        WincubeCancelCouponResponse cancelResponse = client.cancelCoupon(
+//                wincubeProperty.mdCode(),
+//                TR_ID_PREFIX + orderId,
+//                JSON,
+//                authToken
+//        );
+//        validateCancelSuccess(cancelResponse);
+//        WincubeIssueCouponResponse issueResponse = client.issueCoupon(
+//                wincubeProperty.mdCode(),
+//                message,
+//                title,
+//                wincubeProperty.callback(),
+//                productId,
+//                phoneNumber,
+//                TR_ID_PREFIX + orderId,
+//                optionId,
+//                JSON,
+//                authToken
+//        );
+//        loggingIssueCoupon(issueResponse);
     }
 
     private void validateCancellable(WincubeCheckCouponStatusResponse response) {
