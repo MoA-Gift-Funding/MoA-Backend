@@ -2,9 +2,9 @@ package moa.client.wincube.dto;
 
 public record WincubeIssueAuthCodeResponse(
         int resultCode,
+        String message,
         String codeId,
         String expireDate,
-        String expireTime,
-        String message
-) {
+        String expireTime
+) implements WincubeResultCode {
 }

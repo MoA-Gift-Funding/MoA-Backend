@@ -4,6 +4,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import moa.client.wincube.auth.request.WincubeIssueAuthCodeRequest;
 import moa.client.wincube.auth.request.WincubeIssueAuthTokenRequest;
+import moa.client.wincube.dto.WincubeIssueAuthCodeResponse;
+import moa.client.wincube.dto.WincubeIssueAuthTokenResponse;
 import moa.client.wincube.dto.WincubeTokenResponse;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,10 +15,9 @@ public interface WincubeAuthApiClient {
 
     /**
      * 계정 코드 발행
-     * TODO 이것도 예외 형식까지 응답 다 보고 변경
      */
     @PostExchange(value = "/auth/code/issue", contentType = APPLICATION_JSON_VALUE)
-    String issueAuthCode(
+    WincubeIssueAuthCodeResponse issueAuthCode(
             @RequestBody WincubeIssueAuthCodeRequest request
     );
 
@@ -28,7 +29,7 @@ public interface WincubeAuthApiClient {
      * TODO 이것도 예외 형식까지 응답 다 보고 변경
      */
     @PostExchange("/auth/token/issue")
-    String issueAuthToken(
+    WincubeIssueAuthTokenResponse issueAuthToken(
             @RequestBody WincubeIssueAuthTokenRequest request
     );
 
