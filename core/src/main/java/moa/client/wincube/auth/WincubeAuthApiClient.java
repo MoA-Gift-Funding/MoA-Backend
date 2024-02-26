@@ -4,8 +4,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import moa.client.wincube.auth.request.WincubeIssueAuthCodeRequest;
 import moa.client.wincube.auth.request.WincubeIssueAuthTokenRequest;
-import moa.client.wincube.dto.WincubeIssueAuthCodeResponse;
-import moa.client.wincube.dto.WincubeIssueAuthTokenResponse;
 import moa.client.wincube.dto.WincubeTokenResponse;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,9 +13,11 @@ public interface WincubeAuthApiClient {
 
     /**
      * 계정 코드 발행
+     * <p/>
+     * String 반환 이유는 응답 타입이 json이 아니라 text/plain이라 매핑이 안됨..
      */
     @PostExchange(value = "/auth/code/issue", contentType = APPLICATION_JSON_VALUE)
-    WincubeIssueAuthCodeResponse issueAuthCode(
+    String issueAuthCode(
             @RequestBody WincubeIssueAuthCodeRequest request
     );
 
@@ -26,10 +26,10 @@ public interface WincubeAuthApiClient {
      * <p/>
      * codeId는 `계정 코드 발행`의 응답으로 받은 codeId 그대로 전송
      * <p/>
-     * TODO 이것도 예외 형식까지 응답 다 보고 변경
+     * String 반환 이유는 응답 타입이 json이 아니라 text/plain이라 매핑이 안됨..
      */
     @PostExchange("/auth/token/issue")
-    WincubeIssueAuthTokenResponse issueAuthToken(
+    String issueAuthToken(
             @RequestBody WincubeIssueAuthTokenRequest request
     );
 
