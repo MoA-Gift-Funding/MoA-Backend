@@ -73,11 +73,11 @@ public class WincubeProductUpdateJobConfig {
      * <p/>
      * 상품 목록을 우리 서비스에서 사용하는 상품 엔티티(Product)로 변환한 뒤 기존 상품을 모두 업데이트한다.
      * <p/>
-     * 모든 작업 이후 업데이트 일자가 @param now 가 아닌 상품과 상품 옵션은,
+     * 모든 작업 이후 업데이트 일자가 현재(now)가 아닌 `상품`과 `상품 옵션`은 제거된 데이터라고 판단하여,
      * <p/>
-     * 제거된 데이터라고 판단하여 `판매 종료`상태로 변경한다.
+     * 각각 `판매 종료(SALES_DISCONTINUED)와 지원하지 않음(NOT_SUPPORTED)`상태로 변경한다.
      * <p/>
-     * 판매 종료된 상품으로 진행되는 펀딩이 있으면 중지시킨다.
+     * 판매 종료된 상품으로 진행되는 펀딩이 있으면 중지시키고, 펀딩 주인한테 푸쉬알림을 보낸다.
      */
     @Bean
     public Job wincubeProductUpdateJob() {
@@ -106,6 +106,9 @@ public class WincubeProductUpdateJobConfig {
                 .build();
     }
 
+    /**
+     * 윈큐브 API를 호출하여 현재 판매중인 상품 목록을 받아온다.
+     */
     @Bean
     @StepScope
     public ListItemReader<WincubeGoods> wincubeProductReader() {
@@ -119,6 +122,9 @@ public class WincubeProductUpdateJobConfig {
         return new ListItemReader<>(wincubeGoods);
     }
 
+    /**
+     * 받아온 상품 목록 정보를 Product Entity 로 변경한다.
+     */
     @Bean
     @StepScope
     public ItemProcessor<WincubeGoods, ProductDto> wincubeResponseToEntityProcessor(
@@ -133,6 +139,9 @@ public class WincubeProductUpdateJobConfig {
         };
     }
 
+    /**
+     * 상품 목록을 업데이트한다.
+     */
     @Bean
     @StepScope
     public ItemWriter<ProductDto> productWriter() {
@@ -225,9 +234,9 @@ public class WincubeProductUpdateJobConfig {
     }
 
     /**
-     * 모든 작업 이후 업데이트 일자가 @Param(now) 가 아닌 상품과 상품 옵션은,
+     * 모든 작업 이후 업데이트 일자가 현재(now)가 아닌 `상품`과 `상품 옵션`은 제거된 데이터라고 판단하여,
      * <p/>
-     * 제거된 데이터라고 판단하여 `판매 종료`상태로 변경한다.
+     * 각각 `판매 종료(SALES_DISCONTINUED)와 지원하지 않음(NOT_SUPPORTED)`상태로 변경하는 단계이다.
      */
     @Bean
     @JobScope
@@ -289,9 +298,7 @@ public class WincubeProductUpdateJobConfig {
     }
 
     /**
-     * 판매 종료된 상품으로 진행되는 펀딩이 있으면 중지시키고,
-     * <p/>
-     * 펀딩 주인한테 푸쉬알림을 보낸다.
+     * 판매 종료된 상품으로 진행되는 펀딩이 있으면 중지시키고, 펀딩 주인한테 푸쉬알림을 보낸다.
      */
     @Bean
     public Step changeFundingStatusToStopStep() {
@@ -320,6 +327,9 @@ public class WincubeProductUpdateJobConfig {
                 .build();
     }
 
+    /**
+     * 펀딩을 중지시키고 주인에게 알림을 보낸다.
+     */
     @Bean
     public ItemWriter<Funding> fundingStopAndSendNotificationWriter() {
         return chunk -> {
