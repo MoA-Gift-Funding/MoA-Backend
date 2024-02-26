@@ -2,6 +2,8 @@ package moa.client.wincube;
 
 import static moa.product.exception.ProductExceptionType.COUPONS_CANNOT_BE_REISSUED;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,13 +23,24 @@ public class WincubeClient {
     private static final String TR_ID_PREFIX = "giftmoa_";
     private static final String JSON = "JSON";
 
+    private final ObjectMapper objectMapper;
     private final WincubeProperty wincubeProperty;
     private final WincubeAuthClient authClient;
     private final WincubeApiClient client;
 
     public WincubeProductResponse getProductList() {
         String authToken = authClient.getAuthToken();
-        return client.getProductList(wincubeProperty.mdCode(), JSON, authToken);
+        String productList = client.getProductList(wincubeProperty.mdCode(), JSON, authToken);
+        log.info("윈큐브 상품 정보 조회 완료: {}", productList);
+        return readValue(productList, WincubeProductResponse.class);
+    }
+
+    private <T> T readValue(String data, Class<T> type) {
+        try {
+            return objectMapper.readValue(data, type);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void issueCoupon(

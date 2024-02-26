@@ -4,8 +4,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import moa.client.wincube.auth.request.WincubeIssueAuthCodeRequest;
 import moa.client.wincube.auth.request.WincubeIssueAuthTokenRequest;
-import moa.client.wincube.dto.WincubeIssueAuthCodeResponse;
-import moa.client.wincube.dto.WincubeIssueAuthTokenResponse;
 import moa.client.wincube.dto.WincubeTokenResponse;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,7 +16,7 @@ public interface WincubeAuthApiClient {
      * <p/>
      */
     @PostExchange(value = "/auth/code/issue", contentType = APPLICATION_JSON_VALUE)
-    WincubeIssueAuthCodeResponse issueAuthCode(
+    String issueAuthCode(
             @RequestBody WincubeIssueAuthCodeRequest request
     );
 
@@ -28,7 +26,7 @@ public interface WincubeAuthApiClient {
      * codeId는 `계정 코드 발행`의 응답으로 받은 codeId 그대로 전송
      */
     @PostExchange("/auth/token/issue")
-    WincubeIssueAuthTokenResponse issueAuthToken(
+    String issueAuthToken(
             @RequestBody WincubeIssueAuthTokenRequest request
     );
 

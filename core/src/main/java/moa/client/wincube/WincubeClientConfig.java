@@ -26,18 +26,18 @@ public class WincubeClientConfig {
     public WincubeApiClient wincubeApiClient() {
         RestClient build = RestClient.builder()
                 .baseUrl(baseUrl())
+                .requestInterceptor((request, body, execution) -> {
+                    String requestBody = new String(body);
+                    log.info("Wincube API Call\n -> uri: {}\n -> body: {}", request.getURI(), requestBody);
+                    return execution.execute(request, body);
+                })
                 .defaultStatusHandler(HttpStatusCode::isError, (request, response) -> {
                     String responseData = new String(response.getBody().readAllBytes());
                     log.error("Wincube API ERROR {}", responseData);
                     throw new ExternalApiException(EXTERNAL_API_EXCEPTION
                             .withDetail(responseData)
                             .setStatus(HttpStatus.valueOf(response.getStatusCode().value())));
-                })
-                .defaultStatusHandler(HttpStatusCode::is2xxSuccessful, (request, response) -> {
-                    String responseData = new String(response.getBody().readAllBytes());
-                    log.info("Wincube API Response {}", responseData);
-                })
-                .build();
+                }).build();
         return HttpInterfaceUtil.createHttpInterface(build, WincubeApiClient.class);
     }
 

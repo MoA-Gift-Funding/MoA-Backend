@@ -1,10 +1,15 @@
 package moa.client.wincube.auth;
 
+import static moa.client.exception.ExternalApiExceptionType.EXTERNAL_API_EXCEPTION;
+import static moa.client.wincube.auth.Aes256Iv.generateIv;
 import static moa.product.exception.ProductExceptionType.PRODUCT_EXTERNAL_API_ERROR;
 
-import java.security.SecureRandom;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moa.client.exception.ExternalApiException;
+import moa.client.wincube.auth.request.WincubeAuthResultCode;
 import moa.client.wincube.auth.request.WincubeIssueAuthCodeRequest;
 import moa.client.wincube.auth.request.WincubeIssueAuthTokenRequest;
 import moa.client.wincube.dto.WincubeIssueAuthCodeResponse;
@@ -22,6 +27,7 @@ public class WincubeAuthClient {
 
     private static final int AES_IV_BYTE = 16;
 
+    private final ObjectMapper objectMapper;
     private final WincubeAuthProperty wincubeProperty;
     private final WincubeAuthApiClient wincubeAuthApiClient;
     private final Aes256 aes256;
@@ -30,10 +36,14 @@ public class WincubeAuthClient {
 
     // TODO 캐시
     public String getAuthToken() {
-        String aesIv = generateAesIv();
-        log.debug("AES IV 생성 완료");
+        String aesIv = generateIv(AES_IV_BYTE);
+        String codeId = getAuthCode(aesIv);
+        return getAuthToken(codeId, aesIv);
+    }
+
+    private String getAuthCode(String aesIv) {
         log.info("윈큐브 Auth Code 요청 호출");
-        WincubeIssueAuthCodeResponse codeResponse = wincubeAuthApiClient.issueAuthCode(
+        String response = wincubeAuthApiClient.issueAuthCode(
                 new WincubeIssueAuthCodeRequest(
                         aes256.aes256Enc(wincubeProperty.custId(), aesIv),
                         aes256.aes256Enc(wincubeProperty.pwd(), aesIv),
@@ -41,60 +51,67 @@ public class WincubeAuthClient {
                         rsa.encode(wincubeProperty.aesKey()),
                         rsa.encode(aesIv))
         );
+        validateResponseIsSuccess(response);
+        var codeResponse = readValue(
+                response,
+                WincubeIssueAuthCodeResponse.class
+        );
         log.info("윈큐브 Auth Code 받아오기 완료: {}", codeResponse);
         validateCodeResponse(codeResponse, aesIv);
-        WincubeIssueAuthTokenResponse tokenResponse = wincubeAuthApiClient.issueAuthToken(
-                new WincubeIssueAuthTokenRequest(codeResponse.codeId())
-        );
-        log.info("윈큐브 Auth Token 받아오기 완료: {}", tokenResponse);
-        validateTokenResponse(tokenResponse, aesIv);
-        return tokenResponse.tokenId();
+        return codeResponse.codeId();
     }
 
-    private String generateAesIv() {
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] key = new byte[AES_IV_BYTE / 2];  // 16진수로 암호화하는 과정에서 길이가 2배가 됨
-        secureRandom.nextBytes(key);
-        return bytesToHex(key);
-    }
-
-    private String bytesToHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format("%02x", b));
+    private void validateResponseIsSuccess(String response) {
+        log.info("윈큐브 Auth Code 응답 검증");
+        var code = readValue(response, WincubeAuthResultCode.class);
+        if (code.resultCode() >= 400) {
+            log.error("Wincube AUTH API error {}", response);
+            throw new ExternalApiException(EXTERNAL_API_EXCEPTION
+                    .withDetail(response)
+                    .setStatus(HttpStatus.valueOf(code.resultCode())));
         }
-        return sb.toString();
+        log.info("Wincube AUTH API response {}", code);
+    }
+
+    private <T> T readValue(String data, Class<T> type) {
+        try {
+            return objectMapper.readValue(data, type);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void validateCodeResponse(WincubeIssueAuthCodeResponse response, String aesIv) {
-        if (response.resultCode() != 200) {
-            log.error("Wincube AUTH CODE API ERROR {}", response);
-            throw new ProductException(PRODUCT_EXTERNAL_API_ERROR
-                    .withDetail(response.message())
-                    .setStatus(HttpStatus.valueOf(response.resultCode())));
-        }
         String token = response.codeId();
         validateToken(token, aesIv);
+    }
+
+    private void validateToken(String token, String aesIv) {
+        WincubeTokenSignature sig = jwtService.decodePayload(token, WincubeTokenSignature.class);
+        String decodedSig = aes256.aes256Denc(sig.signature(), wincubeProperty.aesKey(), aesIv);
+        if (!decodedSig.equals("wincube")) {
+            log.error("윈큐브 Token 무결성 오류 발생");
+            throw new ProductException(PRODUCT_EXTERNAL_API_ERROR.withDetail("윈큐브 Token 무결성 오류"));
+        }
+    }
+
+    private String getAuthToken(String codeId, String aesIv) {
+        String response = wincubeAuthApiClient.issueAuthToken(new WincubeIssueAuthTokenRequest(codeId));
+        validateResponseIsSuccess(response);
+        var token = readValue(response, WincubeIssueAuthTokenResponse.class);
+        log.info("윈큐브 Auth Token 받아오기 완료: {}", token);
+        validateTokenResponse(token, aesIv);
+        return token.tokenId();
     }
 
     private void validateTokenResponse(WincubeIssueAuthTokenResponse response, String aesIv) {
         if (response.resultCode() != 200) {
             log.error("Wincube AUTH TOKEN API ERROR {}", response);
-            throw new ProductException(PRODUCT_EXTERNAL_API_ERROR
+            throw new ExternalApiException(EXTERNAL_API_EXCEPTION
                     .withDetail(response.message())
                     .setStatus(HttpStatus.valueOf(response.resultCode())));
         }
         String token = response.tokenId();
         validateToken(token, aesIv);
-    }
-
-    private void validateToken(String token, String aesIv) {
-        WincubeTokenSignature sig = jwtService.decodePayload(token,
-                WincubeTokenSignature.class);
-        String decodedSig = aes256.aes256Denc(sig.signature(), wincubeProperty.aesKey(), aesIv);
-        if (decodedSig.equals("wincube")) {
-            log.error("윈큐브 Token 무결성 오류 발생");
-            throw new ProductException(PRODUCT_EXTERNAL_API_ERROR.withDetail("윈큐브 Token 무결성 오류"));
-        }
     }
 }

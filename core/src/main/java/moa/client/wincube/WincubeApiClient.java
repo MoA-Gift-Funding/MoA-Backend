@@ -3,7 +3,6 @@ package moa.client.wincube;
 import moa.client.wincube.dto.WincubeCancelCouponResponse;
 import moa.client.wincube.dto.WincubeCheckCouponStatusResponse;
 import moa.client.wincube.dto.WincubeIssueCouponResponse;
-import moa.client.wincube.dto.WincubeProductResponse;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.PostExchange;
 
@@ -13,7 +12,7 @@ public interface WincubeApiClient {
      * 상품 조회
      */
     @PostExchange("/salelist.do")
-    WincubeProductResponse getProductList(
+    String getProductList(
             @RequestParam("mdcode") String mdCode,  // 매체코드, 윈큐브에서 발급 후 전달
             @RequestParam("response_type") String responseType,  // JSON, XML(default)
             @RequestParam("token") String token
