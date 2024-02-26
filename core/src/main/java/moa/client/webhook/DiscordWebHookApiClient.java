@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
-
+// https://discord.com/developers/docs/resources/webhook
 @HttpExchange("https://discord.com/api/webhooks")
 public interface DiscordWebHookApiClient {
 
