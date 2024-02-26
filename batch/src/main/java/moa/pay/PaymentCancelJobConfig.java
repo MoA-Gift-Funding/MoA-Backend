@@ -56,6 +56,13 @@ public class PaymentCancelJobConfig {
         jobLauncher.run(paymentCancelJob(), jobParameters);
     }
 
+    /**
+     * 결제 취소 대기 (PENDING_CANCEL) 상태의 토스 결제들을 모두 취소하는 작업이다.
+     * <p/>
+     * 먼저 결제 취소를 위한 멱등키를 재생성하고,
+     * <p/>
+     * 이후 결제를 취소한다.
+     */
     @Bean
     public Job paymentCancelJob() {
         return new JobBuilder("paymentCancelJob", jobRepository)
@@ -66,7 +73,7 @@ public class PaymentCancelJobConfig {
 
     /*
      * 결제 취소의 멱등성을 보장하기 위해 사용하는 멱등 키의 만료기간이 15일이다.
-     * 해당 Step 에서는 멱등키 생성 이후 10일 이상 지난 결제 취소 대기중인 결제(Payment)에 대해서,
+     * 해당 Step 에서는 멱등키 생성 이후 10일 이상 지난 결제 취소 대기중인 결제에 대해서,
      * 멱등키를 재생성하는 작업을 수행한다.
      */
     @Bean
@@ -83,6 +90,9 @@ public class PaymentCancelJobConfig {
                 .build();
     }
 
+    /**
+     * 멱등키 생성 이후 10일 이상 지난 결제를 읽어온다.
+     */
     @Bean
     @StepScope
     public JpaCursorItemReader<TossPayment> regenerateIdempotencyKeyCandidateReader(
@@ -101,6 +111,9 @@ public class PaymentCancelJobConfig {
                 .build();
     }
 
+    /**
+     * 멱등 키를 재생성한다.
+     */
     @Bean
     public ItemProcessor<TossPayment, TossPayment> regenerateIdempotencyKey() {
         return payment -> {
@@ -109,6 +122,9 @@ public class PaymentCancelJobConfig {
         };
     }
 
+    /**
+     * 재생성한 멱등키를 DB에 반영한다.
+     */
     @Bean
     @StepScope
     public ItemWriter<TossPayment> regeneratedIdempotencyKeyWriter(
@@ -139,7 +155,7 @@ public class PaymentCancelJobConfig {
     }
 
     /*
-     * 실제로 결제를 취소하는 Step
+     * 실제로 결제를 취소하는 단계이다.
      * 취소 대기중인 결제들을 모두 결제 취소시킨다.
      */
     @Bean
@@ -155,6 +171,9 @@ public class PaymentCancelJobConfig {
                 .build();
     }
 
+    /**
+     * 취소 대기(PENDING_CANCEL)중인 결제들을 읽어온다.
+     */
     @Bean
     public ItemReader<TossPayment> pendingCancelPaymentReader() {
         return new JpaCursorItemReaderBuilder<TossPayment>()
@@ -164,6 +183,9 @@ public class PaymentCancelJobConfig {
                 .build();
     }
 
+    /**
+     * 결제를 취소한다.
+     */
     @Bean
     public ItemWriter<TossPayment> paymentCancelWriter() {
         return chunk -> {
