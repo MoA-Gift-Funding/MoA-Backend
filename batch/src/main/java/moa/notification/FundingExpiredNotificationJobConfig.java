@@ -99,7 +99,7 @@ public class FundingExpiredNotificationJobConfig {
     }
 
     /**
-     * 오늘 만료된 펀딩들을, 만료 알림 메세지로 변환한다.
+     * 오늘 만료된 펀딩들을 만료 알림 메세지로 변환한다.
      */
     @Bean
     @StepScope
