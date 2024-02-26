@@ -1,23 +1,23 @@
 package moa.pay;
 
+import static moa.client.exception.ExternalApiExceptionType.EXTERNAL_API_EXCEPTION;
 import static moa.fixture.TossPaymentFixture.tossPayment;
 import static moa.pay.domain.TossPaymentStatus.CANCELED;
 import static moa.pay.domain.TossPaymentStatus.PENDING_CANCEL;
 import static moa.pay.domain.TossPaymentStatus.UNUSED;
 import static moa.pay.domain.TossPaymentStatus.USED;
-import static moa.pay.exception.TossPaymentExceptionType.TOSS_API_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.time.LocalDateTime;
 import moa.BatchTest;
+import moa.client.exception.ExternalApiException;
 import moa.client.toss.TossClient;
 import moa.pay.domain.TossPayment;
 import moa.pay.domain.TossPaymentCancel;
 import moa.pay.domain.TossPaymentRepository;
 import moa.pay.domain.TossPaymentStatus;
-import moa.pay.exception.TossPaymentException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -92,7 +92,7 @@ class PaymentCancelJobConfigTest {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLocalDateTime("now", now)
                 .toJobParameters();
-        willThrow(new TossPaymentException(TOSS_API_ERROR))
+        willThrow(new ExternalApiException(EXTERNAL_API_EXCEPTION))
                 .given(tossClient).cancelPayment(결제대기_1);
 
         // when

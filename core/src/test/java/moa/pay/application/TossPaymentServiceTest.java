@@ -1,9 +1,9 @@
 package moa.pay.application;
 
+import static moa.client.exception.ExternalApiExceptionType.EXTERNAL_API_EXCEPTION;
 import static moa.pay.domain.TossPaymentStatus.CANCELED;
 import static moa.pay.domain.TossPaymentStatus.PENDING_CANCEL;
 import static moa.pay.exception.TossPaymentExceptionType.ALREADY_CANCELED_PAYMENT;
-import static moa.pay.exception.TossPaymentExceptionType.TOSS_API_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.any;
@@ -12,6 +12,7 @@ import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 
 import moa.ApplicationTest;
+import moa.client.exception.ExternalApiException;
 import moa.client.toss.TossClient;
 import moa.client.toss.dto.TossPaymentResponse;
 import moa.global.exception.MoaExceptionType;
@@ -61,12 +62,12 @@ class TossPaymentServiceTest {
         @Test
         void 토스_api에서_예외가_발생하면_결제_정보는_결제_대기_상태로_남는다() {
             // given
-            willThrow(new TossPaymentException(TOSS_API_ERROR))
+            willThrow(new ExternalApiException(EXTERNAL_API_EXCEPTION))
                     .given(tossClient)
                     .cancelPayment(any());
 
             // when
-            MoaExceptionType exceptionType = assertThrows(TossPaymentException.class, () -> {
+            MoaExceptionType exceptionType = assertThrows(ExternalApiException.class, () -> {
                 tossPaymentService.cancelPayment(
                         payment.getOrderId(),
                         "그냥"
@@ -74,7 +75,7 @@ class TossPaymentServiceTest {
             }).getExceptionType();
 
             // then
-            assertThat(exceptionType).isEqualTo(TOSS_API_ERROR);
+            assertThat(exceptionType).isEqualTo(EXTERNAL_API_EXCEPTION);
             TossPayment after = tossPaymentRepository.getByOrderId(payment.getOrderId());
             assertThat(after.getStatus()).isEqualTo(PENDING_CANCEL);
         }
@@ -95,7 +96,7 @@ class TossPaymentServiceTest {
         @Test
         void 결제_취소시_실패한_경우_다시_요청할_수_있다() {
             // given
-            willThrow(new TossPaymentException(TOSS_API_ERROR))
+            willThrow(new ExternalApiException(EXTERNAL_API_EXCEPTION))
                     .given(tossClient)
                     .cancelPayment(any());
             try {

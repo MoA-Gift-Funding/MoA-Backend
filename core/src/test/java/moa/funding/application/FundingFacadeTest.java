@@ -1,5 +1,6 @@
 package moa.funding.application;
 
+import static moa.client.exception.ExternalApiExceptionType.EXTERNAL_API_EXCEPTION;
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
 import static moa.fixture.ProductFixture.product;
@@ -8,7 +9,6 @@ import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.pay.domain.TossPaymentStatus.CANCELED;
 import static moa.pay.domain.TossPaymentStatus.PENDING_CANCEL;
 import static moa.pay.domain.TossPaymentStatus.USED;
-import static moa.pay.exception.TossPaymentExceptionType.TOSS_API_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.willThrow;
@@ -18,6 +18,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import moa.ApplicationTest;
+import moa.client.exception.ExternalApiException;
 import moa.client.toss.TossClient;
 import moa.friend.domain.Friend;
 import moa.friend.domain.FriendRepository;
@@ -29,7 +30,6 @@ import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import moa.pay.domain.TossPayment;
 import moa.pay.domain.TossPaymentRepository;
-import moa.pay.exception.TossPaymentException;
 import moa.product.domain.Product;
 import moa.product.domain.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -142,7 +142,7 @@ class FundingFacadeTest {
                 "말랑 ㅎㅇ",
                 PUBLIC
         );
-        willThrow(new TossPaymentException(TOSS_API_ERROR))
+        willThrow(new ExternalApiException(EXTERNAL_API_EXCEPTION))
                 .given(tossClient)
                 .cancelPayment(any());
         ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
