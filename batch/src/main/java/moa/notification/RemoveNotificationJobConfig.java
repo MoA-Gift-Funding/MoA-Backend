@@ -41,6 +41,9 @@ public class RemoveNotificationJobConfig {
         jobLauncher.run(removeNotificationJob(), jobParameters);
     }
 
+    /**
+     * 15일이 지난 알림들을 모두 제거한다.
+     */
     @Bean
     public Job removeNotificationJob() {
         return new JobBuilder("removeNotificationJob", jobRepository)
