@@ -14,6 +14,7 @@ public interface WincubeAuthApiClient {
     /**
      * 계정 코드 발행
      * <p/>
+     * String 반환 이유는 응답 타입이 json이 아니라 text/plain이라 매핑이 안됨..
      */
     @PostExchange(value = "/auth/code/issue", contentType = APPLICATION_JSON_VALUE)
     String issueAuthCode(
@@ -24,6 +25,8 @@ public interface WincubeAuthApiClient {
      * 계정 토큰 발행
      * <p/>
      * codeId는 `계정 코드 발행`의 응답으로 받은 codeId 그대로 전송
+     * <p/>
+     * String 반환 이유는 응답 타입이 json이 아니라 text/plain이라 매핑이 안됨..
      */
     @PostExchange("/auth/token/issue")
     String issueAuthToken(

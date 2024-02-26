@@ -10,6 +10,7 @@ public interface WincubeApiClient {
 
     /**
      * 상품 조회
+     * TODO prod 배포 이후 상품 응답 형식 보고 수정
      */
     @PostExchange("/salelist.do")
     String getProductList(

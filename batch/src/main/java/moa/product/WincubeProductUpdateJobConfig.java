@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moa.client.wincube.WincubeClient;
 import moa.client.wincube.dto.WincubeProductResponse;
-import moa.client.wincube.dto.WincubeProductResponse.Value.WincubeGoods;
-import moa.client.wincube.dto.WincubeProductResponse.Value.WincubeGoods.Option;
+import moa.client.wincube.dto.WincubeProductResponse.WincubeGoods;
+import moa.client.wincube.dto.WincubeProductResponse.WincubeGoods.Option;
 import moa.funding.domain.Funding;
 import moa.notification.application.NotificationService;
 import moa.notification.domain.Notification;
@@ -112,10 +112,10 @@ public class WincubeProductUpdateJobConfig {
         log.info("[윈큐브 상품 업데이트 배치] 윈큐브 api 호출");
         WincubeProductResponse response = wincubeClient.getProductList();
         if (!response.isSuccess()) {
-            log.error("Wincube 상품 조회 API 실패", response.result());
-            throw new RuntimeException("Wincube 상품 조회 API 실패 " + response.result());
+            log.error("Wincube 상품 조회 API 실패 {}", response);
+            throw new RuntimeException("Wincube 상품 조회 API 실패 " + response);
         }
-        List<WincubeGoods> wincubeGoods = response.value().goodsList();
+        List<WincubeGoods> wincubeGoods = response.goodsList();
         return new ListItemReader<>(wincubeGoods);
     }
 
