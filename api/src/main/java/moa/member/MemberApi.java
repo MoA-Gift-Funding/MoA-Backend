@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import moa.auth.Auth;
 import moa.member.query.response.MemberResponse;
 import moa.member.query.response.NotificationStatusResponse;
+import moa.member.request.MemberUpdateRequest;
 import moa.member.request.NotificationPermitRequest;
 import moa.member.request.SendPhoneVerificationNumberRequest;
 import moa.member.request.SignupRequest;
@@ -22,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "회원 API", description = "회원 관련 API")
@@ -138,6 +140,23 @@ public interface MemberApi {
     @DeleteMapping("/notification")
     ResponseEntity<Void> rejectNotification(
             @Auth(permit = {SIGNED_UP}) Long memberId
+    );
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "400"),
+                    @ApiResponse(responseCode = "401"),
+                    @ApiResponse(responseCode = "403"),
+                    @ApiResponse(responseCode = "404"),
+            }
+    )
+    @Operation(summary = "회원정보 수정")
+    @PutMapping
+    ResponseEntity<Void> update(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+
+            @Valid @RequestBody MemberUpdateRequest request
     );
 
     @ApiResponses(
