@@ -76,4 +76,12 @@ public class MemberService {
         Member member = memberRepository.getById(memberId);
         member.rejectNotification();
     }
+
+    public void withdraw(Long memberId) {
+        Member member = memberRepository.getById(memberId);
+        member.withdraw();
+        // TODO: 진행중인 펀딩은 취소한다 (참여자들에게 환불)
+        // TODO: 회원의 정보를 삭제한다 - deviceToken, OAuth 인증정보
+        // TODO:
+    }
 }

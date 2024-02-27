@@ -9,4 +9,6 @@ public interface OauthMemberClient {
     OauthProvider supportsProvider();
 
     Member fetch(String accessToken);
+
+    void withDraw(Member member);
 }

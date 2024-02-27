@@ -5,6 +5,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 import static moa.member.domain.MemberStatus.PRESIGNED_UP;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
+import moa.member.exception.MemberExceptionType;
 import static moa.member.exception.MemberExceptionType.ALREADY_SIGNED_UP;
 import static moa.member.exception.MemberExceptionType.NOT_VERIFIED_PHONE;
 
@@ -150,5 +151,12 @@ public class Member extends RootEntity<Long> {
 
     public String getPhoneNumber() {
         return getPhone().getPhoneNumber();
+    }
+
+    public void withdraw() {
+        if (status == MemberStatus.WITHDRAW) {
+            throw new MemberException(MemberExceptionType.ALREADY_WITHDRAW);
+        }
+        this.status = MemberStatus.WITHDRAW;
     }
 }

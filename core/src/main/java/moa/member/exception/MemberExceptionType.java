@@ -1,14 +1,14 @@
 package moa.member.exception;
 
+import org.springframework.http.HttpStatus;
+
+import moa.global.exception.MoaExceptionType;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-
-import moa.global.exception.MoaExceptionType;
-import org.springframework.http.HttpStatus;
 
 public enum MemberExceptionType implements MoaExceptionType {
 
@@ -20,6 +20,7 @@ public enum MemberExceptionType implements MoaExceptionType {
     DIFFERENT_PHONE_VERIFICATION_NUMBER(UNAUTHORIZED, "핸드폰 인증번호가 일치하지 않습니다."),
     ALREADY_SIGNED_UP(BAD_REQUEST, "이미 회원가입한 회원입니다."),
     PHONE_VERIFICATION_NOT_SENT(BAD_REQUEST, "핸드폰 인증번호가 전송되지 않았거나 만료되었습니다."),
+    ALREADY_WITHDRAW(BAD_REQUEST, "이미 탈퇴한 회원입니다."),
     ;
 
     private final HttpStatus httpStatus;

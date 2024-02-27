@@ -38,4 +38,12 @@ public class NaverMemberClient implements OauthMemberClient {
                 response.mobile()
         );
     }
+
+    @Override
+    public void withDraw(Member member) {
+        // TODO: 로그인 수행 시 네이버에서 발급해주는 refreshToken을 어딘가에 저장해야한다.
+        // TODO: 사용자 정보로 AccessToken 재발급
+
+        naverClient.withdrawMember("");
+    }
 }
