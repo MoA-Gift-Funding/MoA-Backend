@@ -14,11 +14,11 @@ public class MemberValidator {
 
     private final MemberRepository memberRepository;
 
-    public void validateDuplicatedEmailExceptMe(String email, Long id) {
+    public void validateDuplicatedEmail(String email) {
         if (email == null || email.isBlank()) {
             return;
         }
-        if (memberRepository.existsByEmailAndIdNot(email, id)) {
+        if (memberRepository.existsByEmail(email)) {
             throw new MemberException(ALREADY_EXISTS_EMAIL);
         }
     }
