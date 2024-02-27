@@ -1,6 +1,7 @@
 package moa.product;
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
@@ -22,6 +23,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "상품 API", description = "상품 관련 API")
 @SecurityRequirement(name = "JWT")
@@ -40,6 +42,9 @@ public interface ProductApi {
     @GetMapping
     ResponseEntity<PageResponse<ProductResponse>> findAllOnSale(
             @Auth(permit = {SIGNED_UP}) Long memberId,
+
+            @Parameter(in = QUERY, required = false, description = "카테고리 이름")
+            @RequestParam(value = "category", required = false) String category,
 
             @ParameterObject
             @PageableDefault(size = 10, sort = "id", direction = ASC) Pageable pageable

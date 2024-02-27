@@ -27,4 +27,16 @@ public interface ProductQueryRepository extends JpaRepository<Product, Long> {
             @Param("afterFiveWeek") LocalDate afterFiveWeek,
             Pageable pageable
     );
+
+    @Query("""
+            SELECT p FROM Product p
+            WHERE p.status = 'SALES'
+            AND p.category = :category
+            AND p.saleEndDate >= :afterFiveWeek
+            """)
+    Page<Product> findAllOnSaleByCategory(
+            @Param("category") String category,
+            @Param("afterFiveWeek") LocalDate afterFiveWeek,
+            Pageable pageable
+    );
 }

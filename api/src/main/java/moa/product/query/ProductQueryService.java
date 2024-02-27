@@ -22,6 +22,12 @@ public class ProductQueryService {
                 .map(ProductResponse::from);
     }
 
+    public Page<ProductResponse> findAllOnSaleByCategory(String category, Pageable pageable) {
+        LocalDate afterFiveWeek = LocalDate.now().plusWeeks(5);
+        return productQueryRepository.findAllOnSaleByCategory(category, afterFiveWeek, pageable)
+                .map(ProductResponse::from);
+    }
+
     public ProductDetailResponse findById(Long productId) {
         return ProductDetailResponse.from(productQueryRepository.getById(productId));
     }
