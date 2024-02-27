@@ -2,8 +2,11 @@ package moa.client.oauth.kakao;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+import moa.client.oauth.kakao.request.KakaoUnlinkRequest;
 import moa.client.oauth.kakao.response.KakaoMemberResponse;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
@@ -18,7 +21,6 @@ public interface KakaoApiClient {
     @PostExchange(url = "https://kapi.kakao.com/v1/user/unlink")
     void withdrawMember(
             @RequestHeader(name = AUTHORIZATION) String adminToken,
-            @RequestHeader(name = "target_id_type", value = "user_id") String targetId,
-            @RequestHeader(name = "target_id") String memberOauthId
+            @RequestBody KakaoUnlinkRequest unlinkRequest
     );
 }

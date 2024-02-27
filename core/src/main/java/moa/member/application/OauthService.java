@@ -34,8 +34,7 @@ public class OauthService {
         );
     }
 
-    public void withdraw(Long memberId) {
-        Member member = memberRepository.getById(memberId);
+    public void withdraw(Member member) {
         oauthMemberClientComposite.withdraw(member);
     }
 }

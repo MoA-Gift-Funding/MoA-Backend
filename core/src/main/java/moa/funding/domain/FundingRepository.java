@@ -3,6 +3,7 @@ package moa.funding.domain;
 import static jakarta.persistence.LockModeType.PESSIMISTIC_WRITE;
 import static moa.funding.exception.FundingExceptionType.NOT_FOUND_FUNDING;
 
+import java.util.List;
 import java.util.Optional;
 import moa.funding.exception.FundingException;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -31,4 +32,6 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
 
     @Lock(PESSIMISTIC_WRITE)
     Optional<Funding> findWithLockById(Long id);
+
+    List<Funding> findAllByMemberId(Long memberId);
 }

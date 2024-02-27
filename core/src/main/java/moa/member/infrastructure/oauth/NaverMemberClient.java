@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moa.client.oauth.naver.NaverClient;
 import moa.client.oauth.naver.response.NaverMemberResponse.Response;
+import moa.client.oauth.naver.response.NaverTokenResponse;
 import moa.member.domain.Member;
 import moa.member.domain.OauthId;
 import moa.member.domain.OauthId.OauthProvider;
@@ -26,8 +27,7 @@ public class NaverMemberClient implements OauthMemberClient {
 
     @Override
     public Member fetch(String accessToken) {
-        Response response = naverClient.fetchMember(accessToken)
-                .response();
+        Response response = naverClient.fetchMember(accessToken).response();
         return new Member(
                 new OauthId(String.valueOf(response.id()), NAVER),
                 response.email(),
@@ -41,9 +41,6 @@ public class NaverMemberClient implements OauthMemberClient {
 
     @Override
     public void withDraw(Member member) {
-        // TODO: 로그인 수행 시 네이버에서 발급해주는 refreshToken을 어딘가에 저장해야한다.
-        // TODO: 사용자 정보로 AccessToken 재발급
-
-        naverClient.withdrawMember("");
+        naverClient.withdrawMember(member.getOauthId().getRefreshToken());
     }
 }
