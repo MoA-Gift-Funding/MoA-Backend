@@ -49,6 +49,21 @@ public class AppleClient {
         return appleIdTokenPayload;
     }
 
+    public void withdraw(String authCode) {
+        AppleTokenResponse response = appleApiClient.fetchToken(
+                appleOauthProperty.clientId(),
+                generateClientSecret(),
+                authCode,
+                GRANT_TYPE
+        );
+        appleApiClient.withdraw(
+                appleOauthProperty.clientId(),
+                generateClientSecret(),
+                response.accessToken(),
+                "ACCESS_TOKEN"
+        );
+    }
+
     private String generateClientSecret() {
         long expiration = MILLISECONDS.convert(5, MINUTES);
 

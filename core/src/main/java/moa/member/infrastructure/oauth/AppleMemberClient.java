@@ -37,4 +37,10 @@ public class AppleMemberClient implements OauthMemberClient {
                 null
         );
     }
+
+    @Override
+    public void withDraw(Member member) {
+        // TODO: 저 위에 있는 authCode를 가지고 어딘가에 저장해야한다.
+        // TODO: authCode를 이용해 accessToken 발급
+    }
 }
