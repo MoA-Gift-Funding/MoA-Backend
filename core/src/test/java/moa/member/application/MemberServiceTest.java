@@ -3,7 +3,6 @@ package moa.member.application;
 import static moa.fixture.MemberFixture.member;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.member.domain.MemberStatus.WITHDRAW;
-import static moa.member.domain.OauthId.OauthProvider.KAKAO;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import moa.ApplicationTest;
@@ -43,7 +42,7 @@ class MemberServiceTest {
             memberRepository.save(member);
 
             // when
-            memberService.withdraw(member.getId(), KAKAO, "temp");
+            memberService.withdraw(member.getId(), "temp");
 
             // then
             var updated = memberRepository.getById(member.getId());

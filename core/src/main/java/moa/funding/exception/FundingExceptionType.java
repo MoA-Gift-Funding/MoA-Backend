@@ -23,7 +23,7 @@ public enum FundingExceptionType implements MoaExceptionType {
     OWNER_CANNOT_PARTICIPATE_FUNDING(BAD_REQUEST, "펀딩 주인은 자신의 펀딩에 참여할 수 없습니다."),
     NO_AUTHORITY_FOR_FUNDING(FORBIDDEN, "펀딩 주인만 가능한 요청입니다."),
     DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT(BAD_REQUEST, "펀딩의 남은 금액과 결제하려는 금액이 다릅니다."),
-    ONLY_PROCESSING_FUNDING_CAN_BE_CANCELLED(BAD_REQUEST, "진행중인 펀딩만 취소 가능합니다."),
+    PROCESSING_OR_STOPPED_FUNDING_CAN_BE_CANCELLED(BAD_REQUEST, "진행중이거나 중단된 펀딩만 취소 가능합니다."),
     ALREADY_CANCEL_PARTICIPATING(BAD_REQUEST, "이미 참여 취소한 펀딩입니다."),
     NO_AUTHORITY_CANCEL_PARTICIPATE(FORBIDDEN, "펀딩 참여를 취소할 권한이 없습니다"),
     FUNDING_IS_NOT_PROCESSING(BAD_REQUEST, "진행중인 펀딩에 대해서만 참여 취소가 가능합니다.");
