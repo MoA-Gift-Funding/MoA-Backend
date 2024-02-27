@@ -5,7 +5,6 @@ import static moa.order.exception.OrderExceptionType.NOT_FOUND_ORDER;
 
 import java.util.Optional;
 import moa.order.exception.OrderException;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 
@@ -15,14 +14,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         return findById(id)
                 .orElseThrow(() -> new OrderException(NOT_FOUND_ORDER));
     }
-
-    default Order getWithRelationById(Long id) {
-        return findWithRelationById(id)
-                .orElseThrow(() -> new OrderException(NOT_FOUND_ORDER));
-    }
-
-    @EntityGraph(attributePaths = {"funding", "product", "member"})
-    Optional<Order> findWithRelationById(Long id);
 
     default Order getWithLockById(Long id) {
         return findWithLockById(id)

@@ -1,6 +1,7 @@
 package moa.order.application;
 
 import static moa.global.config.async.AsyncConfig.VIRTUAL_THREAD_EXECUTOR;
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 
 import java.time.LocalDate;
@@ -47,16 +48,10 @@ public class OrderEventHandler {
     }
 
     @Async(VIRTUAL_THREAD_EXECUTOR)
+    @Transactional(propagation = REQUIRES_NEW)
     @TransactionalEventListener(value = OrderReadyEvent.class, phase = AFTER_COMMIT)
-    public void issueCoupon(OrderReadyEvent event) {
-        Order order = orderRepository.getWithRelationById(event.order().getId());
-        OrderTransaction orderTx = orderTransactionRepository.getLastedByOrder(order);
-        String message = smsMessageFactory.generateFundingFinishMessage(
-                order.getMember().getNickname(),
-                order.getProduct().getProductName(),
-                LocalDate.now().plusDays(order.getProduct().getLimitDate()).toString(),
-                order.getProduct().getDescription()
-        );
+    public void pushOrderReadyNotification(OrderReadyEvent event) {
+        Order order = orderRepository.getById(event.order().getId());
         Funding funding = order.getFunding();
         Notification notification = notificationFactory.generateFundingFinishNotification(
                 funding.getTitle(),
@@ -65,6 +60,20 @@ public class OrderEventHandler {
                 order.getMember()
         );
         notificationService.push(notification);
+    }
+
+    @Async(VIRTUAL_THREAD_EXECUTOR)
+    @Transactional(propagation = REQUIRES_NEW)
+    @TransactionalEventListener(value = OrderReadyEvent.class, phase = AFTER_COMMIT)
+    public void issueCoupon(OrderReadyEvent event) {
+        Order order = orderRepository.getById(event.order().getId());
+        OrderTransaction orderTx = orderTransactionRepository.getLastedByOrder(order);
+        String message = smsMessageFactory.generateFundingFinishMessage(
+                order.getMember().getNickname(),
+                order.getProduct().getProductName(),
+                LocalDate.now().plusDays(order.getProduct().getLimitDate()).toString(),
+                order.getProduct().getDescription()
+        );
         wincubeClient.issueCoupon(
                 orderTx.getTransactionId(),
                 "[MoA] 모아 펀딩 달성 상품",
