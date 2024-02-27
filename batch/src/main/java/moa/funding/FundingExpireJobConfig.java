@@ -3,12 +3,9 @@ package moa.funding;
 import static moa.Crons.EVERY_MIDNIGHT;
 import static org.springframework.batch.repeat.RepeatStatus.FINISHED;
 
-import jakarta.persistence.EntityManagerFactory;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import moa.notification.application.NotificationService;
-import moa.notification.domain.NotificationFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -33,9 +30,6 @@ public class FundingExpireJobConfig {
     private final JobLauncher jobLauncher;
     private final JdbcTemplate jdbcTemplate;
     private final JobRepository jobRepository;
-    private final NotificationFactory notificationFactory;
-    private final NotificationService notificationService;
-    private final EntityManagerFactory entityManagerFactory;
     private final PlatformTransactionManager transactionManager;
 
     @Scheduled(cron = EVERY_MIDNIGHT)
@@ -46,6 +40,9 @@ public class FundingExpireJobConfig {
         jobLauncher.run(fundingExpireJob(), jobParameters);
     }
 
+    /**
+     * 펀딩의 종료일(endDate)이 지난 펀딩들을 만료(EXPIRED) 처리한다.
+     */
     @Bean
     public Job fundingExpireJob() {
         return new JobBuilder("fundingExpireJob", jobRepository)
@@ -53,9 +50,6 @@ public class FundingExpireJobConfig {
                 .build();
     }
 
-    /**
-     * endDate가 지난 펀딩에 대해 만료 처리를 수행한다.
-     */
     @Bean
     @JobScope
     public Step fundingExpireStep(

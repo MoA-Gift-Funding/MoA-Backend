@@ -51,6 +51,10 @@ public class FundingExpiredNotificationJobConfig {
         jobLauncher.run(fundingExpiredNotificationJob(), jobParameters);
     }
 
+
+    /**
+     * 만료된 펀딩들에 대해, 펀딩의 주인에게 만료되었다는 알림을 전송한다.
+     */
     @Bean
     public Job fundingExpiredNotificationJob() {
         return new JobBuilder("fundingExpiredNotificationJob", jobRepository)
@@ -58,9 +62,6 @@ public class FundingExpiredNotificationJobConfig {
                 .build();
     }
 
-    /**
-     * 만료된 펀딩에 대해 알림을 전송한다.
-     */
     @Bean
     @JobScope
     public Step fundingExpiredNotificationStep(
@@ -75,23 +76,31 @@ public class FundingExpiredNotificationJobConfig {
                 .build();
     }
 
+    /**
+     * 오늘 만료된 펀딩들(즉, 종료일이 어제인 펀딩들)을 읽어온다.
+     * <p/>
+     * 해당 배치 작업은 오후 8시에 실행되므로, 오전 00시에 실행되는 FundingExpireJob 으로 인해, 이미 기간이 끝난 펀딩들은 만료된 상태이다.
+     */
     @Bean
     @StepScope
     public JpaCursorItemReader<Funding> expiredFundingForNotificationReader(
             @Value("#{jobParameters[now]}") LocalDateTime now
     ) {
         return new JpaCursorItemReaderBuilder<Funding>()
-                .name("soonExpireNotificationTargetFundingReader")
+                .name("expiredFundingForNotificationReader")
                 .entityManagerFactory(entityManagerFactory)
                 .queryString("""
                         SELECT f FROM Funding f
-                        WHERE f.status = 'PROCESSING'
+                        WHERE f.status = 'EXPIRED'
                         AND f.endDate = :yesterday
                         """)
                 .parameterValues(Map.of("yesterday", now.minusDays(1).toLocalDate()))
                 .build();
     }
 
+    /**
+     * 오늘 만료된 펀딩들을 만료 알림 메세지로 변환한다.
+     */
     @Bean
     @StepScope
     public ItemProcessor<Funding, Notification> expiredFundingForNotificationProcessor() {
@@ -103,6 +112,9 @@ public class FundingExpiredNotificationJobConfig {
         );
     }
 
+    /**
+     * 펀딩 만료 알림 메세지를 전송한다.
+     */
     @Bean
     @StepScope
     public ItemWriter<Notification> expiredFundingForNotificationWriter() {
