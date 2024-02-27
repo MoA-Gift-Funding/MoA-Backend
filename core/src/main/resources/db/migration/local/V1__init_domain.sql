@@ -240,8 +240,6 @@ create table if not exists orders
     updated_date                  datetime(6),
     constraint UK_orders_funding
         unique (funding_id),
-    constraint UK_orders_member
-        unique (member_id),
     constraint FK_orders_funding
         foreign key (funding_id) references funding (id),
     constraint FK_orders_product
