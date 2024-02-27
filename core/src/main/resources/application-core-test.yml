@@ -42,7 +42,7 @@ oauth:
     keyId: ""
     teamId: ""
     clientId: "애플 번들 ID"
-    privateKeyFileName: "애플 private 등록 시 다운받은 p8 파일 이름 (p8) 포함"o
+    privateKeyFileName: "애플 private 등록 시 다운받은 p8 파일 이름 (p8) 포함"
   kakao:
     adminKey: ""
   naver:
