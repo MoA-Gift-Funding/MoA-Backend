@@ -8,6 +8,7 @@ import moa.funding.domain.Funding;
 import moa.funding.domain.FundingParticipant;
 import moa.member.domain.Member;
 import moa.order.domain.Order;
+import moa.order.domain.OrderStatus;
 import moa.product.domain.Product;
 import moa.product.domain.ProductId;
 
@@ -24,6 +25,7 @@ public record OrderDetailResponse(
         int possibleReissueCouponCount,
         Address address,
         String deliveryRequestMessage,
+        OrderStatus status,
         PaymentResponse payment
 ) {
     public static OrderDetailResponse of(Order order, List<Friend> friends) {
@@ -41,6 +43,7 @@ public record OrderDetailResponse(
                 order.getPossibleReissueCouponCount(),
                 order.getAddress(),
                 order.getDeliveryRequestMessage(),
+                order.getStatus(),
                 PaymentResponse.of(funding, friends)
         );
     }
