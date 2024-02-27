@@ -46,8 +46,8 @@ public record ParticipatedFundingResponse(
         @Schema(example = "참가자 id(회원 id가 아님, 참여 취소 시 사용)")
         Long fundingParticipantId,
 
-        @Schema(example = "2024-02-20")
-        @JsonFormat(pattern = "yyyy-MM-dd HH-mm-ss") LocalDateTime participatedDate,
+        @Schema(example = "2024-02-20T12:24:01")
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime participatedDate,
 
         @Schema(description = "펀딩한 금액", example = "20000")
         Long amount,

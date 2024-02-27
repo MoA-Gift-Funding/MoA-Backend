@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moa.pay.PaymentCancelJobConfig;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -48,6 +49,13 @@ public class FundingCancelJobConfig {
         jobLauncher.run(fundingCancelJob(), jobParameters);
     }
 
+    /**
+     * 만료된 펀딩 중 7일 이상 지난 펀딩을 `취소(CANCELLED)` 상태로 바꾸며, 참여자들의 상태를 `CANCELLED_BY_FUND_OWNER`로,
+     * <p/>
+     * 참여자들의 결제 상태를 `결제 취소 대기(PENDING_CANCEL)` 상태로 변경하는 작업을 수행한다.
+     * <p/>
+     * 결제에 대한 환불은 {@link PaymentCancelJobConfig} 으로 책임을 넘긴다.
+     */
     @Bean
     public Job fundingCancelJob() {
         return new JobBuilder("fundingCancelJob", jobRepository)
@@ -55,17 +63,6 @@ public class FundingCancelJobConfig {
                 .build();
     }
 
-    /**
-     * 만료된 펀딩 중 7일 이상 지난 펀딩에 대해 결제 취소 상태로 변경하는 작업을 수행한다.
-     * <p>
-     * 00시에 작업이 수행되나 은행 점검시간을 고려해 PENDING_CANCEL로 돌려두고 환불은 PaymentCancelJobConfig으로 책임을 넘긴다.
-     * <p>
-     * Funding의 상태 EXPIRED -> CANCELED
-     * <p>
-     * 참여자의 상태 PARTICIPATING -> CANCEL
-     * <p>
-     * 결제의 상태 USED, UNUSED -> PENDING_CANCEL
-     */
     @Bean
     @JobScope
     public Step fundingCancelStep(
@@ -79,6 +76,9 @@ public class FundingCancelJobConfig {
                 .build();
     }
 
+    /**
+     * 만료된 펀딩 중 7일 이상 지난 펀딩을 읽는다.
+     */
     @Bean
     @StepScope
     public JdbcCursorItemReader<Long> fundingToBeCancelReader(
@@ -102,6 +102,14 @@ public class FundingCancelJobConfig {
                 .build();
     }
 
+
+    /**
+     * 펀딩을 `취소(CANCELLED)` 상태로 바꾸며,
+     * <p/>
+     * 참여자들의 상태를 `CANCELLED_BY_FUND_OWNER`로,
+     * <p/>
+     * 참여자들의 결제 상태를 `결제 취소 대기(PENDING_CANCEL)` 상태로 변경하는 작업을 수행한다.
+     */
     @Bean
     public ItemWriter<Long> fundingCancelWriter() {
         return chunk -> {
@@ -117,7 +125,7 @@ public class FundingCancelJobConfig {
             );
             jdbcTemplate.update("""
                     UPDATE funding_participant fp
-                    SET fp.status = 'CANCEL'
+                    SET fp.status = 'CANCELLED_BY_FUND_OWNER'
                     WHERE fp.funding_id IN (?);
                     """, fundingIdsInParam
             );

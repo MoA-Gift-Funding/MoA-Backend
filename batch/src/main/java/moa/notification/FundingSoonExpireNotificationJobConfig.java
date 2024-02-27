@@ -51,6 +51,9 @@ public class FundingSoonExpireNotificationJobConfig {
         jobLauncher.run(fundingSoonExpireNotificationJob(), jobParameters);
     }
 
+    /**
+     * 만료 하루 전인 펀딩에 대해 알림을 전송한다.
+     */
     @Bean
     public Job fundingSoonExpireNotificationJob() {
         return new JobBuilder("fundingSoonExpireNotificationJob", jobRepository)
@@ -58,9 +61,6 @@ public class FundingSoonExpireNotificationJobConfig {
                 .build();
     }
 
-    /**
-     * 만료 하루 전인 펀딩에 대해 알림을 전송한다.
-     */
     @Bean
     @JobScope
     public Step sendNotificationSoonExpireFundingStep(
@@ -75,6 +75,9 @@ public class FundingSoonExpireNotificationJobConfig {
                 .build();
     }
 
+    /**
+     * 내일 만료되는 펀딩들을 읽어온다.
+     */
     @Bean
     @StepScope
     public JpaCursorItemReader<Funding> soonExpireNotificationTargetFundingReader(
@@ -91,6 +94,9 @@ public class FundingSoonExpireNotificationJobConfig {
                 .build();
     }
 
+    /**
+     * 내일 만료될 펀딩들을 만료 알림 메세지로 변환한다.
+     */
     @Bean
     @StepScope
     public ItemProcessor<Funding, Notification> soonExpireNotificationTargetFundingProcessor() {
@@ -102,6 +108,9 @@ public class FundingSoonExpireNotificationJobConfig {
         );
     }
 
+    /**
+     * 만료 임박 알림 메세지를 전송한다.
+     */
     @Bean
     @StepScope
     public ItemWriter<Notification> soonExpireNotificationTargetFundingWriter() {
