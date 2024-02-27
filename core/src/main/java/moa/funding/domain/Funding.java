@@ -21,8 +21,8 @@ import static moa.funding.exception.FundingExceptionType.INVALID_FUNDING_END_DAT
 import static moa.funding.exception.FundingExceptionType.MUST_FUNDING_MORE_THAN_MINIMUM_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.NOT_PROCESSING_FUNDING;
 import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_FOR_FUNDING;
-import static moa.funding.exception.FundingExceptionType.ONLY_PROCESSING_FUNDING_CAN_BE_CANCELLED;
 import static moa.funding.exception.FundingExceptionType.OWNER_CANNOT_PARTICIPATE_FUNDING;
+import static moa.funding.exception.FundingExceptionType.PROCESSING_OR_STOPPED_FUNDING_CAN_BE_CANCELLED;
 import static moa.global.domain.Price.ZERO;
 
 import jakarta.persistence.AttributeOverride;
@@ -217,7 +217,7 @@ public class Funding extends RootEntity<Long> {
 
     public void cancel() {
         if (status != PROCESSING && status != STOPPED) {
-            throw new FundingException(ONLY_PROCESSING_FUNDING_CAN_BE_CANCELLED);
+            throw new FundingException(PROCESSING_OR_STOPPED_FUNDING_CAN_BE_CANCELLED);
         }
         this.status = CANCELLED;
         for (FundingParticipant participant : participants) {

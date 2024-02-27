@@ -160,7 +160,7 @@ public class Member extends RootEntity<Long> {
         }
         this.oauthId = null;
         this.email = null;
-        this.nickname = null;
+        this.nickname = "탈퇴한 회원";
         this.birthyear = null;
         this.birthday = null;
         this.profileImageUrl = null;

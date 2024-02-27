@@ -109,7 +109,7 @@ class MemberServiceTest {
             memberRepository.save(member);
 
             // when
-            memberService.withdraw(member.getId(), KAKAO, "temp");
+            memberService.withdraw(member.getId(), "temp");
 
             // then
             var updated = memberRepository.getById(member.getId());

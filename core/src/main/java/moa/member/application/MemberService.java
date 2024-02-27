@@ -102,9 +102,9 @@ public class MemberService {
         member.rejectNotification();
     }
 
-    public void withdraw(Long memberId, OauthProvider provider, String accessToken) {
+    public void withdraw(Long memberId, String accessToken) {
         Member member = memberRepository.getById(memberId);
-        oauthMemberClientComposite.withdraw(provider, accessToken);
+        oauthMemberClientComposite.withdraw(member.getOauthId().getOauthProvider(), accessToken);
         transactionTemplate.executeWithoutResult(status -> {
             member.withdraw();
             memberRepository.save(member);

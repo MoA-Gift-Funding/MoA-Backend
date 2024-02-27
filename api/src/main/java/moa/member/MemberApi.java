@@ -1,9 +1,11 @@
 package moa.member;
 
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.HEADER;
 import static moa.member.domain.MemberStatus.PRESIGNED_UP;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,7 +14,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import moa.auth.Auth;
-import moa.member.domain.OauthId.OauthProvider;
 import moa.member.query.response.MemberResponse;
 import moa.member.query.response.NotificationStatusResponse;
 import moa.member.request.MemberUpdateRequest;
@@ -23,7 +24,6 @@ import moa.member.request.VerifyPhoneRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -175,7 +175,12 @@ public interface MemberApi {
     @DeleteMapping
     ResponseEntity<Void> withdraw(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @PathVariable("oauthProvider") OauthProvider oauthProvider,
+
+            @Parameter(
+                    description = "가입한 OAuth 서비스에서 받아온 AccessToken (Apple의 경우에는 AuthCode)",
+                    in = HEADER,
+                    required = true
+            )
             @RequestHeader(name = "OAuthAccessToken") String oauthAccessToken
     );
 }
