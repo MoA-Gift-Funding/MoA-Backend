@@ -12,6 +12,12 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
         return new Notifications(findByMember(member));
     }
 
+    @Query("""
+            SELECT n
+            FROM Notification n
+            WHERE n.member = :member
+            ORDER BY n.createdDate DESC
+            """)
     List<Notification> findByMember(Member member);
 
     default boolean existsByUnread(Member member) {

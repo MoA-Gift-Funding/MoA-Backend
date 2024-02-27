@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.util.List;
 import moa.funding.domain.Funding;
+import moa.funding.domain.FundingStatus;
 
 public record MyFundingsResponse(
         List<MyFundingResponse> fundings
@@ -25,8 +26,8 @@ public record MyFundingsResponse(
             @Schema(description = "펀딩 달성 퍼센트", example = "56")
             int fundingRate,
 
-            @Schema(description = "펀딩 상태", example = "진행중")
-            String status,
+            @Schema(description = "펀딩 상태")
+            FundingStatus status,
 
             @Schema(description = "지금까지 펀딩된 금액", example = "50000")
             Long fundedAmount,
@@ -44,7 +45,7 @@ public record MyFundingsResponse(
                     funding.getTitle(),
                     funding.getEndDate(),
                     funding.getFundingRate(),
-                    funding.getStatus().getDescription(),
+                    funding.getStatus(),
                     funding.getFundedAmount().longValue(),
                     funding.getParticipants().size(),
                     funding.getProduct().getImageUrl()
