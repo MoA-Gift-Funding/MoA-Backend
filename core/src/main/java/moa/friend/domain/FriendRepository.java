@@ -7,6 +7,7 @@ import java.util.Optional;
 import moa.friend.exception.FriendException;
 import moa.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -34,4 +35,8 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     @Query("SELECT f FROM Friend f JOIN FETCH f.member WHERE f.target = :member AND f.isBlocked = FALSE")
     List<Friend> findUnblockedByTargetId(@Param("member") Member member);
+
+    @Modifying
+    @Query("DELETE FROM Friend f WHERE f.member = :member OR f.target = :member")
+    void deleteAllByMemberId(@Param("member") Member member);
 }
