@@ -1,8 +1,6 @@
 package moa.product;
 
-import static moa.client.wincube.dto.WincubeProductResponse.Result;
 import static moa.client.wincube.dto.WincubeProductResponse.SUCCESS_CODE;
-import static moa.client.wincube.dto.WincubeProductResponse.Value;
 import static moa.fixture.FundingFixture.funding;
 import static moa.fixture.MemberFixture.member;
 import static moa.funding.domain.FundingStatus.CANCELLED;
@@ -101,8 +99,8 @@ class WincubeProductUpdateJobConfigTest {
         ));
         given(wincubeClient.getProductList())
                 .willReturn(new WincubeProductResponse(
-                        new Result(SUCCESS_CODE, "2"),
-                        new Value(List.of(
+                        SUCCESS_CODE, "2",
+                        List.of(
                                 new HashMap<>() {{
                                     put("goods_id", "1");
                                     put("affiliate", "GS25");
@@ -132,7 +130,7 @@ class WincubeProductUpdateJobConfigTest {
                                     put("limit_date", "70");
                                 }}
                         ))
-                ));
+                );
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLocalDateTime("now", LocalDateTime.now())
                 .toJobParameters();
@@ -180,8 +178,8 @@ class WincubeProductUpdateJobConfigTest {
         Funding completed = fundingRepository.save(funding(member, product, COMPLETE));
         given(wincubeClient.getProductList())
                 .willReturn(new WincubeProductResponse(
-                        new Result(SUCCESS_CODE, "2"),
-                        new Value(List.of(
+                        SUCCESS_CODE, "2",
+                        List.of(
                                 new HashMap<>() {{
                                     put("goods_id", "3");
                                     put("affiliate", "CU");
@@ -194,7 +192,7 @@ class WincubeProductUpdateJobConfigTest {
                                     put("limit_date", "70");
                                 }}
                         ))
-                ));
+                );
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLocalDateTime("now", LocalDateTime.now())
                 .toJobParameters();
@@ -228,9 +226,8 @@ class WincubeProductUpdateJobConfigTest {
         // given
         given(wincubeClient.getProductList())
                 .willReturn(new WincubeProductResponse(
-                        new Result("9999", "0"),
-                        new Value(List.of())
-                ));
+                        "9999", "0", List.of())
+                );
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLocalDateTime("now", LocalDateTime.now())
                 .toJobParameters();
