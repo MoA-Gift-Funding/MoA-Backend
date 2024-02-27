@@ -29,7 +29,7 @@ public class AppleMemberClient implements OauthMemberClient {
         AppleIdTokenPayload payload = appleClient.getIdTokenPayload(authCode);
         AppleTokenResponse tokenResponse = appleClient.fetchToken(authCode);
         return new Member(
-                new OauthId(payload.sub(), APPLE).setRefreshToken(tokenResponse.refreshToken()),
+                new OauthId(payload.sub(), APPLE),
                 payload.email(),
                 null,
                 null,

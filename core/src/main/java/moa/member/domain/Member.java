@@ -167,8 +167,4 @@ public class Member extends RootEntity<Long> {
         this.tossCustomerKey = "";
         this.status = MemberStatus.WITHDRAW;
     }
-
-    public void setRefreshToken(String refreshToken) {
-        this.oauthId = this.oauthId.setRefreshToken(refreshToken);
-    }
 }

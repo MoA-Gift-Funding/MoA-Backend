@@ -22,17 +22,9 @@ public class OauthId {
     @Column(nullable = false, name = "oauth_provider")
     private OauthProvider oauthProvider;
 
-    @Column(nullable = true, name = "refresh_token")
-    private String refreshToken;
-
     public OauthId(String oauthId, OauthProvider oauthProvider) {
         this.oauthId = oauthId;
         this.oauthProvider = oauthProvider;
-    }
-
-    public OauthId setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-        return this;
     }
 
     public enum OauthProvider {

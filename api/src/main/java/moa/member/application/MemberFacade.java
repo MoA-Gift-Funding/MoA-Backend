@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import moa.funding.application.FundingService;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingRepository;
-import moa.member.domain.MemberRepository;
 import moa.member.domain.OauthId.OauthProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +19,6 @@ public class MemberFacade {
     private final OauthService oauthService;
     private final MemberService memberService;
     private final FundingService fundingService;
-    private final MemberRepository memberRepository;
     private final FundingRepository fundingRepository;
 
     public void withdraw(Long memberId, OauthProvider oauthProvider, String accessToken) {
