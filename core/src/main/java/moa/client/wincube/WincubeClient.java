@@ -81,8 +81,7 @@ public class WincubeClient {
 
     public void cancelCoupon(Long orderId) {
         String authToken = authClient.getAuthToken();
-        // TODO 고도화
-        String response = client.cancelCoupon(
+        WincubeCancelCouponResponse response = client.cancelCoupon(
                 wincubeProperty.mdCode(),
                 TR_ID_PREFIX + orderId,
                 JSON,
@@ -143,7 +142,7 @@ public class WincubeClient {
         if (!response.isSuccess()) {
             log.info("쿠폰 취소 API 에러 {}", response);
             throw new ProductException(COUPONS_CANNOT_BE_REISSUED
-                    .withDetail(response.result().statusCode() + ", " + response.result().statusText())
+                    .withDetail(response.statusCode() + ", " + response.statusText())
             );
         }
     }
