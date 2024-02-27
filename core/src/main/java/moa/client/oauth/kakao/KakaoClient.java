@@ -2,7 +2,6 @@ package moa.client.oauth.kakao;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import moa.client.oauth.kakao.request.KakaoUnlinkRequest;
 import moa.client.oauth.kakao.response.KakaoMemberResponse;
 import org.springframework.stereotype.Component;
 
@@ -19,11 +18,8 @@ public class KakaoClient {
         return kakaoMemberResponse;
     }
 
-    public void withdrawMember(String oauthId, String adminToken) {
-        kakaoApiClient.withdrawMember(
-                "KakaoAK " + adminToken,
-                new KakaoUnlinkRequest("user_id", oauthId)
-        );
-        log.info("카카오톡 회원 탈퇴 성공: {}", oauthId);
+    public void withdrawMember(String accessToken) {
+        var result = kakaoApiClient.withdrawMember("Bearer " + accessToken);
+        log.info("카카오톡 회원 탈퇴 성공: {}", result);
     }
 }

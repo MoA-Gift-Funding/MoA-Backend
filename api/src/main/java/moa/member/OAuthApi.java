@@ -42,11 +42,6 @@ public interface OAuthApi {
                     in = HEADER,
                     required = true
             )
-            @RequestHeader(name = "OAuthAccessToken") String oauthAccessToken,
-            @Parameter(
-                    description = "해당 서비스에서 받아온 RefreshToken (Apple의 경우에는 null)",
-                    in = HEADER
-            )
-            @RequestHeader(name = "refreshToken", required = false) String refreshToken
+            @RequestHeader(name = "OAuthAccessToken") String oauthAccessToken
     );
 }

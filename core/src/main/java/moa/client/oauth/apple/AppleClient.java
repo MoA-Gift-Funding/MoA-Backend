@@ -44,13 +44,15 @@ public class AppleClient {
         return appleIdTokenPayload;
     }
 
-    public void withdraw(String refreshToken) {
+    public void withdraw(String authCode) {
+        AppleTokenResponse tokenResponse = fetchToken(authCode);
         appleApiClient.withdraw(
                 appleOauthProperty.clientId(),
                 generateClientSecret(),
-                refreshToken,
-                "refresh_token"
+                tokenResponse.accessToken(),
+                "access_token"
         );
+        log.info("애플 회원 탈퇴 성공: {}", authCode);
     }
 
     public AppleTokenResponse fetchToken(String authCode) {

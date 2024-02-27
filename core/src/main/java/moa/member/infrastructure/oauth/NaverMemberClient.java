@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moa.client.oauth.naver.NaverClient;
 import moa.client.oauth.naver.response.NaverMemberResponse.Response;
-import moa.client.oauth.naver.response.NaverTokenResponse;
 import moa.member.domain.Member;
 import moa.member.domain.OauthId;
 import moa.member.domain.OauthId.OauthProvider;
@@ -40,7 +39,7 @@ public class NaverMemberClient implements OauthMemberClient {
     }
 
     @Override
-    public void withdraw(Member member) {
-        naverClient.withdrawMember(member.getOauthId().getRefreshToken());
+    public void withdraw(String accessToken) {
+        naverClient.withdrawMember(accessToken);
     }
 }

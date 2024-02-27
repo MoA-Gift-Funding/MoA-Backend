@@ -10,5 +10,5 @@ public interface OauthMemberClient {
 
     Member fetch(String accessToken);
 
-    void withdraw(Member member);
+    void withdraw(String accessToken);
 }
