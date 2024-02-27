@@ -1,6 +1,7 @@
 package moa.client.toss;
 
 import static moa.client.exception.ExternalApiExceptionType.EXTERNAL_API_EXCEPTION;
+import static moa.global.config.ProfileConfig.NON_TEST_PROFILE;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,7 @@ import org.springframework.web.client.RestClient;
 
 @Slf4j
 @Configuration
-@Profile("!test")
+@Profile(NON_TEST_PROFILE)
 @RequiredArgsConstructor
 public class TossPaymentClientConfig {
 
