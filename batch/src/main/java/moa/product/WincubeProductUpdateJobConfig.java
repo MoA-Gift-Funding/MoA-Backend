@@ -252,6 +252,9 @@ public class WincubeProductUpdateJobConfig {
                 .build();
     }
 
+    /**
+     * 업데이트되지 않은 상품들을 모두 제거 & 그와 연관된 옵션들도 모두 제거한다.
+     */
     private void changeDeletedProductStatus(LocalDateTime now) {
         List<Long> deleteCandidateProductIds = namedParameterJdbcTemplate.query("""
                         SELECT id
@@ -286,6 +289,9 @@ public class WincubeProductUpdateJobConfig {
                 ));
     }
 
+    /**
+     * 업데이트되지 않은 옵션들을 모두 제거
+     */
     private void changeDeletedProductOptionsStatus(LocalDateTime now) {
         List<Long> deleteCandidateOptionsIds = namedParameterJdbcTemplate.query("""
                         SELECT po.id
