@@ -262,6 +262,9 @@ public class WincubeProductUpdateJobConfig {
                 Map.of("now", now),
                 new SingleColumnRowMapper<>());
 
+        if (deleteCandidateProductIds.isEmpty()) {
+            return;
+        }
         namedParameterJdbcTemplate.update("""
                         UPDATE product_option po
                         SET po.status = 'NOT_SUPPORTED', po.updated_date = :now
