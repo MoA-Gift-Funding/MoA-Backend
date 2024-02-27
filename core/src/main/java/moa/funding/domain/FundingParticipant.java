@@ -42,15 +42,15 @@ public class FundingParticipant extends RootEntity<Long> {
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "funding_id")
+    @JoinColumn(name = "funding_id", nullable = false)
     private Funding funding;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "payment_id", unique = true)
+    @JoinColumn(name = "payment_id", nullable = false, unique = true)
     private TossPayment tossPayment;
 
     @Embedded
@@ -62,6 +62,7 @@ public class FundingParticipant extends RootEntity<Long> {
     private FundingMessage fundingMessage;
 
     @Enumerated(STRING)
+    @Column(nullable = false)
     private ParticipantStatus status;
 
     public FundingParticipant(

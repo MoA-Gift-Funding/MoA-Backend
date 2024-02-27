@@ -3,14 +3,16 @@ package moa.funding;
 import static moa.fixture.ProductFixture.product;
 import static moa.funding.domain.FundingStatus.EXPIRED;
 import static moa.funding.domain.FundingStatus.PROCESSING;
+import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import static org.springframework.batch.core.BatchStatus.COMPLETED;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import moa.BatchTest;
-import moa.friend.domain.FriendRepository;
+import moa.address.domain.Address;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingRepository;
 import moa.funding.domain.FundingVisibility;
@@ -19,7 +21,6 @@ import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import moa.member.domain.OauthId;
 import moa.member.domain.OauthId.OauthProvider;
-import moa.notification.domain.NotificationRepository;
 import moa.product.domain.Product;
 import moa.product.domain.ProductRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -51,19 +52,13 @@ class FundingExpireJobConfigTest {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private FriendRepository friendRepository;
-
-    @Autowired
-    private NotificationRepository notificationRepository;
-
     @Test
     void 기간이_지난_펀딩의_상태가_EXPIRED가_된다() throws Exception {
         jobLauncherTestUtils.setJob(fundingExpireJob);
 
         // 24년 1월 4일 00시 기준
         var now = LocalDateTime.of(2024, 1, 4, 0, 0, 0);
-        Member member = memberRepository.save(new Member(
+        Member entity = new Member(
                 new OauthId("1", OauthProvider.APPLE),
                 null,
                 "주노",
@@ -71,7 +66,9 @@ class FundingExpireJobConfigTest {
                 "06",
                 "testImageUrl",
                 "010-1234-5678"
-        ));
+        );
+        setField(entity, "status", SIGNED_UP);
+        Member member = memberRepository.save(entity);
         Product product = productRepository.save(product("exampleProduct", Price.from("10000")));
 
         LocalDate nowDate = now.toLocalDate();
@@ -115,7 +112,7 @@ class FundingExpireJobConfigTest {
                         Price.from("15000"),
                         member,
                         product,
-                        null,
+                        new Address("", "", "", "", "", "", ""),
                         ""
                 ));
     }

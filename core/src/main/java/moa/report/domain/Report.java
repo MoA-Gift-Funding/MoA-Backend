@@ -5,6 +5,7 @@ import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -26,16 +27,20 @@ public class Report extends RootEntity<Long> {
     private Long id;
 
     @Enumerated(STRING)
+    @Column(nullable = false)
     private DomainType domain;
 
+    @Column(nullable = false)
     private Long domainId;
 
+    @Column(nullable = false)
     private String content;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @Column(nullable = false)
     private boolean done;
 
     public enum DomainType {

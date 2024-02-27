@@ -40,19 +40,22 @@ public class TossPayment extends RootEntity<Long> {
     @Column(nullable = false, unique = true)
     private String orderId;
 
+    @Column(nullable = false)
     private String orderName;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "total_amount"))
     private Price totalAmount;
 
-    @Column
+    @Column(nullable = false)
     private Long memberId;
 
     @Enumerated(STRING)
+    @Column(nullable = false)
     private TossPaymentStatus status;
 
     @Embedded
+    @AttributeOverride(name = "reason", column = @Column(name = "cancel_reason"))
     private TossPaymentCancel cancel;
 
     public TossPayment(String paymentKey, String orderId, String orderName, String totalAmount, Long memberId) {

@@ -22,7 +22,7 @@ public class Phone {
     @Column(nullable = true)
     private String phoneNumber;
 
-    @Column(name = "verified_phone")
+    @Column(name = "verified_phone", nullable = true)
     private boolean verified;
 
     @Column(nullable = true)

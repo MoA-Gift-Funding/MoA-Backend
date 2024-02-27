@@ -11,6 +11,7 @@ import static moa.funding.domain.FundingStatus.STOPPED;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.product.domain.ProductId.ProductProvider.WINCUBE;
 import static moa.product.domain.ProductOptionStatus.NOT_SUPPORTED;
+import static moa.product.domain.ProductOptionStatus.SUPPORTED;
 import static moa.product.domain.ProductStatus.SALES;
 import static moa.product.domain.ProductStatus.SALES_DISCONTINUED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -241,7 +242,7 @@ class WincubeProductUpdateJobConfigTest {
     }
 
     private Product product(String id) {
-        return new Product(
+        Product product = new Product(
                 new ProductId(id, WINCUBE),
                 "image",
                 "brand",
@@ -253,6 +254,8 @@ class WincubeProductUpdateJobConfigTest {
                 0,
                 60
         );
+        setField(product, "status", SALES);
+        return product;
     }
 
     private ProductOption productOption(String name, String code, Product product) {
@@ -260,6 +263,7 @@ class WincubeProductUpdateJobConfigTest {
         LocalDateTime now = LocalDateTime.now();
         setField(productOption, "createdDate", now);
         setField(productOption, "updatedDate", now);
+        setField(productOption, "status", SUPPORTED);
         return productOption;
     }
 }

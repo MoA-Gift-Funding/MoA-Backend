@@ -5,6 +5,7 @@ import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -25,21 +26,26 @@ public class Notification extends RootEntity<Long> {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String url;
 
+    @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private String message;
 
     private String imageUrl;
 
     @Enumerated(STRING)
+    @Column(nullable = false)
     private NotificationType type;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @Column(nullable = false)
     private boolean isRead = false;
 
     public Notification(

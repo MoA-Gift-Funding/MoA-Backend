@@ -3,6 +3,7 @@ package moa.friend.query;
 import static moa.fixture.MemberFixture.member;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.member.domain.OauthId.OauthProvider.KAKAO;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.util.List;
 import moa.ApplicationTest;
@@ -48,6 +49,7 @@ class FriendQueryServiceTest {
                 "profile 3",
                 "010-3333-3333"
         );
+        setField(member3, "status", SIGNED_UP);
         memberRepository.saveAll(List.of(member1, member2, member3));
 
         Friend unblock = friendRepository.save(new Friend(member1, member2, "바보 2"));
