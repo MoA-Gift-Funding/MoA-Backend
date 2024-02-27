@@ -55,7 +55,7 @@ public class AppleClient {
         log.info("애플 회원 탈퇴 성공: {}", authCode);
     }
 
-    public AppleTokenResponse fetchToken(String authCode) {
+    private AppleTokenResponse fetchToken(String authCode) {
         return appleApiClient.fetchToken(
                 appleOauthProperty.clientId(),
                 generateClientSecret(),
@@ -63,7 +63,7 @@ public class AppleClient {
                 GRANT_TYPE
         );
     }
-    
+
     private String generateClientSecret() {
         long expiration = MILLISECONDS.convert(5, MINUTES);
 
