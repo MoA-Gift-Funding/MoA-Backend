@@ -18,8 +18,9 @@ public class OauthService {
     private final OauthMemberClientComposite oauthMemberClientComposite;
     private final MemberValidator memberValidator;
 
-    public Long login(OauthProvider provider, String accessToken) {
+    public Long login(OauthProvider provider, String accessToken, String refreshToken) {
         Member member = oauthMemberClientComposite.fetch(provider, accessToken);
+        member.setRefreshToken(refreshToken);
         return memberRepository.findByOauthId(member.getOauthId())
                 .orElseGet(() -> preSignup(member))
                 .getId();

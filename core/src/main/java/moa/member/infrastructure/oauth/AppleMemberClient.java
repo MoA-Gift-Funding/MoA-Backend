@@ -8,7 +8,6 @@ import moa.client.oauth.apple.AppleClient;
 import moa.client.oauth.apple.response.AppleIdTokenPayload;
 import moa.client.oauth.apple.response.AppleTokenResponse;
 import moa.member.domain.Member;
-import moa.member.domain.MemberRepository;
 import moa.member.domain.OauthId;
 import moa.member.domain.OauthId.OauthProvider;
 import moa.member.domain.oauth.OauthMemberClient;
@@ -30,7 +29,7 @@ public class AppleMemberClient implements OauthMemberClient {
         AppleIdTokenPayload payload = appleClient.getIdTokenPayload(authCode);
         AppleTokenResponse tokenResponse = appleClient.fetchToken(authCode);
         return new Member(
-                new OauthId(payload.sub(), APPLE, tokenResponse.refreshToken()),
+                new OauthId(payload.sub(), APPLE).setRefreshToken(tokenResponse.refreshToken()),
                 payload.email(),
                 null,
                 null,

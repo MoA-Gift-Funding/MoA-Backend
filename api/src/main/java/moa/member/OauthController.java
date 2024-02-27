@@ -23,9 +23,10 @@ public class OauthController implements OAuthApi {
     @GetMapping("/login/app/{oauthProvider}")
     public ResponseEntity<JwtResponse> login(
             @PathVariable("oauthProvider") OauthProvider oauthProvider,
-            @RequestHeader(name = "OAuthAccessToken") String oauthAccessToken
+            @RequestHeader(name = "OAuthAccessToken") String oauthAccessToken,
+            @RequestHeader(name = "refreshToken", required = false) String refreshToken
     ) {
-        Long memberId = oauthService.login(oauthProvider, oauthAccessToken);
+        Long memberId = oauthService.login(oauthProvider, oauthAccessToken, refreshToken);
         String accessToken = jwtService.createAccessToken(memberId);
         return ResponseEntity.ok(new JwtResponse(accessToken));
     }

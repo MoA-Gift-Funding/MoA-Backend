@@ -30,10 +30,9 @@ public class OauthId {
         this.oauthProvider = oauthProvider;
     }
 
-    public OauthId(String oauthId, OauthProvider oauthProvider, String refreshToken) {
-        this.oauthId = oauthId;
-        this.oauthProvider = oauthProvider;
+    public OauthId setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+        return this;
     }
 
     public enum OauthProvider {
