@@ -12,7 +12,7 @@ public record WincubeIssueCouponResponse(
         String ctrId, // 기프팅 거래번호
         String createDateTime  // 쿠폰 생성시간
 ) {
-    public static final String SUCCESS_CODE = "0";
+    public static final String SUCCESS_CODE = "1000";
 
     public boolean isSuccess() {
         return resultCode.equals(SUCCESS_CODE);

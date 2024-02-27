@@ -16,6 +16,8 @@ import moa.notification.domain.NotificationFactory;
 import moa.order.domain.Order;
 import moa.order.domain.OrderReadyEvent;
 import moa.order.domain.OrderRepository;
+import moa.order.domain.OrderTransaction;
+import moa.order.domain.OrderTransactionRepository;
 import moa.sms.SmsMessageFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -24,44 +26,32 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class OrderEventHandler {
 
     private final OrderRepository orderRepository;
     private final FundingRepository fundingRepository;
+    private final OrderTransactionRepository orderTransactionRepository;
     private final WincubeClient wincubeClient;
     private final SmsMessageFactory smsMessageFactory;
     private final NotificationFactory notificationFactory;
     private final NotificationService notificationService;
 
+    @Transactional
     @EventListener(value = FundingFinishEvent.class)
     public void createOrder(FundingFinishEvent event) {
         Funding funding = fundingRepository.getById(event.fundingId());
         Order order = new Order(funding);
+        OrderTransaction orderTransaction = new OrderTransaction(order);
         orderRepository.save(order);
+        orderTransactionRepository.save(orderTransaction);
     }
 
     @Async(VIRTUAL_THREAD_EXECUTOR)
     @Transactional(propagation = REQUIRES_NEW)
     @TransactionalEventListener(value = OrderReadyEvent.class, phase = AFTER_COMMIT)
-    public void issueCoupon(OrderReadyEvent event) {
+    public void pushOrderReadyNotification(OrderReadyEvent event) {
         Order order = orderRepository.getById(event.order().getId());
-        String message = smsMessageFactory.generateFundingFinishMessage(
-                order.getMember().getNickname(),
-                order.getProduct().getProductName(),
-                LocalDate.now().plusDays(order.getProduct().getLimitDate()).toString(),
-                order.getProduct().getDescription()
-        );
-        wincubeClient.issueCoupon(
-                order.getId(),
-                "[MoA] 모아 펀딩 달성 상품",
-                message,
-                order.getProduct().getProductId().getProductId(),
-                order.getMember().getPhoneNumber(),
-                null
-        );
-        order.complete();
         Funding funding = order.getFunding();
         Notification notification = notificationFactory.generateFundingFinishNotification(
                 funding.getTitle(),
@@ -70,5 +60,29 @@ public class OrderEventHandler {
                 order.getMember()
         );
         notificationService.push(notification);
+    }
+
+    @Async(VIRTUAL_THREAD_EXECUTOR)
+    @Transactional(propagation = REQUIRES_NEW)
+    @TransactionalEventListener(value = OrderReadyEvent.class, phase = AFTER_COMMIT)
+    public void issueCoupon(OrderReadyEvent event) {
+        Order order = orderRepository.getById(event.order().getId());
+        OrderTransaction orderTx = orderTransactionRepository.getLastedByOrder(order);
+        String message = smsMessageFactory.generateFundingFinishMessage(
+                order.getMember().getNickname(),
+                order.getProduct().getProductName(),
+                LocalDate.now().plusDays(order.getProduct().getLimitDate()).toString(),
+                order.getProduct().getDescription()
+        );
+        wincubeClient.issueCoupon(
+                orderTx.getTransactionId(),
+                "[MoA] 모아 펀딩 달성 상품",
+                message,
+                order.getProduct().getProductId().getProductId(),
+                order.getAddress().phoneNumber(),
+                null
+        );
+        order.complete();
+        orderRepository.save(order);
     }
 }

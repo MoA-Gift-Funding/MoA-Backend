@@ -240,14 +240,25 @@ create table if not exists orders
     updated_date                  datetime(6),
     constraint UK_orders_funding
         unique (funding_id),
-    constraint UK_orders_member
-        unique (member_id),
     constraint FK_orders_funding
         foreign key (funding_id) references funding (id),
     constraint FK_orders_product
         foreign key (product_id) references product (id),
     constraint FK_orders_member
         foreign key (member_id) references member (id)
+);
+
+create table if not exists order_transaction
+(
+    id           bigint auto_increment primary key,
+    order_id     bigint       not null,
+    transaction_id        varchar(255) not null,
+    created_date datetime(6) not null,
+    updated_date datetime(6),
+    constraint UK_order_tx_transaction_id
+        unique (transaction_id),
+    constraint FK_order_tx_orders
+        foreign key (order_id) references orders (id)
 );
 
 create table if not exists personal_inquiry

@@ -23,7 +23,7 @@ public class FcmClient {
             String url,
             String type
     ) {
-        log.info("call FcmClient sendMessage");
+        log.info("call FcmClient sendMessage: title: {}, content: {}", title, content);
         if (targetDeviceToken == null) {
             return;
         }

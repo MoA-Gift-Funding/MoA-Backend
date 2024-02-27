@@ -58,7 +58,7 @@ public class Order extends RootEntity<Long> {
     @Column
     private String deliveryRequestMessage;
 
-    @OneToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 

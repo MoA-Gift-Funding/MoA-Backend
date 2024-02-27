@@ -22,5 +22,4 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Lock(PESSIMISTIC_WRITE)
     Optional<Order> findWithLockById(Long id);
-
 }
