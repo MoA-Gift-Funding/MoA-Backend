@@ -15,6 +15,7 @@ import moa.notification.domain.NotificationFactory;
 import moa.order.domain.Order;
 import moa.order.domain.OrderReadyEvent;
 import moa.order.domain.OrderRepository;
+import moa.order.domain.OrderTransaction;
 import moa.sms.SmsMessageFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -64,7 +65,7 @@ public class OrderEventHandler {
                 "[MoA] 모아 펀딩 달성 상품",
                 message,
                 order.getProduct().getProductId().getProductId(),
-                order.getMember().getPhoneNumber(),
+                order.getAddress().phoneNumber(),
                 null
         );
         order.complete();
