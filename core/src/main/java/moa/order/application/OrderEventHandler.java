@@ -49,7 +49,7 @@ public class OrderEventHandler {
     @Async(VIRTUAL_THREAD_EXECUTOR)
     @TransactionalEventListener(value = OrderReadyEvent.class, phase = AFTER_COMMIT)
     public void issueCoupon(OrderReadyEvent event) {
-        Order order = orderRepository.getById(event.order().getId());
+        Order order = orderRepository.getWithRelationById(event.order().getId());
         OrderTransaction orderTx = orderTransactionRepository.getLastedByOrder(order);
         String message = smsMessageFactory.generateFundingFinishMessage(
                 order.getMember().getNickname(),
