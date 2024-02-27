@@ -68,7 +68,15 @@ public class WincubeClient {
                 authToken
         );
         log.info("윈큐브 쿠폰 발행 API 호출 완료.\n -> 응답: {}", response);
-        loggingIssueCoupon(response);
+        validateIssueCoupon(response);
+    }
+
+    private void validateIssueCoupon(WincubeIssueCouponResponse response) {
+        if (response.isSuccess()) {
+            log.info("윈큐브 쿠폰 발행 완료 {}", response);
+        } else {
+            throw new ExternalApiException(EXTERNAL_API_EXCEPTION.withDetail("윈큐브 쿠폰 발행 실패: " + response));
+        }
     }
 
     public void cancelCoupon(Long orderId) {
@@ -137,14 +145,6 @@ public class WincubeClient {
             throw new ProductException(COUPONS_CANNOT_BE_REISSUED
                     .withDetail(response.result().statusCode() + ", " + response.result().statusText())
             );
-        }
-    }
-
-    private void loggingIssueCoupon(WincubeIssueCouponResponse response) {
-        if (response.isSuccess()) {
-            log.info("윈큐브 쿠폰 발행 완료 {}", response);
-        } else {
-            throw new ExternalApiException(EXTERNAL_API_EXCEPTION.withDetail("윈큐브 쿠폰 발행 실패: " + response));
         }
     }
 }

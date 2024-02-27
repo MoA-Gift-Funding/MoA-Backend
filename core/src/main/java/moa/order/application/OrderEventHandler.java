@@ -1,7 +1,6 @@
 package moa.order.application;
 
 import static moa.global.config.async.AsyncConfig.VIRTUAL_THREAD_EXECUTOR;
-import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 
 import java.time.LocalDate;
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class OrderEventHandler {
 
@@ -35,6 +33,7 @@ public class OrderEventHandler {
     private final NotificationFactory notificationFactory;
     private final NotificationService notificationService;
 
+    @Transactional
     @EventListener(value = FundingFinishEvent.class)
     public void createOrder(FundingFinishEvent event) {
         Funding funding = fundingRepository.getById(event.fundingId());
@@ -43,7 +42,6 @@ public class OrderEventHandler {
     }
 
     @Async(VIRTUAL_THREAD_EXECUTOR)
-    @Transactional(propagation = REQUIRES_NEW)
     @TransactionalEventListener(value = OrderReadyEvent.class, phase = AFTER_COMMIT)
     public void issueCoupon(OrderReadyEvent event) {
         Order order = orderRepository.getById(event.order().getId());
@@ -53,6 +51,14 @@ public class OrderEventHandler {
                 LocalDate.now().plusDays(order.getProduct().getLimitDate()).toString(),
                 order.getProduct().getDescription()
         );
+        Funding funding = order.getFunding();
+        Notification notification = notificationFactory.generateFundingFinishNotification(
+                funding.getTitle(),
+                funding.getProduct().getImageUrl(),
+                order.getId(),
+                order.getMember()
+        );
+        notificationService.push(notification);
         wincubeClient.issueCoupon(
                 order.getId(),
                 "[MoA] 모아 펀딩 달성 상품",
@@ -62,13 +68,6 @@ public class OrderEventHandler {
                 null
         );
         order.complete();
-        Funding funding = order.getFunding();
-        Notification notification = notificationFactory.generateFundingFinishNotification(
-                funding.getTitle(),
-                funding.getProduct().getImageUrl(),
-                order.getId(),
-                order.getMember()
-        );
-        notificationService.push(notification);
+        orderRepository.save(order);
     }
 }
