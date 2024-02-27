@@ -1,5 +1,6 @@
 package moa.client.wincube;
 
+import static moa.client.exception.ExternalApiExceptionType.EXTERNAL_API_EXCEPTION;
 import static moa.product.exception.ProductExceptionType.COUPONS_CANNOT_BE_REISSUED;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -7,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moa.client.exception.ExternalApiException;
 import moa.client.wincube.auth.WincubeAuthClient;
 import moa.client.wincube.dto.WincubeCancelCouponResponse;
 import moa.client.wincube.dto.WincubeCheckCouponStatusResponse;
@@ -67,6 +69,18 @@ public class WincubeClient {
         );
         log.info("윈큐브 쿠폰 발행 API 호출 완료.\n -> 응답: {}", response);
         loggingIssueCoupon(response);
+    }
+
+    public void cancelCoupon(Long orderId) {
+        String authToken = authClient.getAuthToken();
+        // TODO 고도화
+        String response = client.cancelCoupon(
+                wincubeProperty.mdCode(),
+                TR_ID_PREFIX + orderId,
+                JSON,
+                authToken
+        );
+        log.info("윈큐브 쿠폰 취소 API 호출 완료.\n -> 응답: {}", response);
     }
 
     // TODO 2차때 회의 후, trId 어케할지 결정하고 처리
@@ -130,7 +144,7 @@ public class WincubeClient {
         if (response.isSuccess()) {
             log.info("윈큐브 쿠폰 발행 완료 {}", response);
         } else {
-            log.error("윈큐브 쿠폰 발행 실패 {}", response);
+            throw new ExternalApiException(EXTERNAL_API_EXCEPTION.withDetail("윈큐브 쿠폰 발행 실패: " + response));
         }
     }
 }

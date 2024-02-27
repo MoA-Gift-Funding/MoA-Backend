@@ -1,6 +1,5 @@
 package moa.client.wincube;
 
-import moa.client.wincube.dto.WincubeCancelCouponResponse;
 import moa.client.wincube.dto.WincubeCheckCouponStatusResponse;
 import moa.client.wincube.dto.WincubeIssueCouponResponse;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -51,7 +50,7 @@ public interface WincubeApiClient {
      * 쿠폰 취소
      */
     @PostExchange("/coupon_cancel.do")
-    WincubeCancelCouponResponse cancelCoupon(
+    String cancelCoupon(
             @RequestParam("mdcode") String mdCode,  // 매체코드, 윈큐브에서 발급 후 전달
             @RequestParam("tr_id") String trId,  // 우리가 부여한 고유번호, (예: gift_moa_00000000001)
             @RequestParam("response_type") String responseType,  // JSON, XML(default)
