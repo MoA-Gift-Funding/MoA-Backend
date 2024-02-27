@@ -40,7 +40,7 @@ public class NaverMemberClient implements OauthMemberClient {
     }
 
     @Override
-    public void withDraw(Member member) {
+    public void withdraw(Member member) {
         naverClient.withdrawMember(member.getOauthId().getRefreshToken());
     }
 }

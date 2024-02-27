@@ -40,7 +40,7 @@ public class AppleMemberClient implements OauthMemberClient {
     }
 
     @Override
-    public void withDraw(Member member) {
+    public void withdraw(Member member) {
         appleClient.withdraw(member.getOauthId().getRefreshToken());
     }
 }

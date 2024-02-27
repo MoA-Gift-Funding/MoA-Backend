@@ -41,7 +41,7 @@ public class KakaoMemberClient implements OauthMemberClient {
     }
 
     @Override
-    public void withDraw(Member member) {
+    public void withdraw(Member member) {
         kakaoClient.withdrawMember(member.getOauthId().getOauthId(), kakaoOauthProperty.adminKey());
     }
 }

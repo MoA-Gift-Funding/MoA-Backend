@@ -24,6 +24,6 @@ public class OauthMemberClientComposite {
     }
 
     public void withdraw(Member member) {
-        clients.get(member.getOauthId().getOauthProvider()).withDraw(member);
+        clients.get(member.getOauthId().getOauthProvider()).withdraw(member);
     }
 }
