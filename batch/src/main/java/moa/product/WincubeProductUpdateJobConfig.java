@@ -118,7 +118,7 @@ public class WincubeProductUpdateJobConfig {
             log.error("Wincube 상품 조회 API 실패 {}", response);
             throw new RuntimeException("Wincube 상품 조회 API 실패 " + response);
         }
-        List<WincubeGoods> wincubeGoods = response.goodsList();
+        List<WincubeGoods> wincubeGoods = response.goods();
         return new ListItemReader<>(wincubeGoods);
     }
 
@@ -260,8 +260,11 @@ public class WincubeProductUpdateJobConfig {
                         AND updated_date < :now
                         """,
                 Map.of("now", now),
-                new SingleColumnRowMapper<>());
-
+                new SingleColumnRowMapper<>()
+        );
+        if (deleteCandidateProductIds.isEmpty()) {
+            return;
+        }
         namedParameterJdbcTemplate.update("""
                         UPDATE product_option po
                         SET po.status = 'NOT_SUPPORTED', po.updated_date = :now
@@ -284,17 +287,27 @@ public class WincubeProductUpdateJobConfig {
     }
 
     private void changeDeletedProductOptionsStatus(LocalDateTime now) {
+        List<Long> deleteCandidateOptionsIds = namedParameterJdbcTemplate.query("""
+                        SELECT po.id
+                        FROM product_option po
+                        JOIN product p ON p.id = po.product_id
+                        WHERE po.updated_date < :now
+                        AND p.product_provider = 'WINCUBE'
+                        """,
+                Map.of("now", now),
+                new SingleColumnRowMapper<>()
+        );
+        if (deleteCandidateOptionsIds.isEmpty()) {
+            return;
+        }
         namedParameterJdbcTemplate.update("""
                 UPDATE product_option po
                 SET po.status = 'NOT_SUPPORTED', po.updated_date = :now
-                WHERE po.id IN (
-                    SELECT po.id
-                    FROM product_option po
-                    JOIN product p ON p.id = po.product_id
-                    WHERE po.updated_date < :now
-                    AND p.product_provider = 'WINCUBE'
-                ) 
-                """, Map.of("now", now));
+                WHERE po.id IN (:ids) 
+                """, Map.of(
+                "now", now,
+                "ids", deleteCandidateOptionsIds
+        ));
     }
 
     /**

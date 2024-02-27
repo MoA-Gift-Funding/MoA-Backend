@@ -14,7 +14,7 @@ import moa.client.wincube.dto.WincubeProductResponse.WincubeGoods.Option;
 public record WincubeProductResponse(
         String resultCode,
         String goodsNum,
-        List<Map<String, Object>> goodslist
+        List<Map<String, Object>> goodsList
 ) {
     public static final String SUCCESS_CODE = "0";
 
@@ -43,10 +43,10 @@ public record WincubeProductResponse(
         }
     }
 
-    public List<WincubeGoods> goodsList() {
-        List<WincubeGoods> goodsList = new ArrayList<>();
-        for (Map<String, Object> goodsMap : goodslist) {
-            goodsList.add(new WincubeGoods(
+    public List<WincubeGoods> goods() {
+        List<WincubeGoods> products = new ArrayList<>();
+        for (Map<String, Object> goodsMap : this.goodsList) {
+            products.add(new WincubeGoods(
                     (String) goodsMap.get("goods_id"),
                     (String) goodsMap.get("affiliate"),
                     (String) goodsMap.get("affiliate_category"),
@@ -59,7 +59,7 @@ public record WincubeProductResponse(
                     getOptions(goodsMap)
             ));
         }
-        return goodsList;
+        return products;
     }
 
     private List<Option> getOptions(Map<String, Object> goodsMap) {
