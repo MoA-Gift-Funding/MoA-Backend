@@ -27,18 +27,18 @@ public class FundingMessage extends RootEntity<Long> {
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_from_id")
+    @JoinColumn(name = "member_from_id", nullable = false)
     private Member sender;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_to_id")
+    @JoinColumn(name = "member_to_id", nullable = false)
     private Member receiver;
 
-    @Column
+    @Column(nullable = false)
     private String content;
 
-    @Column
     @Enumerated(STRING)
+    @Column(nullable = false)
     private MessageVisibility visible;
 
     public FundingMessage(Member sender, Member receiver, String content, MessageVisibility visible) {

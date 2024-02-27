@@ -11,7 +11,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -28,7 +27,7 @@ import moa.global.domain.RootEntity;
 @NoArgsConstructor(access = PROTECTED)
 @Table(uniqueConstraints = {
         @UniqueConstraint(
-                name = "product_id_unique",
+                name = "UK_product_id",
                 columnNames = {
                         "product_id",
                         "product_provider"
@@ -47,17 +46,19 @@ public class Product extends RootEntity<Long> {
     @Column
     private String imageUrl;
 
+    @Column
     private String brand;
 
+    @Column
     private String category;
 
+    @Column(nullable = false)
     private String productName;
 
     @Embedded
     private Price price;
 
-    @Lob
-    @Column(columnDefinition = "BLOB")
+    @Column(columnDefinition = "text")
     private String description;
 
     private LocalDate saleEndDate;
@@ -67,6 +68,7 @@ public class Product extends RootEntity<Long> {
     private int limitDate;
 
     @Enumerated(STRING)
+    @Column(nullable = false)
     private ProductStatus status;
 
     @OneToMany(fetch = LAZY, mappedBy = "product")

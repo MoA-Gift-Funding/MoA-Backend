@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Embeddable
 public record Price(
-        @Column(name = "price") BigDecimal value
+        @Column(name = "price", nullable = false) BigDecimal value
 ) {
     public static Price ZERO = new Price(BigDecimal.ZERO);
 

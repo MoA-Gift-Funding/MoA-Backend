@@ -32,17 +32,17 @@ public class Friend extends RootEntity<Long> {
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "target_id")
+    @JoinColumn(name = "target_id", nullable = false)
     private Member target;
 
     @Column(nullable = false)
     private String nickname;
 
-    @Column
+    @Column(nullable = false)
     private boolean isBlocked = false;
 
     public Friend(Member member, Member target, String nickname) {

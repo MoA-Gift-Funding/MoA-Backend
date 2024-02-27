@@ -3,6 +3,7 @@ package moa.fixture;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.time.LocalDate;
+import moa.address.domain.Address;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingStatus;
 import moa.funding.domain.FundingVisibility;
@@ -11,6 +12,8 @@ import moa.member.domain.Member;
 import moa.product.domain.Product;
 
 public class FundingFixture {
+
+    private static final Address address = new Address("", "", "", "", "", "", "");
 
     public static Funding funding(
             Member owner,
@@ -26,7 +29,7 @@ public class FundingFixture {
             String maximumAmount,
             LocalDate endDate
     ) {
-        Funding funding = new Funding(
+        return new Funding(
                 null,
                 "",
                 "",
@@ -35,10 +38,9 @@ public class FundingFixture {
                 Price.from(maximumAmount),
                 owner,
                 product,
-                null,
+                address,
                 ""
         );
-        return funding;
     }
 
     public static Funding funding(
@@ -55,7 +57,7 @@ public class FundingFixture {
                 Price.from("5000"),
                 owner,
                 product,
-                null,
+                address,
                 ""
         );
         setField(funding, "status", status);

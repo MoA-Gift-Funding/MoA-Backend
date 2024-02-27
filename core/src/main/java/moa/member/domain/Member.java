@@ -32,7 +32,7 @@ import org.hibernate.annotations.SQLDelete;
 @SQLDelete(sql = "UPDATE member SET status = 'WITHDRAW' WHERE id = ?")
 @Table(uniqueConstraints = {
         @UniqueConstraint(
-                name = "oauth_id_unique",
+                name = "UK_member_oauth_id",
                 columnNames = {
                         "oauth_id",
                         "oauth_provider"
@@ -67,9 +67,10 @@ public class Member extends RootEntity<Long> {
     private Phone phone;
 
     @Enumerated(STRING)
+    @Column(nullable = false)
     private MemberStatus status;
 
-    @Column(unique = true)
+    @Column(nullable = true, unique = true)
     private String tossCustomerKey;
 
     public Member(

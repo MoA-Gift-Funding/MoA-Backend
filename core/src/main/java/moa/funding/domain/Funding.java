@@ -26,6 +26,7 @@ import static moa.funding.exception.FundingExceptionType.PROCESSING_OR_STOPPED_F
 import static moa.global.domain.Price.ZERO;
 
 import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -62,16 +63,21 @@ public class Funding extends RootEntity<Long> {
     private String imageUrl;
 
     @Size(max = 25)
+    @Column(nullable = false)
     private String title;
 
+    @Column(columnDefinition = "text", nullable = false)
     private String description;
 
+    @Column(nullable = false)
     private LocalDate endDate;
 
     @Enumerated(STRING)
+    @Column(nullable = false)
     private FundingVisibility visible;
 
     @Enumerated(STRING)
+    @Column(nullable = false)
     private FundingStatus status;
 
     @Embedded
@@ -83,14 +89,19 @@ public class Funding extends RootEntity<Long> {
     private Price minimumAmount;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     @Embedded
+    @AttributeOverrides(
+            value = {
+                    @AttributeOverride(name = "name", column = @Column(name = "address_name"))
+            }
+    )
     private Address address;
 
     @Column

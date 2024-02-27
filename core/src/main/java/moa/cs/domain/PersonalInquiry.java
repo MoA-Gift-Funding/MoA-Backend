@@ -30,6 +30,7 @@ public class PersonalInquiry extends RootEntity<Long> {
     @Column(nullable = false)
     private QuestionCategory category;
 
+    @Column(nullable = false)
     private String content;
 
     @ManyToOne(fetch = LAZY)

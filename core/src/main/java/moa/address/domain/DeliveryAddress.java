@@ -29,13 +29,13 @@ public class DeliveryAddress extends RootEntity<Long> {
     private Long id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Embedded
     private Address address;
 
-    @Column
+    @Column(nullable = false)
     private boolean isDefault;
 
     public DeliveryAddress(
