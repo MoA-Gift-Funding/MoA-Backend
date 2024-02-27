@@ -118,7 +118,7 @@ public class WincubeProductUpdateJobConfig {
             log.error("Wincube 상품 조회 API 실패 {}", response);
             throw new RuntimeException("Wincube 상품 조회 API 실패 " + response);
         }
-        List<WincubeGoods> wincubeGoods = response.goodsList();
+        List<WincubeGoods> wincubeGoods = response.goods();
         return new ListItemReader<>(wincubeGoods);
     }
 
