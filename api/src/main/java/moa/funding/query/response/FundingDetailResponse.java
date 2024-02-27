@@ -138,14 +138,14 @@ public record FundingDetailResponse(
                 funding.getFundingRate(),
                 funding.getStatus(),
                 funding.getFundedAmount().longValue(),
-                funding.getParticipants().size(),
+                funding.getParticipatingParticipants().size(),
                 product.getImageUrl(),
                 getMessages(funding, member, friends)
         );
     }
 
     private static List<Participant> getMessages(Funding funding, Member member, List<Friend> friends) {
-        return funding.getParticipants()
+        return funding.getParticipatingParticipants()
                 .stream()
                 .map(participant -> Participant.of(funding, participant, member, friends))
                 .toList();
