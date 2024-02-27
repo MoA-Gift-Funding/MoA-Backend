@@ -243,4 +243,10 @@ public class Funding extends RootEntity<Long> {
         Price fundedAmount = getFundedAmount();
         return (int) (fundedAmount.divide(product.getPrice()) * 100);
     }
+
+    public List<FundingParticipant> getParticipatingParticipants() {
+        return participants.stream()
+                .filter(FundingParticipant::isParticipating)
+                .toList();
+    }
 }
