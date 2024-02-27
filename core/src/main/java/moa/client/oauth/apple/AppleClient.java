@@ -52,7 +52,7 @@ public class AppleClient {
                 tokenResponse.accessToken(),
                 "access_token"
         );
-        log.info("애플 회원 탈퇴 성공: {}", authCode);
+        log.info("애플 회원 탈퇴 성공");
     }
 
     private AppleTokenResponse fetchToken(String authCode) {
