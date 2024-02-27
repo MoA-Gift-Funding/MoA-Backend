@@ -22,4 +22,8 @@ public class OauthMemberClientComposite {
     public Member fetch(OauthProvider provider, String accessToken) {
         return clients.get(provider).fetch(accessToken);
     }
+
+    public void withdraw(OauthProvider provider, String accessToken) {
+        clients.get(provider).withdraw(accessToken);
+    }
 }

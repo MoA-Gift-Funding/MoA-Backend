@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import moa.auth.Auth;
 import moa.member.application.MemberService;
+import moa.member.domain.OauthId.OauthProvider;
 import moa.member.query.MemberQueryService;
 import moa.member.query.response.MemberResponse;
 import moa.member.query.response.NotificationStatusResponse;
@@ -18,9 +19,11 @@ import moa.member.request.VerifyPhoneRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -98,5 +101,15 @@ public class MemberController implements MemberApi {
     ) {
         memberService.update(request.toCommand(memberId));
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> withdraw(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            @PathVariable("oauthProvider") OauthProvider oauthProvider,
+            @RequestHeader(name = "OAuthAccessToken") String accessToken
+    ) {
+        memberService.withdraw(memberId, oauthProvider, accessToken);
+        return ResponseEntity.noContent().build();
     }
 }

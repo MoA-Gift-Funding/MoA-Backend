@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import moa.auth.Auth;
+import moa.member.domain.OauthId.OauthProvider;
 import moa.member.query.response.MemberResponse;
 import moa.member.query.response.NotificationStatusResponse;
 import moa.member.request.MemberUpdateRequest;
@@ -22,9 +23,11 @@ import moa.member.request.VerifyPhoneRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @Tag(name = "회원 API", description = "회원 관련 API")
 @SecurityRequirement(name = "JWT")
@@ -157,5 +160,22 @@ public interface MemberApi {
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
             @Valid @RequestBody MemberUpdateRequest request
+    );
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "204"),
+                    @ApiResponse(responseCode = "400"),
+                    @ApiResponse(responseCode = "401"),
+                    @ApiResponse(responseCode = "403"),
+                    @ApiResponse(responseCode = "404"),
+            }
+    )
+    @Operation(summary = "회원 탈퇴")
+    @DeleteMapping
+    ResponseEntity<Void> withdraw(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            @PathVariable("oauthProvider") OauthProvider oauthProvider,
+            @RequestHeader(name = "OAuthAccessToken") String oauthAccessToken
     );
 }

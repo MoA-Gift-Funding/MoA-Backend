@@ -37,4 +37,9 @@ public class KakaoMemberClient implements OauthMemberClient {
                 response.kakaoAccount().formattedPhone()
         );
     }
+
+    @Override
+    public void withdraw(String accessToken) {
+        kakaoClient.withdrawMember(accessToken);
+    }
 }

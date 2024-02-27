@@ -17,4 +17,9 @@ public class KakaoClient {
         log.info("카카오톡 회원 정보 조회 성공: {}", kakaoMemberResponse);
         return kakaoMemberResponse;
     }
+
+    public void withdrawMember(String accessToken) {
+        var result = kakaoApiClient.withdrawMember("Bearer " + accessToken);
+        log.info("카카오톡 회원 탈퇴 성공: {}", result);
+    }
 }

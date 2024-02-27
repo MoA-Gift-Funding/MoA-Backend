@@ -37,4 +37,9 @@ public class AppleMemberClient implements OauthMemberClient {
                 null
         );
     }
+
+    @Override
+    public void withdraw(String accessToken) {
+        appleClient.withdraw(accessToken);
+    }
 }

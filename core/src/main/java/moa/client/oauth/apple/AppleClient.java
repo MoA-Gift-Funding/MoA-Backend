@@ -37,16 +37,31 @@ public class AppleClient {
     private final JwtService jwtService;
 
     public AppleIdTokenPayload getIdTokenPayload(String authCode) {
-        AppleTokenResponse response = appleApiClient.fetchToken(
+        AppleTokenResponse response = fetchToken(authCode);
+        String idToken = response.idToken();
+        AppleIdTokenPayload appleIdTokenPayload = jwtService.decodePayload(idToken, AppleIdTokenPayload.class);
+        log.info("애플 회원 정보 조회 성공: {}", appleIdTokenPayload);
+        return appleIdTokenPayload;
+    }
+
+    public void withdraw(String authCode) {
+        AppleTokenResponse tokenResponse = fetchToken(authCode);
+        appleApiClient.withdraw(
+                appleOauthProperty.clientId(),
+                generateClientSecret(),
+                tokenResponse.accessToken(),
+                "access_token"
+        );
+        log.info("애플 회원 탈퇴 성공");
+    }
+
+    private AppleTokenResponse fetchToken(String authCode) {
+        return appleApiClient.fetchToken(
                 appleOauthProperty.clientId(),
                 generateClientSecret(),
                 authCode,
                 GRANT_TYPE
         );
-        String idToken = response.idToken();
-        AppleIdTokenPayload appleIdTokenPayload = jwtService.decodePayload(idToken, AppleIdTokenPayload.class);
-        log.info("애플 회원 정보 조회 성공: {}", appleIdTokenPayload);
-        return appleIdTokenPayload;
     }
 
     private String generateClientSecret() {

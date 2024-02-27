@@ -26,8 +26,7 @@ public class NaverMemberClient implements OauthMemberClient {
 
     @Override
     public Member fetch(String accessToken) {
-        Response response = naverClient.fetchMember(accessToken)
-                .response();
+        Response response = naverClient.fetchMember(accessToken).response();
         return new Member(
                 new OauthId(String.valueOf(response.id()), NAVER),
                 response.email(),
@@ -37,5 +36,10 @@ public class NaverMemberClient implements OauthMemberClient {
                 response.profileImage(),
                 response.mobile()
         );
+    }
+
+    @Override
+    public void withdraw(String accessToken) {
+        naverClient.withdrawMember(accessToken);
     }
 }

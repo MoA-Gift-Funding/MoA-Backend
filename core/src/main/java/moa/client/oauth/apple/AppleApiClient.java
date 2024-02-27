@@ -18,4 +18,15 @@ public interface AppleApiClient {
             @RequestParam("code") String code,
             @RequestParam("grant_type") String grantType
     );
+
+    /**
+     * https://developer.apple.com/documentation/sign_in_with_apple/revoke_tokens
+     */
+    @PostExchange(url = "https://appleid.apple.com/auth/revoke", contentType = APPLICATION_FORM_URLENCODED_VALUE)
+    void withdraw(
+            @RequestParam("client_id") String clientId,
+            @RequestParam("client_secret") String clientSecret,
+            @RequestParam("token") String token,
+            @RequestParam("token_type_hint") String tokenTypeHint
+    );
 }
