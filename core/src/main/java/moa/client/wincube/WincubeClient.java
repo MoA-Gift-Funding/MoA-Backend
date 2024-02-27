@@ -47,7 +47,7 @@ public class WincubeClient {
     }
 
     public void issueCoupon(
-            Long orderId,
+            String transactionId,
             String title,
             String message,
             String productId,
@@ -62,7 +62,7 @@ public class WincubeClient {
                 wincubeProperty.callback(),
                 productId,
                 phoneNumber,
-                TR_ID_PREFIX + orderId,
+                TR_ID_PREFIX + transactionId,
                 optionId,
                 JSON,
                 authToken

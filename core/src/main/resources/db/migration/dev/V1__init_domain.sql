@@ -248,6 +248,19 @@ create table orders
         foreign key (member_id) references member (id)
 );
 
+create table order_transaction
+(
+    id           bigint auto_increment primary key,
+    order_id     bigint       not null,
+    transaction_id        varchar(255) not null,
+    created_date datetime(6) not null,
+    updated_date datetime(6),
+    constraint UK_order_tx_transaction_id
+    unique (transaction_id),
+    constraint FK_order_tx_orders
+    foreign key (order_id) references orders (id)
+    );
+
 create table personal_inquiry
 (
     id           bigint auto_increment primary key,

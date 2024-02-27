@@ -16,6 +16,7 @@ import moa.order.domain.Order;
 import moa.order.domain.OrderReadyEvent;
 import moa.order.domain.OrderRepository;
 import moa.order.domain.OrderTransaction;
+import moa.order.domain.OrderTransactionRepository;
 import moa.sms.SmsMessageFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -29,6 +30,7 @@ public class OrderEventHandler {
 
     private final OrderRepository orderRepository;
     private final FundingRepository fundingRepository;
+    private final OrderTransactionRepository orderTransactionRepository;
     private final WincubeClient wincubeClient;
     private final SmsMessageFactory smsMessageFactory;
     private final NotificationFactory notificationFactory;
@@ -39,13 +41,16 @@ public class OrderEventHandler {
     public void createOrder(FundingFinishEvent event) {
         Funding funding = fundingRepository.getById(event.fundingId());
         Order order = new Order(funding);
+        OrderTransaction orderTransaction = new OrderTransaction(order);
         orderRepository.save(order);
+        orderTransactionRepository.save(orderTransaction);
     }
 
     @Async(VIRTUAL_THREAD_EXECUTOR)
     @TransactionalEventListener(value = OrderReadyEvent.class, phase = AFTER_COMMIT)
     public void issueCoupon(OrderReadyEvent event) {
         Order order = orderRepository.getById(event.order().getId());
+        OrderTransaction orderTx = orderTransactionRepository.getLastedByOrder(order);
         String message = smsMessageFactory.generateFundingFinishMessage(
                 order.getMember().getNickname(),
                 order.getProduct().getProductName(),
@@ -61,7 +66,7 @@ public class OrderEventHandler {
         );
         notificationService.push(notification);
         wincubeClient.issueCoupon(
-                order.getId(),
+                orderTx.getTransactionId(),
                 "[MoA] 모아 펀딩 달성 상품",
                 message,
                 order.getProduct().getProductId().getProductId(),
