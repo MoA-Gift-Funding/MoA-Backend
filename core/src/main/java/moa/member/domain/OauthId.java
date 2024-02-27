@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 public class OauthId {
 
-    @Column(nullable = false, name = "oauth_id")
+    @Column(nullable = true, name = "oauth_id")
     private String oauthId;  // 각 Oauth 서비스에서 회원을 식별하는 id
 
     @Enumerated(STRING)
-    @Column(nullable = false, name = "oauth_provider")
+    @Column(nullable = true, name = "oauth_provider")
     private OauthProvider oauthProvider;
 
     public OauthId(String oauthId, OauthProvider oauthProvider) {

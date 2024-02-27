@@ -6,7 +6,6 @@ import static moa.member.domain.MemberStatus.SIGNED_UP;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import moa.auth.Auth;
-import moa.member.application.MemberFacade;
 import moa.member.application.MemberService;
 import moa.member.domain.OauthId.OauthProvider;
 import moa.member.query.MemberQueryService;
@@ -33,7 +32,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/members")
 public class MemberController implements MemberApi {
 
-    private final MemberFacade memberFacade;
     private final MemberService memberService;
     private final MemberQueryService memberQueryService;
 
@@ -109,9 +107,9 @@ public class MemberController implements MemberApi {
     public ResponseEntity<Void> withdraw(
             @Auth(permit = {SIGNED_UP}) Long memberId,
             @PathVariable("oauthProvider") OauthProvider oauthProvider,
-            @RequestHeader(name = "OAuthAccessToken") String oauthAccessToken
+            @RequestHeader(name = "OAuthAccessToken") String accessToken
     ) {
-        memberFacade.withdraw(memberId, oauthProvider, oauthAccessToken);
+        memberService.withdraw(memberId, oauthProvider, accessToken);
         return ResponseEntity.noContent().build();
     }
 }

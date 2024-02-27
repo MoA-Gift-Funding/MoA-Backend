@@ -8,6 +8,8 @@ import moa.member.application.command.SignupCommand;
 import moa.member.domain.Member;
 import moa.member.domain.MemberRepository;
 import moa.member.domain.MemberValidator;
+import moa.member.domain.OauthId.OauthProvider;
+import moa.member.domain.oauth.OauthMemberClientComposite;
 import moa.member.domain.phone.Phone;
 import moa.member.domain.phone.PhoneRepository;
 import moa.member.domain.phone.PhoneVerificationNumber;
@@ -15,18 +17,37 @@ import moa.member.domain.phone.PhoneVerificationNumberRepository;
 import moa.member.domain.phone.PhoneVerificationNumberSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class MemberService {
 
-    private final MemberRepository memberRepository;
     private final MemberValidator memberValidator;
     private final PhoneRepository phoneRepository;
+    private final MemberRepository memberRepository;
     private final PhoneVerificationNumberSender sender;
+    private final TransactionTemplate transactionTemplate;
+    private final OauthMemberClientComposite oauthMemberClientComposite;
     private final PhoneVerificationNumberRepository phoneVerificationNumberRepository;
 
+    public Long login(OauthProvider provider, String accessToken) {
+        Member member = oauthMemberClientComposite.fetch(provider, accessToken);
+        return memberRepository.findByOauthId(member.getOauthId())
+                .orElseGet(() -> preSignup(member))
+                .getId();
+    }
+
+    private Member preSignup(Member member) {
+        return transactionTemplate.execute(status -> {
+                    Member saved = memberRepository.save(member);
+                    saved.preSignup(memberValidator);
+                    return saved;
+                }
+        );
+    }
+
+    @Transactional
     public void sendPhoneVerificationNumber(Long memberId, String phoneNumber) {
         Member member = memberRepository.getById(memberId);
         Phone phone = new Phone(member, phoneNumber);
@@ -36,6 +57,7 @@ public class MemberService {
         sender.sendVerificationNumber(phone, verificationNumber);
     }
 
+    @Transactional
     public void verifyPhone(PhoneVerifyCommand command) {
         Member member = memberRepository.getById(command.memberId());
         PhoneVerificationNumber verificationNumber = phoneVerificationNumberRepository.getByMember(member);
@@ -45,6 +67,7 @@ public class MemberService {
         member.changeVerifiedPhone(memberValidator, phone);
     }
 
+    @Transactional
     public void signup(SignupCommand command) {
         Member member = memberRepository.getById(command.memberId());
         member.signup(
@@ -57,6 +80,7 @@ public class MemberService {
         );
     }
 
+    @Transactional
     public void update(MemberUpdateCommand command) {
         Member member = memberRepository.getById(command.memberId());
         member.update(
@@ -67,18 +91,24 @@ public class MemberService {
         );
     }
 
+    @Transactional
     public void permitNotification(Long memberId, String deviceToken) {
         Member member = memberRepository.getById(memberId);
         member.permitNotification(deviceToken);
     }
 
+    @Transactional
     public void rejectNotification(Long memberId) {
         Member member = memberRepository.getById(memberId);
         member.rejectNotification();
     }
 
-    public void withdraw(Long memberId) {
+    public void withdraw(Long memberId, OauthProvider provider, String accessToken) {
         Member member = memberRepository.getById(memberId);
-        member.withdraw();
+        oauthMemberClientComposite.withdraw(provider, accessToken);
+        transactionTemplate.executeWithoutResult(status -> {
+            member.withdraw();
+            memberRepository.save(member);
+        });
     }
 }

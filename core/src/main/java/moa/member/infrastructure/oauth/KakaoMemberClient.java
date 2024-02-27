@@ -5,7 +5,6 @@ import static moa.member.domain.OauthId.OauthProvider.KAKAO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moa.client.oauth.kakao.KakaoClient;
-import moa.client.oauth.kakao.KakaoOauthProperty;
 import moa.client.oauth.kakao.response.KakaoMemberResponse;
 import moa.member.domain.Member;
 import moa.member.domain.OauthId;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
 public class KakaoMemberClient implements OauthMemberClient {
 
     private final KakaoClient kakaoClient;
-    private final KakaoOauthProperty kakaoOauthProperty;
 
     @Override
     public OauthProvider supportsProvider() {
