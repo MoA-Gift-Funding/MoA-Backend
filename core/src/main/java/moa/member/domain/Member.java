@@ -92,7 +92,7 @@ public class Member extends RootEntity<Long> {
     }
 
     public void preSignup(MemberValidator validator) {
-        validator.validateDuplicatedEmailExceptMe(email, id);
+        validator.validateDuplicatedEmail(email);
         this.status = PRESIGNED_UP;
     }
 
@@ -121,7 +121,7 @@ public class Member extends RootEntity<Long> {
         if (!phone.isVerified()) {
             throw new MemberException(NOT_VERIFIED_PHONE);
         }
-        memberValidator.validateDuplicatedEmailExceptMe(email, id);
+        memberValidator.validateDuplicatedEmail(email);
         this.status = SIGNED_UP;
         this.email = email;
         this.nickname = nickname;

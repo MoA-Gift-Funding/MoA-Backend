@@ -40,9 +40,8 @@ public class MemberService {
 
     private Member preSignup(Member member) {
         return transactionTemplate.execute(status -> {
-                    Member saved = memberRepository.save(member);
-                    saved.preSignup(memberValidator);
-                    return saved;
+                    member.preSignup(memberValidator);
+                    return memberRepository.save(member);
                 }
         );
     }

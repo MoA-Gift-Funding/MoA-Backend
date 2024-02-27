@@ -17,7 +17,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByOauthId(OauthId oauthId);
 
-    boolean existsByEmailAndIdNot(String email, Long id);
+    boolean existsByEmail(String email);
 
     @Query("SELECT COUNT(m) > 0 FROM Member m WHERE m.phone.phoneNumber = :phoneNumber AND m.phone.verified = TRUE")
     boolean existsByVerifiedPhone(String phoneNumber);
