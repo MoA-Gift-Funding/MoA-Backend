@@ -27,6 +27,9 @@ spring:
     jdbc:
       initialize-schema: always
 
+  flyway:
+    enabled: true
+
 jwt:
   secretKey: c2VjcmV0LWtleXNlY3JldC1rZXlzZWNyZXQta2V5c2VjcmV0LWtleXNlY3JldC1rZXlzZWNyZXQta2V5
   accessTokenExpirationPeriodDay: 1000000
