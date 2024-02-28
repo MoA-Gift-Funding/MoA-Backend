@@ -100,9 +100,10 @@ public class FundingController implements FundingApi {
     @GetMapping("/my")
     public ResponseEntity<PageResponse<MyFundingResponse>> findMyFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
+            @RequestParam(value = "statuses", defaultValue = "PROCESSING") List<FundingStatus> statuses,
             @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
     ) {
-        var result = fundingQueryService.findMyFundings(memberId, pageable);
+        var result = fundingQueryService.findMyFundings(memberId, statuses, pageable);
         return ResponseEntity.ok(PageResponse.from(result));
     }
 

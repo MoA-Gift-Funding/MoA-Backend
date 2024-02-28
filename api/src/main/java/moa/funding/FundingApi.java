@@ -169,6 +169,8 @@ public interface FundingApi {
     ResponseEntity<PageResponse<MyFundingResponse>> findMyFundings(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
+            @RequestParam(value = "statuses", defaultValue = "PROCESSING") List<FundingStatus> statuses,
+
             @ParameterObject
             @PageableDefault(size = 10, sort = "createdDate", direction = DESC) Pageable pageable
     );
