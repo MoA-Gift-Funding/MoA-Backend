@@ -19,7 +19,15 @@ public interface FundingQueryRepository extends JpaRepository<Funding, Long> {
                 .orElseThrow(() -> new FundingException(NOT_FOUND_FUNDING));
     }
 
-    Page<Funding> findAllByMemberId(Long memberId, Pageable pageable);
+    @Query("""
+            SELECT f FROM Funding f
+            WHERE f.member.id = :memberId
+            AND f.status IN (:statuses)
+            """)
+    Page<Funding> findAllByMemberId(
+            @Param("memberId") Long memberId,
+            @Param("statuses") List<FundingStatus> statuses,
+            Pageable pageable);
 
     @Query("""
             SELECT f FROM Funding f

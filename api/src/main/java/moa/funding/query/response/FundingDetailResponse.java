@@ -76,6 +76,9 @@ public record FundingDetailResponse(
             @Schema(description = "참여자 프로필 사진 Url", example = "https://example.com")
             String profileImageUrl,
 
+            @Schema(description = "메시지 고유 ID", example = "1")
+            Long messageId,
+
             @Schema(description = "메시지 내용", example = "형님이 보태준다")
             String message,
 
@@ -96,6 +99,7 @@ public record FundingDetailResponse(
                         null,
                         null,
                         null,
+                        null,
                         participant.getCreatedDate()
                 );
             }
@@ -108,6 +112,7 @@ public record FundingDetailResponse(
                     participant.getMember().getId(),
                     nickName,
                     participant.getMember().getProfileImageUrl(),
+                    participant.getFundingMessage().getId(),
                     participant.getFundingMessage().getContent(),
                     participant.getCreatedDate()
             );

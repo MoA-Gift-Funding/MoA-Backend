@@ -32,8 +32,8 @@ public class FundingQueryService {
     private final FundingMessageQueryRepository fundingMessageQueryRepository;
     private final FundingParticipantQueryRepository fundingParticipantQueryRepository;
 
-    public Page<MyFundingResponse> findMyFundings(Long memberId, Pageable pageable) {
-        return fundingQueryRepository.findAllByMemberId(memberId, pageable)
+    public Page<MyFundingResponse> findMyFundings(Long memberId, List<FundingStatus> statuses, Pageable pageable) {
+        return fundingQueryRepository.findAllByMemberId(memberId, statuses, pageable)
                 .map(MyFundingResponse::from);
     }
 
