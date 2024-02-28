@@ -15,6 +15,9 @@ public record FundingMessageResponse(
         @Schema(example = "크왕이")
         String nickName,
 
+        @Schema(example = "1")
+        Long messageId,
+
         @Schema(example = "잘먹고 잘 살아라 즐거웠다...")
         String message,
 
@@ -35,6 +38,7 @@ public record FundingMessageResponse(
         return new FundingMessageResponse(
                 sender.getProfileImageUrl(),
                 nickName,
+                message.getId(),
                 message.getContent(),
                 sender.getId(),
                 message.getCreatedDate()
