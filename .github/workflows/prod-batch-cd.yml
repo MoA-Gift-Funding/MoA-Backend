@@ -1,10 +1,9 @@
-name: ✨ MoA backend Batch DEV CD ✨
+name: ✨ MoA backend Batch PROD CD ✨
 
 env:
-  PROFILE: dev
-  IMAGE_TAG: back-dev-batch-${{ secrets.APP_VERSION_TAG }}
+  PROFILE: prod
+  IMAGE_TAG: back-prod-batch-${{ secrets.APP_VERSION_TAG }}
   DOCKER_CONTAINER_NAME: backend-batch
-  DOCKER_CONTAINER_NETWORK: moa-server
   DOCKER_HUB_REPOSITORY: moagift/moa_server
   APPLICATION: batch
 
@@ -16,7 +15,7 @@ on:
     paths:
       - "core/**"
       - "batch/**"
-      - ".github/workflows/**"
+      - ".github/workflows/prod-batch-cd.yml"
 
 jobs:
   backend-docker-build-and-push:
@@ -66,7 +65,7 @@ jobs:
           tags: ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
   backend-docker-pull-and-run:
-    runs-on: [ self-hosted, dev ]
+    runs-on: [ self-hosted, prod, batch ]
     if: ${{ needs.backend-docker-build-and-push.result == 'success' }}
     needs: [ backend-docker-build-and-push ]
     steps:
@@ -83,7 +82,6 @@ jobs:
           docker run \
             -d \
             --name ${{ env.DOCKER_CONTAINER_NAME }} \
-            --network ${{ env.DOCKER_CONTAINER_NETWORK }} \
             -p 18080:8080 \
             -e "SPRING_PROFILES_ACTIVE=${{ env.PROFILE }}" \
             ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
