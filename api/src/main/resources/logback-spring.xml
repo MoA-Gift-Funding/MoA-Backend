@@ -1,8 +1,8 @@
 <configuration>
     <property name="prodLogPattern"
-              value="[%d{yyyy-MM-dd' T 'HH:mm:ss.SSS}] %-5level --- [%15.15thread] %-40.40logger{36} - %msg%n"/>
+              value="[%d{yyyy-MM-dd' T 'HH:mm:ss.SSS}] %-5level --- [%15.15thread] %-40.40logger{36} - [%X{requestId}] %msg%n"/>
     <property name="consoleLogPattern"
-              value="[%d{yyyy-MM-dd' T 'HH:mm:ss.SSS}] %clr(%-5level) %clr(${PID:-}){magenta} %clr(---){faint} %clr([%15.15thread]){faint} %clr(%-40.40logger{36}){cyan} %clr(:){faint} %msg%n"/>
+              value="[%d{yyyy-MM-dd' T 'HH:mm:ss.SSS}] %clr(%-5level) %clr(${PID:-}){magenta} %clr(---){faint} %clr([%15.15thread]){faint} %clr(%-40.40logger{36}){cyan} %clr(:){faint} - [%X{requestId}] %msg%n"/>
 
     <springProfile name="local, default, test">
         <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
@@ -18,7 +18,7 @@
         </root>
     </springProfile>
 
-    <springProfile name="dev, prod, own">
+    <springProfile name="dev, prod">
         <property name="infoLogPath" value="logs/backend/info"/>
         <property name="errorLogPath" value="logs/backend/error"/>
         <property name="fileNamePattern" value="%d{yyyy-MM-dd}_%i.log"/>

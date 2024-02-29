@@ -55,13 +55,11 @@ public class RequestLoggingFilter implements Filter {
         try {
             MDC.put(REQUEST_ID, getRequestId(httpRequest));
             stopWatch.start();
-            log.info("[{}] request start [uri: {} {}]",
-                    MDC.get(REQUEST_ID), httpRequest.getMethod(), httpRequest.getRequestURI()
-            );
+            log.info("request start [uri: {} {}]", httpRequest.getMethod(), httpRequest.getRequestURI());
             chain.doFilter(cachedRequest, cachedResponse);
         } finally {
             stopWatch.stop();
-            log.info("[{}] request end [time: {}ms]", MDC.get(REQUEST_ID), stopWatch.getTotalTimeMillis());
+            log.info("request end [time: {}ms]", stopWatch.getTotalTimeMillis());
             MDC.clear();
         }
     }
