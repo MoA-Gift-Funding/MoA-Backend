@@ -6,7 +6,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,7 +22,6 @@ import org.springframework.util.PathMatcher;
 import org.springframework.util.StopWatch;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.util.ContentCachingRequestWrapper;
-import org.springframework.web.util.ContentCachingResponseWrapper;
 
 @Slf4j
 @Component
@@ -49,14 +47,12 @@ public class RequestLoggingFilter implements Filter {
         }
 
         var cachedRequest = new ContentCachingRequestWrapper((HttpServletRequest) request);
-        var cachedResponse = new ContentCachingResponseWrapper((HttpServletResponse) response);
-
         StopWatch stopWatch = new StopWatch();
         try {
             MDC.put(REQUEST_ID, getRequestId(httpRequest));
             stopWatch.start();
             log.info("request start [uri: {} {}]", httpRequest.getMethod(), httpRequest.getRequestURI());
-            chain.doFilter(cachedRequest, cachedResponse);
+            chain.doFilter(cachedRequest, response);
         } finally {
             stopWatch.stop();
             log.info("request end [time: {}ms]", stopWatch.getTotalTimeMillis());

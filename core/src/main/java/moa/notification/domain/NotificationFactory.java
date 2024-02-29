@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class NotificationFactory {
 
-    private static final String FUNDING_DETAIL_APP_PATH = "giftMoA://navigation?name=FundDetail&fundingId=";
-    private static final String MY_FUNDING_APP_PATH = "giftMoA://navigation?name=MyFunding&fundingId=";
-    private static final String ORDER_DETAIL_APP_PATH = "giftMoA://navigation?name=MyOrder&orderId=";
+    private static final String FUNDING_DETAIL_APP_PATH = "giftMoA://FundDetail&fundingId=";
+    private static final String MY_FUNDING_APP_PATH = "giftMoA://MyFunding&fundingId=";
+    private static final String ORDER_DETAIL_APP_PATH = "giftMoA://MyOrder&orderId=";
 
     /**
      * 펀딩 개설 완료
@@ -121,12 +121,13 @@ public class NotificationFactory {
      * 펀딩 취소
      */
     public Notification generateFundingCancelNotification(
+            Long fundingId,
             String fundingOwnerName,
             String fundingTitle,
             Member target
     ) {
         return new Notification(
-                "giftMoA://navigation?name=MyFunding",
+                MY_FUNDING_APP_PATH + fundingId,
                 "펀딩 취소",
                 "%s님이 [%s] 펀딩을 취소했어요🥲 참여한 펀딩 금액은 3-5 영업일 이내로 환불될 예정입니다."
                         .formatted(fundingOwnerName, fundingTitle),
@@ -160,7 +161,7 @@ public class NotificationFactory {
             Member target
     ) {
         return new Notification(
-                "giftMoA://navigation?name=Home",
+                "giftMoA://Home",
                 "친구 생일",
                 "내일 생일인 친구가 있어요 펀딩을 확인해보세요🎉",
                 null,

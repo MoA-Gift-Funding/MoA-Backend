@@ -96,6 +96,7 @@ public class FundingNotificationEventHandler {
         List<Notification> notifications = participants.stream()
                 .map(FundingParticipant::getMember)
                 .map(target -> notificationFactory.generateFundingCancelNotification(
+                        funding.getId(),
                         getNickName(target, friendsTargetOwner),
                         funding.getTitle(),
                         target
