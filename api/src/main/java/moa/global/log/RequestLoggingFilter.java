@@ -55,13 +55,11 @@ public class RequestLoggingFilter implements Filter {
         try {
             MDC.put(REQUEST_ID, getRequestId(httpRequest));
             stopWatch.start();
-            log.info("[{}] request start [uri: {} {}]",
-                    MDC.get(REQUEST_ID), httpRequest.getMethod(), httpRequest.getRequestURI());
+            log.info("request start [uri: {} {}]", httpRequest.getMethod(), httpRequest.getRequestURI());
             chain.doFilter(cachedRequest, cachedResponse);
         } finally {
             stopWatch.stop();
-            log.info("[{}] response body: {}", MDC.get(REQUEST_ID), getResponseBody(cachedResponse));
-            log.info("[{}] request end [time: {}ms]", MDC.get(REQUEST_ID), stopWatch.getTotalTimeMillis());
+            log.info("request end [time: {}ms]", stopWatch.getTotalTimeMillis());
             MDC.clear();
         }
     }
@@ -79,18 +77,5 @@ public class RequestLoggingFilter implements Filter {
             return UUID.randomUUID().toString().replace("-", "");
         }
         return requestId;
-    }
-
-    private String getResponseBody(ContentCachingResponseWrapper response) throws IOException {
-        String payload = null;
-        if (response != null) {
-            response.setCharacterEncoding("UTF-8");
-            byte[] buf = response.getContentAsByteArray();
-            if (buf.length > 0) {
-                payload = new String(buf, response.getCharacterEncoding());
-                response.copyBodyToResponse();
-            }
-        }
-        return null == payload ? " - " : payload;
     }
 }
