@@ -85,6 +85,5 @@ jobs:
             --name ${{ env.DOCKER_CONTAINER_NAME }} \
             --network ${{ env.DOCKER_CONTAINER_NETWORK }} \
             -p 8080:8080 \
-            -v ./logs:/logs \
             -e "SPRING_PROFILES_ACTIVE=${{ env.PROFILE }}" \
             ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
