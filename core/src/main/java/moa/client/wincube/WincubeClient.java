@@ -3,7 +3,6 @@ package moa.client.wincube;
 import static moa.client.exception.ExternalApiExceptionType.EXTERNAL_API_EXCEPTION;
 import static moa.product.exception.ProductExceptionType.COUPONS_CANNOT_BE_REISSUED;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -32,18 +31,9 @@ public class WincubeClient {
 
     public WincubeProductResponse getProductList() {
         String authToken = authClient.getAuthToken();
-        String productList = client.getProductList(wincubeProperty.mdCode(), JSON, authToken);
-        log.info("윈큐브 상품 정보 조회 완료: {}", productList);
-        // TODO 나중에 응답 보고 json 형식 맞춘뒤 변경
-        return readValue(productList, WincubeProductResponse.class);
-    }
-
-    private <T> T readValue(String data, Class<T> type) {
-        try {
-            return objectMapper.readValue(data, type);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        WincubeProductResponse productList = client.getProductList(wincubeProperty.mdCode(), JSON, authToken);
+        log.info("윈큐브 상품 정보 조회 완료 [code: {}, 상품 개수: {}]", productList.resultCode(), productList.goodsNum());
+        return productList;
     }
 
     public void issueCoupon(
