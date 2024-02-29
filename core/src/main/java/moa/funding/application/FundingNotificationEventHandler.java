@@ -1,6 +1,7 @@
 package moa.funding.application;
 
 
+import static moa.funding.domain.ParticipantStatus.PARTICIPATING;
 import static moa.global.config.async.AsyncConfig.VIRTUAL_THREAD_EXECUTOR;
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
@@ -94,6 +95,7 @@ public class FundingNotificationEventHandler {
         List<FundingParticipant> participants = funding.getParticipants();
         List<Friend> friendsTargetOwner = friendRepository.findAllByTargetId(fundingOwner);
         List<Notification> notifications = participants.stream()
+                .filter(target -> target.getStatus() == PARTICIPATING)
                 .map(FundingParticipant::getMember)
                 .map(target -> notificationFactory.generateFundingCancelNotification(
                         getNickName(target, friendsTargetOwner),
