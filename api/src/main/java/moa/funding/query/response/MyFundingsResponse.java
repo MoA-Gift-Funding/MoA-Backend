@@ -1,13 +1,10 @@
 package moa.funding.query.response;
 
-import static moa.funding.domain.ParticipantStatus.PARTICIPATING;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.util.List;
 import moa.funding.domain.Funding;
-import moa.funding.domain.FundingParticipant;
 import moa.funding.domain.FundingStatus;
 
 public record MyFundingsResponse(
@@ -42,7 +39,7 @@ public record MyFundingsResponse(
             String productImageUrl
     ) {
         public static MyFundingResponse from(Funding funding) {
-            var participants = getFundingParticipants(funding);
+            var participants = funding.getParticipatingParticipants();
             return new MyFundingResponse(
                     funding.getId(),
                     funding.getImageUrl(),
@@ -63,11 +60,5 @@ public record MyFundingsResponse(
                         .map(MyFundingResponse::from)
                         .toList()
         );
-    }
-
-    private static List<FundingParticipant> getFundingParticipants(Funding funding) {
-        return funding.getParticipants().stream()
-                .filter(it -> it.getStatus() == PARTICIPATING)
-                .toList();
     }
 }
