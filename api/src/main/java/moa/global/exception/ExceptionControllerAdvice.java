@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.WebUtils;
 
@@ -38,6 +39,13 @@ public class ExceptionControllerAdvice {
         requestLogging(request);
         return ResponseEntity.status(type.getHttpStatus())
                 .body(new ExceptionResponse(type.name(), type.getMessage()));
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    ResponseEntity<ExceptionResponse> handleException(NoResourceFoundException e) {
+        log.error(e.getMessage());
+        return ResponseEntity.status(404)
+                .body(new ExceptionResponse("NOT_FOUND", e.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
