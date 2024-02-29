@@ -83,5 +83,6 @@ jobs:
             -d \
             --name ${{ env.DOCKER_CONTAINER_NAME }} \
             -p 18080:8080 \
+            -v ./log/backend:/logs
             -e "SPRING_PROFILES_ACTIVE=${{ env.PROFILE }}" \
             ${{ env.DOCKER_HUB_REPOSITORY }}:${{ env.IMAGE_TAG }}
