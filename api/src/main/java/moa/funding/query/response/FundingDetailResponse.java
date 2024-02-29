@@ -2,6 +2,7 @@ package moa.funding.query.response;
 
 
 import static moa.funding.domain.MessageVisibility.PRIVATE;
+import static moa.funding.domain.ParticipantStatus.PARTICIPATING;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -129,6 +130,7 @@ public record FundingDetailResponse(
 
     public static FundingDetailResponse of(Funding funding, Member member, List<Friend> friends) {
         Product product = funding.getProduct();
+        var participants = getFundingParticipants(funding);
         return new FundingDetailResponse(
                 funding.getId(),
                 funding.getMember().getId(),
@@ -143,7 +145,7 @@ public record FundingDetailResponse(
                 funding.getFundingRate(),
                 funding.getStatus(),
                 funding.getFundedAmount().longValue(),
-                funding.getParticipatingParticipants().size(),
+                participants.size(),
                 product.getImageUrl(),
                 getMessages(funding, member, friends)
         );
@@ -152,6 +154,7 @@ public record FundingDetailResponse(
     private static List<Participant> getMessages(Funding funding, Member member, List<Friend> friends) {
         return funding.getParticipatingParticipants()
                 .stream()
+                .filter(it -> it.getStatus() == PARTICIPATING)
                 .map(participant -> Participant.of(funding, participant, member, friends))
                 .toList();
     }
@@ -162,5 +165,11 @@ public record FundingDetailResponse(
 
     private static boolean isMessageOwner(FundingParticipant participant, Member member) {
         return Objects.equals(participant.getMember().getId(), member.getId());
+    }
+
+    private static List<FundingParticipant> getFundingParticipants(Funding funding) {
+        return funding.getParticipants().stream()
+                .filter(it -> it.getStatus() == PARTICIPATING)
+                .toList();
     }
 }
