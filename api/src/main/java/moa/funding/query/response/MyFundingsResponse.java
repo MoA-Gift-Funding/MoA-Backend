@@ -39,6 +39,7 @@ public record MyFundingsResponse(
             String productImageUrl
     ) {
         public static MyFundingResponse from(Funding funding) {
+            var participants = funding.getParticipatingParticipants();
             return new MyFundingResponse(
                     funding.getId(),
                     funding.getImageUrl(),
@@ -47,7 +48,7 @@ public record MyFundingsResponse(
                     funding.getFundingRate(),
                     funding.getStatus(),
                     funding.getFundedAmount().longValue(),
-                    funding.getParticipants().size(),
+                    participants.size(),
                     funding.getProduct().getImageUrl()
             );
         }

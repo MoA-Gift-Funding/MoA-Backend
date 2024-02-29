@@ -129,6 +129,7 @@ public record FundingDetailResponse(
 
     public static FundingDetailResponse of(Funding funding, Member member, List<Friend> friends) {
         Product product = funding.getProduct();
+        var participants = funding.getParticipatingParticipants();
         return new FundingDetailResponse(
                 funding.getId(),
                 funding.getMember().getId(),
@@ -143,7 +144,7 @@ public record FundingDetailResponse(
                 funding.getFundingRate(),
                 funding.getStatus(),
                 funding.getFundedAmount().longValue(),
-                funding.getParticipatingParticipants().size(),
+                participants.size(),
                 product.getImageUrl(),
                 getMessages(funding, member, friends)
         );

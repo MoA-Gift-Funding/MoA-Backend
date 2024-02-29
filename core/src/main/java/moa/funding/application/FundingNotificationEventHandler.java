@@ -91,8 +91,8 @@ public class FundingNotificationEventHandler {
     public void push(FundingCancelEvent event) {
         Funding funding = fundingRepository.getById(event.fundingId());
         Member fundingOwner = funding.getMember();
-        List<FundingParticipant> participants = funding.getParticipants();
         List<Friend> friendsTargetOwner = friendRepository.findAllByTargetId(fundingOwner);
+        List<FundingParticipant> participants = funding.getParticipatingParticipants();
         List<Notification> notifications = participants.stream()
                 .map(FundingParticipant::getMember)
                 .map(target -> notificationFactory.generateFundingCancelNotification(
