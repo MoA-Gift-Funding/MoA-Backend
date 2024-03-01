@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moa.client.discord.DiscordWebHookClient;
 import moa.client.exception.ExternalApiException;
 import moa.client.wincube.auth.request.WincubeAuthResultCode;
 import moa.client.wincube.auth.request.WincubeIssueAuthCodeRequest;
@@ -25,6 +26,7 @@ public class WincubeAuthClient {
 
     private static final int AES_IV_BYTE = 16;
 
+    private final DiscordWebHookClient discordWebHookClient;
     private final ObjectMapper objectMapper;
     private final WincubeAuthProperty wincubeProperty;
     private final WincubeAuthApiClient wincubeAuthApiClient;
@@ -63,7 +65,8 @@ public class WincubeAuthClient {
         log.info("윈큐브 Auth Code 응답 검증");
         var code = readValue(response, WincubeAuthResultCode.class);
         if (code.resultCode() >= 400) {
-            log.error("Wincube AUTH API error {}", response);
+            log.error("Wincube AUTH CODE API ERROR {}", response);
+            discordWebHookClient.sendToErrorChannel("Wincube AUTH CODE API ERROR \n ->" + response);
             throw new ExternalApiException(EXTERNAL_API_EXCEPTION
                     .withDetail(response)
                     .setStatus(HttpStatus.valueOf(code.resultCode())));
@@ -105,6 +108,7 @@ public class WincubeAuthClient {
     private void validateTokenResponse(WincubeIssueAuthTokenResponse response, String aesIv) {
         if (response.resultCode() != 200) {
             log.error("Wincube AUTH TOKEN API ERROR {}", response);
+            discordWebHookClient.sendToErrorChannel("Wincube AUTH TOKEN API ERROR \n ->" + response);
             throw new ExternalApiException(EXTERNAL_API_EXCEPTION
                     .withDetail(response.message())
                     .setStatus(HttpStatus.valueOf(response.resultCode())));

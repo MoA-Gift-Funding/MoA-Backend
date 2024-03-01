@@ -87,5 +87,9 @@ wincube:
     rsaPublicKey: ""
 
 discord:
-  webhookId: "id"
-  webhookToken: "token"
+  inquiry-channel:
+    webhookId: "id"
+    webhookToken: "token"
+  error-channel:
+    webhookId: "id"
+    webhookToken: "token"
