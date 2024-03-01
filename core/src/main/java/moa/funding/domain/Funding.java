@@ -8,8 +8,8 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 import static moa.funding.domain.FundingStatus.CANCELLED;
 import static moa.funding.domain.FundingStatus.COMPLETE;
+import static moa.funding.domain.FundingStatus.EXPIRED;
 import static moa.funding.domain.FundingStatus.PROCESSING;
-import static moa.funding.domain.FundingStatus.STOPPED;
 import static moa.funding.domain.ParticipantStatus.PARTICIPATING;
 import static moa.funding.exception.FundingExceptionType.DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_FUNDING_AMOUNT;
@@ -227,8 +227,8 @@ public class Funding extends RootEntity<Long> {
     }
 
     public void cancel() {
-        if (status != PROCESSING && status != STOPPED) {
-            throw new FundingException(PROCESSING_OR_STOPPED_FUNDING_CAN_BE_CANCELLED);
+        if (status != PROCESSING && status != EXPIRED) {
+            throw new FundingException(PROCESSING_OR_EXPIRED_FUNDING_CAN_BE_CANCELLED);
         }
         this.status = CANCELLED;
         for (FundingParticipant participant : participants) {
