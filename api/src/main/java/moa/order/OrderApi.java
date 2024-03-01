@@ -42,7 +42,7 @@ public interface OrderApi {
     @PostMapping("/{orderId}/cancel-coupon")
     ResponseEntity<Void> cancelCoupon(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            
+
             @Parameter(in = PATH, required = true, description = "주문 ID")
             @PathVariable("orderId") Long orderId
     );

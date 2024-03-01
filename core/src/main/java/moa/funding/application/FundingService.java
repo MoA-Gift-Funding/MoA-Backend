@@ -6,9 +6,12 @@ import moa.address.domain.DeliveryAddress;
 import moa.address.domain.DeliveryAddressRepository;
 import moa.funding.application.command.FundingCreateCommand;
 import moa.funding.application.command.FundingFinishCommand;
+import moa.funding.application.command.FundingMessageUpdateCommand;
 import moa.funding.application.command.FundingParticipateCancelCommand;
 import moa.funding.application.command.FundingParticipateCommand;
 import moa.funding.domain.Funding;
+import moa.funding.domain.FundingMessage;
+import moa.funding.domain.FundingMessageRepository;
 import moa.funding.domain.FundingParticipant;
 import moa.funding.domain.FundingParticipateRepository;
 import moa.funding.domain.FundingRepository;
@@ -31,6 +34,7 @@ public class FundingService {
     private final FundingRepository fundingRepository;
     private final DeliveryAddressRepository addressRepository;
     private final TossPaymentRepository tossPaymentRepository;
+    private final FundingMessageRepository fundingMessageRepository;
     private final FundingParticipateRepository fundingParticipateRepository;
     private final FundingValidator fundingValidator;
 
@@ -63,6 +67,13 @@ public class FundingService {
         funding.validateOwner(member);
         funding.finish(payment.getTotalAmount());
         fundingRepository.save(funding);
+    }
+
+    public void updateMessage(FundingMessageUpdateCommand command) {
+        FundingMessage message = fundingMessageRepository.getById(command.messageId());
+        Member member = memberRepository.getById(command.memberId());
+        message.validateSender(member);
+        message.update(command.message(), command.visibility());
     }
 
     public void participateCancel(FundingParticipateCancelCommand command) {

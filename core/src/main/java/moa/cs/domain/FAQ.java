@@ -28,7 +28,7 @@ public class FAQ extends RootEntity<Long> {
 
     @Column(nullable = false)
     private String content;
-    
+
     private String answer;
 
     public FAQ(QuestionCategory category, String content, String answer) {

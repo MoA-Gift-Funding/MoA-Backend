@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moa.funding.application.command.FundingCreateCommand;
 import moa.funding.application.command.FundingFinishCommand;
+import moa.funding.application.command.FundingMessageUpdateCommand;
 import moa.funding.application.command.FundingParticipateCancelCommand;
 import moa.funding.application.command.FundingParticipateCommand;
 import moa.pay.application.TossPaymentService;
@@ -43,6 +44,10 @@ public class FundingFacade {
                     "펀딩 끝내기 실패"
             );
         }
+    }
+
+    public void updateMessage(FundingMessageUpdateCommand command) {
+        fundingService.updateMessage(command);
     }
 
     public void participateCancel(FundingParticipateCancelCommand command) {
