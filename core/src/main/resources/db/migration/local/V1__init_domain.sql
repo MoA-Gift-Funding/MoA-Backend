@@ -287,14 +287,3 @@ create table if not exists report
     constraint FK_report_member
         foreign key (member_id) references member (id)
 );
-
-create table if not exists sms_history
-(
-    id            bigint auto_increment primary key,
-    status        varchar(255) not null,
-    message       varchar(255) not null,
-    phone_number  varchar(255) not null,
-    error_message varchar(255),
-    created_date  datetime(6) not null,
-    updated_date  datetime(6) null
-);

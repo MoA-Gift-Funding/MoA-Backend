@@ -1,4 +1,4 @@
-package moa.sms;
+package moa.client.sms;
 
 import org.springframework.stereotype.Component;
 

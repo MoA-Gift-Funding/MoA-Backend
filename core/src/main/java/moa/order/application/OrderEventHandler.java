@@ -6,6 +6,7 @@ import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMI
 
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import moa.client.sms.SmsMessageFactory;
 import moa.client.wincube.WincubeClient;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingFinishEvent;
@@ -18,7 +19,6 @@ import moa.order.domain.OrderReadyEvent;
 import moa.order.domain.OrderRepository;
 import moa.order.domain.OrderTransaction;
 import moa.order.domain.OrderTransactionRepository;
-import moa.sms.SmsMessageFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
