@@ -15,7 +15,7 @@ public interface DiscordWebHookApiClient {
      * https://discord.com/developers/docs/resources/webhook
      */
     @PostExchange(url = "/webhooks/{webhookId}/{webhookToken}", contentType = APPLICATION_JSON_VALUE)
-    Void sendMessage(
+    void sendMessage(
             @PathVariable("webhookId") String webhookId,
             @PathVariable("webhookToken") String webhookToken,
             @RequestBody DiscordSendMessageRequest request
