@@ -4,7 +4,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "discord")
 public record DiscordWebHookProperty(
-        String webhookId,
-        String webhookToken
+        WebhookProperty inquiryChannel,
+        WebhookProperty errorChannel
 ) {
+    public record WebhookProperty(
+            String webhookId,
+            String webhookToken
+    ) {
+    }
 }

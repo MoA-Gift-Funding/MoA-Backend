@@ -6,6 +6,7 @@ import static moa.product.exception.ProductExceptionType.COUPONS_CANNOT_BE_REISS
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moa.client.discord.DiscordWebHookClient;
 import moa.client.exception.ExternalApiException;
 import moa.client.wincube.auth.WincubeAuthClient;
 import moa.client.wincube.dto.WincubeCancelCouponResponse;
@@ -26,6 +27,7 @@ public class WincubeClient {
     private final WincubeProperty wincubeProperty;
     private final WincubeAuthClient authClient;
     private final WincubeApiClient client;
+    private final DiscordWebHookClient discordWebHookClient;
 
     public WincubeProductResponse getProductList() {
         String authToken = authClient.getAuthToken();
@@ -63,6 +65,8 @@ public class WincubeClient {
         if (response.isSuccess()) {
             log.info("윈큐브 쿠폰 발행 완료 {}", response);
         } else {
+            log.error("윈큐브 쿠폰 발행 실패 {}", response);
+            discordWebHookClient.sendToErrorChannel("윈큐브 쿠폰 발행 실패 \n ->" + response);
             throw new ExternalApiException(EXTERNAL_API_EXCEPTION.withDetail(
                     "윈큐브 쿠폰 발행 실패: " + response
             ));
@@ -79,8 +83,10 @@ public class WincubeClient {
         );
         log.info("윈큐브 쿠폰 취소 API 호출 완료.");
         if (!response.isSuccess()) {
+            log.error("윈큐브 쿠폰 취소 실패 {}", response);
+            discordWebHookClient.sendToErrorChannel("윈큐브 쿠폰 취소 실패 \n ->" + response);
             throw new ExternalApiException(EXTERNAL_API_EXCEPTION.withDetail(
-                    "윈큐브 쿠폰 취소 실해: " + response
+                    "윈큐브 쿠폰 취소 실패: " + response
             ));
         }
     }
