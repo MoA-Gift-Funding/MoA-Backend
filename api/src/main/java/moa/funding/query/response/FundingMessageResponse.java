@@ -6,9 +6,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 import moa.friend.domain.Friend;
 import moa.funding.domain.FundingMessage;
+import moa.funding.domain.FundingParticipant;
 import moa.member.domain.Member;
 
 public record FundingMessageResponse(
+        @Schema(description = "펀딩 ID")
+        Long fundingId,
+
+        @Schema(description = "펀딩 제목", example = "나의 에어팟 펀딩")
+        String fundingTitle,
+
         @Schema(example = "https://user-image.com")
         String profileImageUrl,
 
@@ -28,7 +35,8 @@ public record FundingMessageResponse(
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         LocalDateTime createdDate
 ) {
-    public static FundingMessageResponse of(FundingMessage message, List<Friend> friends) {
+    public static FundingMessageResponse of(FundingParticipant participant, List<Friend> friends) {
+        FundingMessage message = participant.getFundingMessage();
         Member sender = message.getSender();
         String nickName = friends.stream()
                 .filter(friend -> friend.getTarget().equals(message.getSender()))
@@ -36,6 +44,8 @@ public record FundingMessageResponse(
                 .map(Friend::getNickname)
                 .orElseGet(sender::getNickname);
         return new FundingMessageResponse(
+                participant.getFunding().getId(),
+                participant.getFunding().getTitle(),
                 sender.getProfileImageUrl(),
                 nickName,
                 message.getId(),

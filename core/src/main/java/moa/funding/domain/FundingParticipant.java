@@ -57,8 +57,8 @@ public class FundingParticipant extends RootEntity<Long> {
     @AttributeOverride(name = "value", column = @Column(name = "amount"))
     private Price amount;
 
-    @OneToOne(cascade = {PERSIST, MERGE})
-    @JoinColumn(name = "funding_message_id", nullable = false)
+    @OneToOne(fetch = LAZY, cascade = {PERSIST, MERGE})
+    @JoinColumn(name = "funding_message_id", nullable = false, unique = true)
     private FundingMessage fundingMessage;
 
     @Enumerated(STRING)

@@ -48,7 +48,7 @@ public class FundingService {
         return fundingRepository.save(funding).getId();
     }
 
-    public void participate(FundingParticipateCommand command) {
+    public Long participate(FundingParticipateCommand command) {
         Funding funding = fundingRepository.getWithLockById(command.fundingId());
         Member member = memberRepository.getById(command.memberId());
         fundingValidator.validateVisible(member, funding);
@@ -57,6 +57,7 @@ public class FundingService {
         FundingParticipant participant = command.toParticipant(member, funding, payment);
         funding.participate(participant);
         fundingRepository.save(funding);
+        return participant.getId();
     }
 
     public void finish(FundingFinishCommand command) {

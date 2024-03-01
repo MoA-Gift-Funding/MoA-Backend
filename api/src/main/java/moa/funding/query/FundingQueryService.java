@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import moa.friend.domain.Friend;
 import moa.friend.query.FriendQueryRepository;
 import moa.funding.domain.Funding;
-import moa.funding.domain.FundingMessage;
 import moa.funding.domain.FundingStatus;
 import moa.funding.domain.FundingValidator;
 import moa.funding.query.response.FundingDetailResponse;
@@ -29,7 +28,6 @@ public class FundingQueryService {
     private final MemberQueryRepository memberQueryRepository;
     private final FriendQueryRepository friendQueryRepository;
     private final FundingQueryRepository fundingQueryRepository;
-    private final FundingMessageQueryRepository fundingMessageQueryRepository;
     private final FundingParticipantQueryRepository fundingParticipantQueryRepository;
 
     public Page<MyFundingResponse> findMyFundings(Long memberId, List<FundingStatus> statuses, Pageable pageable) {
@@ -58,8 +56,8 @@ public class FundingQueryService {
     }
 
     public Page<FundingMessageResponse> findReceivedMessages(Long memberId, Pageable pageable) {
-        Page<FundingMessage> messages = fundingMessageQueryRepository.findAllByReceiverId(memberId, pageable);
         List<Friend> friends = friendQueryRepository.findAllByMemberId(memberId);
-        return messages.map(message -> FundingMessageResponse.of(message, friends));
+        return fundingParticipantQueryRepository.findAllByFundingOwnerIdAndStatusIsParticipating(memberId, pageable)
+                .map(participant -> FundingMessageResponse.of(participant, friends));
     }
 }
