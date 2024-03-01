@@ -2,6 +2,7 @@ package moa.funding.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import moa.funding.application.command.FundingParticipateCommand;
 import moa.funding.domain.MessageVisibility;
 
@@ -13,7 +14,7 @@ public record FundingParticipateRequest(
         @NotBlank String message,
 
         @Schema(example = "메시지 공개 여부")
-        MessageVisibility visible
+        @NotNull MessageVisibility visible
 ) {
     public FundingParticipateCommand toCommand(Long fundingId, Long memberId) {
         return new FundingParticipateCommand(

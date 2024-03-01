@@ -4,6 +4,7 @@ import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
+import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_FOR_FUNDING;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import moa.funding.exception.FundingException;
 import moa.global.domain.RootEntity;
 import moa.member.domain.Member;
 
@@ -44,6 +46,17 @@ public class FundingMessage extends RootEntity<Long> {
     public FundingMessage(Member sender, Member receiver, String content, MessageVisibility visible) {
         this.sender = sender;
         this.receiver = receiver;
+        this.content = content;
+        this.visible = visible;
+    }
+
+    public void validateSender(Member member) {
+        if (!this.sender.equals(member)) {
+            throw new FundingException(NO_AUTHORITY_FOR_FUNDING);
+        }
+    }
+
+    public void update(String content, MessageVisibility visible) {
         this.content = content;
         this.visible = visible;
     }
