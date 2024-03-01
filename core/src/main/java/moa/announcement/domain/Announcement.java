@@ -22,7 +22,7 @@ public class Announcement extends RootEntity<Long> {
 
     @Column(nullable = false)
     private String title;
-    
+
     @Column(nullable = false)
     private String content;
 
