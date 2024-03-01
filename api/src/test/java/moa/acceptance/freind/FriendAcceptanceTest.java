@@ -54,6 +54,30 @@ public class FriendAcceptanceTest extends AcceptanceTest {
             // then
             assertStatus(response, OK);
         }
+
+        @Test
+        void 연락처에_동일한_번호가_존재하면_둘_중_아무거나_하나의_이름으로_추가된다() {
+            // given
+            말랑_token = login(말랑);
+            var request = new SyncContactRequest(
+                    new ContactRequest("주예스", "010-2222-2222"),
+                    new ContactRequest("주노", "010-2222-2222"),
+                    new ContactRequest("주예스", "010-2222-2222")
+            );
+
+            // when
+            연락처_동기화(말랑_token, request);
+
+            // then
+            var response = 내_친구_목록_조회_요청(말랑_token);
+            List<FriendResponse> result = response.as(new TypeRef<>() {
+            });
+            assertThat(result)
+                    .hasSize(1)
+                    .element(0)
+                    .extracting(FriendResponse::customNickname)
+                    .isIn("주노", "주예스");
+        }
     }
 
     @Nested
