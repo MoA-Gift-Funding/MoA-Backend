@@ -13,6 +13,7 @@ import moa.friend.domain.Friend;
 import moa.funding.domain.Funding;
 import moa.funding.domain.FundingParticipant;
 import moa.funding.domain.FundingStatus;
+import moa.funding.domain.MessageVisibility;
 import moa.member.domain.Member;
 import moa.product.domain.Product;
 
@@ -82,6 +83,9 @@ public record FundingDetailResponse(
             @Schema(description = "메시지 내용", example = "형님이 보태준다")
             String message,
 
+            @Schema(description = "메시지 공개여부")
+            MessageVisibility visibility,
+
             @Schema(description = "메시지 작성 시간", example = "2024-11-02 12:00:01")
             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
             LocalDateTime createAt
@@ -100,6 +104,7 @@ public record FundingDetailResponse(
                         null,
                         null,
                         null,
+                        PRIVATE,
                         participant.getCreatedDate()
                 );
             }
@@ -114,6 +119,7 @@ public record FundingDetailResponse(
                     participant.getMember().getProfileImageUrl(),
                     participant.getFundingMessage().getId(),
                     participant.getFundingMessage().getContent(),
+                    participant.getFundingMessage().getVisible(),
                     participant.getCreatedDate()
             );
         }
