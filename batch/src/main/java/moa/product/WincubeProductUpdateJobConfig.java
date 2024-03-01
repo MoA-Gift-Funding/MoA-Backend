@@ -77,7 +77,7 @@ public class WincubeProductUpdateJobConfig {
      * <p/>
      * 각각 `판매 종료(SALES_DISCONTINUED)와 지원하지 않음(NOT_SUPPORTED)`상태로 변경한다.
      * <p/>
-     * 판매 종료된 상품으로 진행되는 펀딩이 있으면 중지시키고, 펀딩 주인한테 푸쉬알림을 보낸다.
+     * 판매 종료된 상품으로 진행 혹은 만료된 펀딩이 있으면 중지시키고, 펀딩 주인한테 푸쉬알림을 보낸다.
      */
     @Bean
     public Job wincubeProductUpdateJob() {
@@ -329,7 +329,7 @@ public class WincubeProductUpdateJobConfig {
     }
 
     /**
-     * 현재 `진행중`인 펀딩들 중, 상품이 판매 중지된 펀딩들을 읽어온다.
+     * 현재 `진행중` 혹은 `만료`된 펀딩들 중, 상품이 판매 중지된 펀딩들을 읽어온다.
      */
     @Bean
     public JpaCursorItemReader<Funding> stoppedCandidateFundingReader() {
@@ -341,7 +341,7 @@ public class WincubeProductUpdateJobConfig {
                         JOIN FETCH f.member
                         JOIN f.product p
                         WHERE p.status = 'SALES_DISCONTINUED'
-                        AND f.status = 'PROCESSING'
+                        AND (f.status = 'PROCESSING' OR f.status = 'EXPIRED')
                         """)
                 .build();
     }
