@@ -17,8 +17,11 @@ public record MakeFromContactCommand(
 
     public Map<String, String> phoneAndNameMap() {
         return contactList.stream()
-                .collect(toMap(ContactInfo::phoneNumber, ContactInfo::name));
-
+                .collect(toMap(
+                        ContactInfo::phoneNumber,
+                        ContactInfo::name,
+                        (order, recent) -> recent
+                ));
     }
 
     public List<String> phones() {
