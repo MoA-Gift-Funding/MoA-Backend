@@ -20,7 +20,7 @@ import org.springframework.web.client.RestClient;
 public class KakaoClientConfig {
 
     private final DiscordWebHookClient discordWebHookClient;
-    
+
     @Bean
     public KakaoApiClient kakaoApiClient() {
         RestClient restClient = RestClient.builder()

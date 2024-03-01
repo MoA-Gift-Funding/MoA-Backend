@@ -25,6 +25,6 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
     @Lock(PESSIMISTIC_WRITE)
     Optional<Funding> findWithLockById(Long id);
 
-    @Query("SELECT f FROM Funding f WHERE f.status != 'PROCESSING' AND f.status != 'STOPPED'")
+    @Query("SELECT f FROM Funding f WHERE f.status != 'PROCESSING' AND f.status != 'EXPIRED'")
     List<Funding> findAllCancellableByMemberId(Long memberId);
 }

@@ -8,8 +8,8 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 import static moa.funding.domain.FundingStatus.CANCELLED;
 import static moa.funding.domain.FundingStatus.COMPLETE;
+import static moa.funding.domain.FundingStatus.EXPIRED;
 import static moa.funding.domain.FundingStatus.PROCESSING;
-import static moa.funding.domain.FundingStatus.STOPPED;
 import static moa.funding.domain.ParticipantStatus.PARTICIPATING;
 import static moa.funding.exception.FundingExceptionType.DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT;
 import static moa.funding.exception.FundingExceptionType.EXCEEDED_POSSIBLE_FUNDING_AMOUNT;
@@ -22,7 +22,8 @@ import static moa.funding.exception.FundingExceptionType.MUST_FUNDING_MORE_THAN_
 import static moa.funding.exception.FundingExceptionType.NOT_PROCESSING_FUNDING;
 import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_FOR_FUNDING;
 import static moa.funding.exception.FundingExceptionType.OWNER_CANNOT_PARTICIPATE_FUNDING;
-import static moa.funding.exception.FundingExceptionType.PROCESSING_OR_STOPPED_FUNDING_CAN_BE_CANCELLED;
+import static moa.funding.exception.FundingExceptionType.PROCESSING_OR_EXPIRED_FUNDING_CAN_BE_CANCELLED;
+import static moa.funding.exception.FundingExceptionType.PROCESSING_OR_EXPIRED_FUNDING_CAN_BE_FINISHED;
 import static moa.global.domain.Price.ZERO;
 
 import jakarta.persistence.AttributeOverride;
@@ -218,17 +219,22 @@ public class Funding extends RootEntity<Long> {
     }
 
     public void finish(Price price) {
+        if (status != PROCESSING && status != EXPIRED) {
+            throw new FundingException(PROCESSING_OR_EXPIRED_FUNDING_CAN_BE_FINISHED);
+        }
+
         if (!remainAmount().equals(price)) {
             throw new FundingException(DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT);
         }
+
         this.status = COMPLETE;
         myFinishedPaymentAmount = price;
         registerEvent(new FundingFinishEvent(id));
     }
 
     public void cancel() {
-        if (status != PROCESSING && status != STOPPED) {
-            throw new FundingException(PROCESSING_OR_STOPPED_FUNDING_CAN_BE_CANCELLED);
+        if (status != PROCESSING && status != EXPIRED) {
+            throw new FundingException(PROCESSING_OR_EXPIRED_FUNDING_CAN_BE_CANCELLED);
         }
         this.status = CANCELLED;
         for (FundingParticipant participant : participants) {

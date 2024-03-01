@@ -6,7 +6,7 @@ import static moa.fixture.ProductFixture.product;
 import static moa.funding.domain.FundingStatus.CANCELLED;
 import static moa.funding.domain.FundingStatus.COMPLETE;
 import static moa.funding.domain.MessageVisibility.PUBLIC;
-import static moa.funding.exception.FundingExceptionType.PROCESSING_OR_STOPPED_FUNDING_CAN_BE_CANCELLED;
+import static moa.funding.exception.FundingExceptionType.PROCESSING_OR_EXPIRED_FUNDING_CAN_BE_CANCELLED;
 import static moa.member.domain.MemberStatus.SIGNED_UP;
 import static moa.pay.domain.TossPaymentStatus.PENDING_CANCEL;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -201,6 +201,6 @@ class FundingServiceTest {
         MoaExceptionType exceptionType = assertThrows(FundingException.class, () -> {
             fundingService.cancel(funding.getId(), owner.getId());
         }).getExceptionType();
-        assertThat(exceptionType).isEqualTo(PROCESSING_OR_STOPPED_FUNDING_CAN_BE_CANCELLED);
+        assertThat(exceptionType).isEqualTo(PROCESSING_OR_EXPIRED_FUNDING_CAN_BE_CANCELLED);
     }
 }
