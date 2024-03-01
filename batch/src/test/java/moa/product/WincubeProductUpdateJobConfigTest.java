@@ -170,7 +170,7 @@ class WincubeProductUpdateJobConfigTest {
     }
 
     @Test
-    void 진행중인_펀딩_중_상품이_판매중지된_펀딩이_있으면_즉시_중단하고_알림을_전송한다() throws Exception {
+    void 진행중_혹은_만료된_펀딩_중_상품이_판매중지된_펀딩이_있으면_즉시_중단하고_알림을_전송한다() throws Exception {
         Product product = productRepository.save(product("1"));
         Member member = memberRepository.save(member(null, "mal", "010-1111-1111", SIGNED_UP));
         Funding processing = fundingRepository.save(funding(member, product, PROCESSING));
@@ -203,11 +203,11 @@ class WincubeProductUpdateJobConfigTest {
 
         // then
         transactionTemplate.executeWithoutResult(status -> {
-            Funding stopped = fundingRepository.getById(processing.getId());
-            assertThat(stopped.getStatus()).isEqualTo(STOPPED);
+            Funding stoppedProcessing = fundingRepository.getById(processing.getId());
+            assertThat(stoppedProcessing.getStatus()).isEqualTo(STOPPED);
 
-            Funding nonUpdateExpired = fundingRepository.getById(expired.getId());
-            assertThat(nonUpdateExpired.getStatus()).isEqualTo(EXPIRED);
+            Funding stoppedExpired = fundingRepository.getById(expired.getId());
+            assertThat(stoppedExpired.getStatus()).isEqualTo(STOPPED);
 
             Funding nonUpdateCanceled = fundingRepository.getById(canceled.getId());
             assertThat(nonUpdateCanceled.getStatus()).isEqualTo(CANCELLED);
@@ -216,7 +216,7 @@ class WincubeProductUpdateJobConfigTest {
             assertThat(nonUpdateCompleted.getStatus()).isEqualTo(COMPLETE);
 
             assertThat(notificationRepository.findAll())
-                    .hasSize(1)
+                    .hasSize(2)
                     .extracting(Notification::getTitle)
                     .containsOnly("펀딩 중단");
         });
