@@ -18,6 +18,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,6 +40,15 @@ public class OrderController implements OrderApi {
             @Valid @RequestBody ReissueCouponRequest request
     ) {
         orderService.reissueCoupon(request.toCommand(memberId, orderId));
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{orderId}/cancel-coupon")
+    public ResponseEntity<Void> cancelCoupon(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            @PathVariable("orderId") Long orderId
+    ) {
+        orderService.cancelCoupon(orderId, memberId);
         return ResponseEntity.ok().build();
     }
 

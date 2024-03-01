@@ -22,10 +22,30 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Tag(name = "주문 API", description = "주문 관련 API")
 @SecurityRequirement(name = "JWT")
 public interface OrderApi {
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "400"),
+                    @ApiResponse(responseCode = "401"),
+                    @ApiResponse(responseCode = "403"),
+                    @ApiResponse(responseCode = "404"),
+                    @ApiResponse(responseCode = "500"),
+            }
+    )
+    @Operation(summary = "쿠폰 취소")
+    @PostMapping("/{orderId}/cancel-coupon")
+    ResponseEntity<Void> cancelCoupon(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            
+            @Parameter(in = PATH, required = true, description = "주문 ID")
+            @PathVariable("orderId") Long orderId
+    );
 
     @ApiResponses(
             value = {
