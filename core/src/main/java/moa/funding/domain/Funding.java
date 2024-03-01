@@ -22,7 +22,8 @@ import static moa.funding.exception.FundingExceptionType.MUST_FUNDING_MORE_THAN_
 import static moa.funding.exception.FundingExceptionType.NOT_PROCESSING_FUNDING;
 import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_FOR_FUNDING;
 import static moa.funding.exception.FundingExceptionType.OWNER_CANNOT_PARTICIPATE_FUNDING;
-import static moa.funding.exception.FundingExceptionType.PROCESSING_OR_STOPPED_FUNDING_CAN_BE_CANCELLED;
+import static moa.funding.exception.FundingExceptionType.PROCESSING_OR_EXPIRED_FUNDING_CAN_BE_CANCELLED;
+import static moa.funding.exception.FundingExceptionType.PROCESSING_OR_EXPIRED_FUNDING_CAN_BE_FINISHED;
 import static moa.global.domain.Price.ZERO;
 
 import jakarta.persistence.AttributeOverride;
@@ -218,9 +219,14 @@ public class Funding extends RootEntity<Long> {
     }
 
     public void finish(Price price) {
+        if (status != PROCESSING && status != EXPIRED) {
+            throw new FundingException(PROCESSING_OR_EXPIRED_FUNDING_CAN_BE_FINISHED);
+        }
+
         if (!remainAmount().equals(price)) {
             throw new FundingException(DIFFERENT_FROM_FUNDING_REMAIN_AMOUNT);
         }
+
         this.status = COMPLETE;
         myFinishedPaymentAmount = price;
         registerEvent(new FundingFinishEvent(id));
