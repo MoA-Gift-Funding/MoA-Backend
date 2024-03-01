@@ -20,6 +20,7 @@ import moa.funding.query.response.MyFundingsResponse.MyFundingResponse;
 import moa.funding.query.response.ParticipatedFundingResponse;
 import moa.funding.request.FundingCreateRequest;
 import moa.funding.request.FundingFinishRequest;
+import moa.funding.request.FundingMessageUpdateRequest;
 import moa.funding.request.FundingParticipateCancelRequest;
 import moa.funding.request.FundingParticipateRequest;
 import moa.global.presentation.PageResponse;
@@ -29,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -71,12 +73,13 @@ public class FundingController implements FundingApi {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{id}/cancel")
-    public ResponseEntity<Void> cancel(
+    @PutMapping("/messages/{messageId}")
+    public ResponseEntity<Void> updateMessage(
             @Auth(permit = {SIGNED_UP}) Long memberId,
-            @PathVariable Long id
+            @PathVariable("messageId") Long messageId,
+            @Valid @RequestBody FundingMessageUpdateRequest request
     ) {
-        fundingFacade.cancel(id, memberId);
+        fundingFacade.updateMessage(request.toCommand(memberId, messageId));
         return ResponseEntity.ok().build();
     }
 
@@ -87,6 +90,15 @@ public class FundingController implements FundingApi {
             @Valid @RequestBody FundingParticipateCancelRequest request
     ) {
         fundingFacade.participateCancel(request.toCommand(memberId, id));
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<Void> cancel(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+            @PathVariable Long id
+    ) {
+        fundingFacade.cancel(id, memberId);
         return ResponseEntity.ok().build();
     }
 

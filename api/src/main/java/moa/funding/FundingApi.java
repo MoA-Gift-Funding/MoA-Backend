@@ -26,6 +26,7 @@ import moa.funding.query.response.MyFundingsResponse.MyFundingResponse;
 import moa.funding.query.response.ParticipatedFundingResponse;
 import moa.funding.request.FundingCreateRequest;
 import moa.funding.request.FundingFinishRequest;
+import moa.funding.request.FundingMessageUpdateRequest;
 import moa.funding.request.FundingParticipateCancelRequest;
 import moa.funding.request.FundingParticipateRequest;
 import moa.global.presentation.PageResponse;
@@ -36,6 +37,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -109,15 +111,18 @@ public interface FundingApi {
                     @ApiResponse(responseCode = "401"),
                     @ApiResponse(responseCode = "403"),
                     @ApiResponse(responseCode = "404"),
+                    @ApiResponse(responseCode = "500"),
             }
     )
-    @Operation(summary = "펀딩 취소")
-    @PostMapping("/{id}/cancel")
-    ResponseEntity<Void> cancel(
+    @Operation(summary = "펀딩 메세지 수정")
+    @PutMapping("/messages/{messageId}")
+    ResponseEntity<Void> updateMessage(
             @Auth(permit = {SIGNED_UP}) Long memberId,
 
-            @Parameter(in = PATH, required = true, description = "펀딩 ID")
-            @PathVariable Long id
+            @Parameter(in = PATH, required = true, description = "펀딩 메세지 ID")
+            @PathVariable("messageId") Long messageId,
+
+            @Valid @RequestBody FundingMessageUpdateRequest request
     );
 
     @ApiResponses(
@@ -138,6 +143,24 @@ public interface FundingApi {
             @PathVariable Long id,
 
             @Valid @RequestBody FundingParticipateCancelRequest request
+    );
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "400"),
+                    @ApiResponse(responseCode = "401"),
+                    @ApiResponse(responseCode = "403"),
+                    @ApiResponse(responseCode = "404"),
+            }
+    )
+    @Operation(summary = "펀딩 취소")
+    @PostMapping("/{id}/cancel")
+    ResponseEntity<Void> cancel(
+            @Auth(permit = {SIGNED_UP}) Long memberId,
+
+            @Parameter(in = PATH, required = true, description = "펀딩 ID")
+            @PathVariable Long id
     );
 
     @ApiResponses(
