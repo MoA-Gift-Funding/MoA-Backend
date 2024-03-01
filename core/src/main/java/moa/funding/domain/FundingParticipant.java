@@ -11,8 +11,8 @@ import static moa.funding.domain.ParticipantStatus.CANCEL;
 import static moa.funding.domain.ParticipantStatus.CANCELLED_BY_FUND_OWNER;
 import static moa.funding.domain.ParticipantStatus.PARTICIPATING;
 import static moa.funding.exception.FundingExceptionType.ALREADY_CANCEL_PARTICIPATING;
-import static moa.funding.exception.FundingExceptionType.FUNDING_IS_NOT_PROCESSING;
 import static moa.funding.exception.FundingExceptionType.NO_AUTHORITY_CANCEL_PARTICIPATE;
+import static moa.funding.exception.FundingExceptionType.PARTICIPATE_CANCEL_ONLY_PERMIT_PROCESSING_FUNDING;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -106,7 +106,7 @@ public class FundingParticipant extends RootEntity<Long> {
         if (funding.getStatus() == PROCESSING) {
             return;
         }
-        throw new FundingException(FUNDING_IS_NOT_PROCESSING);
+        throw new FundingException(PARTICIPATE_CANCEL_ONLY_PERMIT_PROCESSING_FUNDING);
     }
 
     public void canceledByFundingOwner() {
