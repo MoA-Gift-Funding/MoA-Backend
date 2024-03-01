@@ -2,6 +2,8 @@ package moa.client.wincube.auth;
 
 import static moa.client.exception.ExternalApiExceptionType.EXTERNAL_API_EXCEPTION;
 import static moa.client.wincube.auth.Aes256Iv.generateIv;
+import static moa.global.config.cache.CacheConfig.WINCUBE_ACCESS_TOKEN_CACHE_MANAGER_NAME;
+import static moa.global.config.cache.CacheConfig.WINCUBE_ACCESS_TOKEN_CACHE_NAME;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +18,7 @@ import moa.client.wincube.dto.WincubeIssueAuthCodeResponse;
 import moa.client.wincube.dto.WincubeIssueAuthTokenResponse;
 import moa.client.wincube.dto.WincubeTokenSignature;
 import moa.global.jwt.JwtService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +37,10 @@ public class WincubeAuthClient {
     private final Rsa rsa;
     private final JwtService jwtService;
 
-    // TODO 캐시
+    @Cacheable(
+            cacheNames = WINCUBE_ACCESS_TOKEN_CACHE_NAME,
+            cacheManager = WINCUBE_ACCESS_TOKEN_CACHE_MANAGER_NAME
+    )
     public String getAuthToken() {
         String aesIv = generateIv(AES_IV_BYTE);
         String codeId = getAuthCode(aesIv);
