@@ -6,28 +6,21 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.WebUtils;
 
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
-public class ExceptionControllerAdvice {
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    ResponseEntity<ExceptionResponse> handleException(HttpServletRequest request, MethodArgumentNotValidException e) {
-        log.info("잘못된 요청이 들어왔습니다. uri: {} {},  내용:  {}",
-                request.getMethod(), request.getRequestURI(), e.getMessage()
-        );
-        requestLogging(request);
-        return ResponseEntity.badRequest()
-                .body(new ExceptionResponse("MethodArgumentNotValid", e.getMessage()));
-    }
+public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({MoaException.class})
     ResponseEntity<ExceptionResponse> handleException(HttpServletRequest request, MoaException e) {
@@ -40,19 +33,27 @@ public class ExceptionControllerAdvice {
                 .body(new ExceptionResponse(type.name(), type.getMessage()));
     }
 
-    @ExceptionHandler(NoResourceFoundException.class)
-    ResponseEntity<ExceptionResponse> handleException(NoResourceFoundException e) {
-        log.error(e.getMessage());
-        return ResponseEntity.status(404)
-                .body(new ExceptionResponse("NOT_FOUND", e.getMessage()));
-    }
-
     @ExceptionHandler(Exception.class)
     ResponseEntity<ExceptionResponse> handleException(HttpServletRequest request, Exception e) {
         log.error("예상하지 못한 예외가 발생했습니다. uri: {} {}, ", request.getMethod(), request.getRequestURI(), e);
         requestLogging(request);
         return ResponseEntity.internalServerError()
                 .body(new ExceptionResponse("INTERNAL_EXCEPTION", "알 수 없는 오류가 발생했습니다."));
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleExceptionInternal(
+            Exception ex,
+            Object body,
+            HttpHeaders headers,
+            HttpStatusCode statusCode,
+            WebRequest webRequest
+    ) {
+        HttpServletRequest request = ((ServletWebRequest) webRequest).getRequest();
+        log.error("예외가 발생했습니다. uri: {} {}, ", request.getMethod(), request.getRequestURI(), ex);
+        requestLogging(request);
+        return ResponseEntity.status(statusCode)
+                .body(new ExceptionResponse("DEFAULT", body.toString()));
     }
 
     private void requestLogging(HttpServletRequest request) {
