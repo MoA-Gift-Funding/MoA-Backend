@@ -75,7 +75,7 @@ public class Funding extends RootEntity<Long> {
 
     @Enumerated(STRING)
     @Column(nullable = false)
-    private FundingVisibility visible;
+    private FundingVisibility visibility;
 
     @Enumerated(STRING)
     @Column(nullable = false)
@@ -120,7 +120,7 @@ public class Funding extends RootEntity<Long> {
             String title,
             String description,
             LocalDate endDate,
-            FundingVisibility visible,
+            FundingVisibility visibility,
             Price maximumAmount,
             Member member,
             Product product,
@@ -131,7 +131,7 @@ public class Funding extends RootEntity<Long> {
         this.title = title;
         this.description = description;
         this.endDate = endDate;
-        this.visible = visible;
+        this.visibility = visibility;
         this.status = PROCESSING;
         this.maximumAmount = maximumAmount;
         this.minimumAmount = MINIMUM_AMOUNT;

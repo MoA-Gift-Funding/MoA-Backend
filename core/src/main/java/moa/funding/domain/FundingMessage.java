@@ -41,13 +41,13 @@ public class FundingMessage extends RootEntity<Long> {
 
     @Enumerated(STRING)
     @Column(nullable = false)
-    private MessageVisibility visible;
+    private MessageVisibility visibility;
 
-    public FundingMessage(Member sender, Member receiver, String content, MessageVisibility visible) {
+    public FundingMessage(Member sender, Member receiver, String content, MessageVisibility visibility) {
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
-        this.visible = visible;
+        this.visibility = visibility;
     }
 
     public void validateSender(Member member) {
@@ -58,6 +58,6 @@ public class FundingMessage extends RootEntity<Long> {
 
     public void update(String content, MessageVisibility visible) {
         this.content = content;
-        this.visible = visible;
+        this.visibility = visible;
     }
 }

@@ -14,7 +14,7 @@ public record FundingParticipateRequest(
         @NotBlank String message,
 
         @Schema(example = "메시지 공개 여부")
-        @NotNull MessageVisibility visible
+        @NotNull MessageVisibility visibility
 ) {
     public FundingParticipateCommand toCommand(Long fundingId, Long memberId) {
         return new FundingParticipateCommand(
@@ -22,7 +22,7 @@ public record FundingParticipateRequest(
                 memberId,
                 paymentOrderId,
                 message,
-                visible
+                visibility
         );
     }
 }

@@ -53,7 +53,7 @@ public record ParticipatedFundingResponse(
         Long amount,
 
         @Schema(description = "참여 상태", example = "PARTICIPATING")
-        ParticipantStatus participateStatus
+        ParticipantStatus participantStatus
 ) {
     public static ParticipatedFundingResponse of(FundingParticipant participant, List<Friend> friends) {
         Funding funding = participant.getFunding();

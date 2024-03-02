@@ -11,14 +11,14 @@ public record FundingMessageUpdateRequest(
         @NotBlank String message,
 
         @Schema(example = "메시지 공개 여부")
-        @NotNull MessageVisibility visible
+        @NotNull MessageVisibility visibility
 ) {
     public FundingMessageUpdateCommand toCommand(Long memberId, Long messageId) {
         return new FundingMessageUpdateCommand(
                 memberId,
                 messageId,
                 message,
-                visible
+                visibility
         );
     }
 }

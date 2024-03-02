@@ -53,7 +53,7 @@ public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
         log.error("예외가 발생했습니다. uri: {} {}, ", request.getMethod(), request.getRequestURI(), ex);
         requestLogging(request);
         return ResponseEntity.status(statusCode)
-                .body(new ExceptionResponse("DEFAULT", body.toString()));
+                .body(new ExceptionResponse("DEFAULT", ex.getMessage()));
     }
 
     private void requestLogging(HttpServletRequest request) {

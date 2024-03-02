@@ -137,7 +137,7 @@ create table product_option
 create table funding
 (
     id                         bigint auto_increment primary key,
-    visible                    varchar(255)   not null,
+    visibility                    varchar(255)   not null,
     title                      varchar(25)    not null,
     description                text           not null,
     end_date                   date           not null,
@@ -170,7 +170,7 @@ create table funding_message
     member_from_id bigint       not null,
     member_to_id   bigint       not null,
     content        varchar(255) not null,
-    visible        varchar(255) not null,
+    visibility        varchar(255) not null,
     created_date   datetime(6) not null,
     updated_date   datetime(6),
     constraint FK_funding_message_from_member
