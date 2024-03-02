@@ -93,3 +93,6 @@ discord:
   error-channel:
     webhookId: "id"
     webhookToken: "token"
+  report-channel:
+    webhookId: "id"
+    webhookToken: "token"
