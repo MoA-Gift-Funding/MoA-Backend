@@ -96,7 +96,7 @@ public record FundingDetailResponse(
                 Member member,
                 List<Friend> friends
         ) {
-            if (participant.getFundingMessage().getVisible() == PRIVATE
+            if (participant.getFundingMessage().getVisibility() == PRIVATE
                 && !isFundingOwner(funding, member) && !isMessageOwner(participant, member)) {
                 return new Participant(
                         null,
@@ -119,7 +119,7 @@ public record FundingDetailResponse(
                     participant.getMember().getProfileImageUrl(),
                     participant.getFundingMessage().getId(),
                     participant.getFundingMessage().getContent(),
-                    participant.getFundingMessage().getVisible(),
+                    participant.getFundingMessage().getVisibility(),
                     participant.getCreatedDate()
             );
         }
