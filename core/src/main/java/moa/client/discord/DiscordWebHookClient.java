@@ -30,4 +30,12 @@ public class DiscordWebHookClient {
                 new DiscordSendMessageRequest(content)
         );
     }
+
+    public void sendToReportChannel(String content) {
+        webHookApiClient.sendMessage(
+                discordWebHookProperty.reportChannel().webhookId(),
+                discordWebHookProperty.reportChannel().webhookToken(),
+                new DiscordSendMessageRequest(content)
+        );
+    }
 }
