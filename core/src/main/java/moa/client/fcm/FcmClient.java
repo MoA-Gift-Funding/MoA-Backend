@@ -1,7 +1,9 @@
 package moa.client.fcm;
 
+import static com.google.firebase.messaging.AndroidConfig.Priority.HIGH;
 import static moa.global.config.async.AsyncConfig.VIRTUAL_THREAD_EXECUTOR;
 
+import com.google.firebase.messaging.AndroidConfig;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
@@ -37,7 +39,10 @@ public class FcmClient {
                 .setNotification(notification)
                 .putData("url", url)
                 .putData("type", type)
-                .build();
+                .setAndroidConfig(AndroidConfig.builder()
+                        .setPriority(HIGH)
+                        .build()
+                ).build();
         try {
             String result = FirebaseMessaging.getInstance().send(message);
             log.info("FCM 알림 전송 성공 : " + result);
