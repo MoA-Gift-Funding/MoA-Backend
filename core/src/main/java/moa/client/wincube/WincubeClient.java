@@ -51,7 +51,7 @@ public class WincubeClient {
                 title,
                 wincubeProperty.callback(),
                 productId,
-                phoneNumber,
+                phoneNumber.replace("-", ""),
                 TR_ID_PREFIX + transactionId,
                 optionId,
                 JSON,
