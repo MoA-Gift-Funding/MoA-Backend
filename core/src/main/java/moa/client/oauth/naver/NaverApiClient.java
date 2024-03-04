@@ -19,6 +19,6 @@ public interface NaverApiClient {
             @RequestParam(name = "client_id") String clientId,
             @RequestParam(name = "client_secret") String clientSecret,
             @RequestParam(name = "access_token") String accessToken,
-            @RequestParam(name = "grant_type", value = "delete") String grantType
+            @RequestParam(name = "grant_type") String grantType
     );
 }
