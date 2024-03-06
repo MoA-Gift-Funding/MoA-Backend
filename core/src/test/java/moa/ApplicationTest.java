@@ -5,7 +5,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import moa.config.TestPaymentConfig;
+import moa.config.TestInfraConfig;
 import moa.support.DataClearExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +15,6 @@ import org.springframework.context.annotation.Import;
 @Retention(RUNTIME)
 @SpringBootTest
 @ExtendWith(DataClearExtension.class)
-@Import({TestConfig.class, TestPaymentConfig.class})
+@Import({TestConfig.class, TestInfraConfig.class})
 public @interface ApplicationTest {
 }

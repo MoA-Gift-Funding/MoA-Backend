@@ -17,5 +17,5 @@ public interface KakaoApiClient {
     KakaoMemberResponse fetchMember(@RequestHeader(name = AUTHORIZATION) String bearerToken);
 
     @PostExchange(url = "https://kapi.kakao.com/v1/user/unlink")
-    KakaoWithdrawResponse withdrawMember(@RequestHeader(name = AUTHORIZATION) String adminToken);
+    KakaoWithdrawResponse withdrawMember(@RequestHeader(name = AUTHORIZATION) String bearerToken);
 }
