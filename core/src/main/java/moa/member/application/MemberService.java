@@ -15,6 +15,7 @@ import moa.member.domain.phone.PhoneRepository;
 import moa.member.domain.phone.PhoneVerificationNumber;
 import moa.member.domain.phone.PhoneVerificationNumberRepository;
 import moa.member.domain.phone.PhoneVerificationNumberSender;
+import moa.member.domain.phone.VerificationNumberGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -30,6 +31,7 @@ public class MemberService {
     private final TransactionTemplate transactionTemplate;
     private final OauthMemberClientComposite oauthMemberClientComposite;
     private final PhoneVerificationNumberRepository phoneVerificationNumberRepository;
+    private final VerificationNumberGenerator verificationNumberGenerator;
 
     public Long login(OauthProvider provider, String accessToken) {
         Member member = oauthMemberClientComposite.fetch(provider, accessToken);
@@ -46,7 +48,10 @@ public class MemberService {
     public void sendPhoneVerificationNumber(Long memberId, String phoneNumber) {
         Member member = memberRepository.getById(memberId);
         Phone phone = new Phone(member, phoneNumber);
-        PhoneVerificationNumber verificationNumber = phone.generateVerification(memberValidator);
+        PhoneVerificationNumber verificationNumber = phone.generateVerification(
+                memberValidator,
+                verificationNumberGenerator
+        );
         phoneRepository.save(phone);
         phoneVerificationNumberRepository.save(member, verificationNumber);
         sender.sendVerificationNumber(phone, verificationNumber);

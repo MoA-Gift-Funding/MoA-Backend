@@ -5,7 +5,6 @@ import static lombok.AccessLevel.PROTECTED;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Transient;
-import java.util.concurrent.ThreadLocalRandom;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import moa.member.domain.Member;
@@ -37,22 +36,16 @@ public class Phone {
         this.verified = true;
     }
 
-    public PhoneVerificationNumber generateVerification(MemberValidator memberValidator) {
+    public PhoneVerificationNumber generateVerification(
+            MemberValidator memberValidator,
+            VerificationNumberGenerator generator
+    ) {
         memberValidator.validateDuplicatedVerifiedPhone(this);
-        return generateVerification();
+        return generateVerification(generator);
     }
 
-    private PhoneVerificationNumber generateVerification() {
-        int leftLimit = 48;  // numeral '0'
-        int rightLimit = 57;  // numeral '9'
-        int targetStringLength = 6;
-        return new PhoneVerificationNumber(
-                ThreadLocalRandom.current()
-                        .ints(leftLimit, rightLimit + 1)
-                        .limit(targetStringLength)
-                        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                        .toString()
-        );
+    private PhoneVerificationNumber generateVerification(VerificationNumberGenerator generator) {
+        return generator.generate();
     }
 
     public void permitNotification(String deviceToken) {
