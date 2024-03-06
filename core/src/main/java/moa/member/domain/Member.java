@@ -68,7 +68,7 @@ public class Member extends RootEntity<Long> {
 
     @Enumerated(STRING)
     @Column(nullable = false)
-    private MemberStatus status;
+    private MemberStatus status = PRESIGNED_UP;
 
     @Column(nullable = true, unique = true)
     private String tossCustomerKey;
@@ -90,11 +90,6 @@ public class Member extends RootEntity<Long> {
         this.profileImageUrl = profileImageUrl;
         this.phone = new Phone(this, phoneNumber);
         this.tossCustomerKey = UUID.randomUUID().toString();
-    }
-
-    public void preSignup(MemberValidator validator) {
-        validator.validateDuplicatedEmail(email);
-        this.status = PRESIGNED_UP;
     }
 
     public void changeVerifiedPhone(

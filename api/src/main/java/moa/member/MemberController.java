@@ -33,14 +33,6 @@ public class MemberController implements MemberApi {
     private final MemberService memberService;
     private final MemberQueryService memberQueryService;
 
-    @GetMapping("/my")
-    public ResponseEntity<MemberResponse> findMyProfile(
-            @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId
-    ) {
-        MemberResponse response = memberQueryService.findMyProfile(memberId);
-        return ResponseEntity.ok(response);
-    }
-
     @PostMapping("/verification/phone/send-number")
     public ResponseEntity<Void> sendPhoneVerificationNumber(
             @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId,
@@ -68,8 +60,16 @@ public class MemberController implements MemberApi {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<MemberResponse> findMyProfile(
+            @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId
+    ) {
+        MemberResponse response = memberQueryService.findMyProfile(memberId);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/notification")
-    public ResponseEntity<NotificationStatusResponse> checkNotificationStatus(
+    public ResponseEntity<NotificationStatusResponse> checkNotificationPermitStatus(
             @Auth(permit = {SIGNED_UP}) Long memberId
     ) {
         return ResponseEntity.ok(memberQueryService.checkNotification(memberId));

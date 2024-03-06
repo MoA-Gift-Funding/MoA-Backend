@@ -36,20 +36,6 @@ public interface MemberApi {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200"),
-                    @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
-                    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
-                    @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
-            }
-    )
-    @Operation(summary = "회원 프로필 조회")
-    @GetMapping("/my")
-    ResponseEntity<MemberResponse> findMyProfile(
-            @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId
-    );
-
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "400"),
                     @ApiResponse(responseCode = "401"),
                     @ApiResponse(responseCode = "404"),
@@ -103,13 +89,27 @@ public interface MemberApi {
                     @ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+            }
+    )
+    @Operation(summary = "회원 프로필 조회")
+    @GetMapping("/my")
+    ResponseEntity<MemberResponse> findMyProfile(
+            @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId
+    );
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
             }
     )
     @Operation(summary = "푸쉬알림 동의 여부 조회")
     @GetMapping("/notification")
-    ResponseEntity<NotificationStatusResponse> checkNotificationStatus(
+    ResponseEntity<NotificationStatusResponse> checkNotificationPermitStatus(
             @Auth(permit = {SIGNED_UP}) Long memberId
     );
 
