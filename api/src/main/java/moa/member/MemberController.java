@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -33,12 +34,13 @@ public class MemberController implements MemberApi {
     private final MemberService memberService;
     private final MemberQueryService memberQueryService;
 
-    @GetMapping("/my")
-    public ResponseEntity<MemberResponse> findMyProfile(
-            @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId
+    @GetMapping("/email-check")
+    public ResponseEntity<Boolean> checkDuplicatedEmail(
+            @Auth(permit = PRESIGNED_UP) Long memberId,
+            @Valid @RequestParam("email") String email
     ) {
-        MemberResponse response = memberQueryService.findMyProfile(memberId);
-        return ResponseEntity.ok(response);
+        boolean isExist = memberQueryService.existsDuplicatedEmail(email);
+        return ResponseEntity.ok(isExist);
     }
 
     @PostMapping("/verification/phone/send-number")
@@ -68,8 +70,16 @@ public class MemberController implements MemberApi {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<MemberResponse> findMyProfile(
+            @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId
+    ) {
+        MemberResponse response = memberQueryService.findMyProfile(memberId);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/notification")
-    public ResponseEntity<NotificationStatusResponse> checkNotificationStatus(
+    public ResponseEntity<NotificationStatusResponse> checkNotificationPermitStatus(
             @Auth(permit = {SIGNED_UP}) Long memberId
     ) {
         return ResponseEntity.ok(memberQueryService.checkNotification(memberId));

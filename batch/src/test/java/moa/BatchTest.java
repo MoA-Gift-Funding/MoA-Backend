@@ -5,7 +5,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import moa.config.TestPaymentConfig;
+import moa.config.TestInfraConfig;
 import moa.support.DataClearExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.batch.test.context.SpringBatchTest;
@@ -17,6 +17,6 @@ import org.springframework.context.annotation.Import;
 @SpringBootTest
 @SpringBatchTest
 @ExtendWith(DataClearExtension.class)
-@Import({TestPaymentConfig.class})
+@Import({TestInfraConfig.class})
 public @interface BatchTest {
 }

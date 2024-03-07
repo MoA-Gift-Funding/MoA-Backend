@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "회원 API", description = "회원 관련 API")
 @SecurityRequirement(name = "JWT")
@@ -38,13 +39,15 @@ public interface MemberApi {
                     @ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
             }
     )
-    @Operation(summary = "회원 프로필 조회")
-    @GetMapping("/my")
-    ResponseEntity<MemberResponse> findMyProfile(
-            @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId
+    @Operation(summary = "이메일 중복 검사")
+    @GetMapping("/email-check")
+    ResponseEntity<Boolean> checkDuplicatedEmail(
+            @Auth(permit = PRESIGNED_UP) Long memberId,
+            @Valid @RequestParam("email") String email
     );
 
     @ApiResponses(
@@ -103,13 +106,27 @@ public interface MemberApi {
                     @ApiResponse(responseCode = "200"),
                     @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
+            }
+    )
+    @Operation(summary = "회원 프로필 조회")
+    @GetMapping("/my")
+    ResponseEntity<MemberResponse> findMyProfile(
+            @Auth(permit = {PRESIGNED_UP, SIGNED_UP}) Long memberId
+    );
+
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200"),
+                    @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(hidden = true))),
             }
     )
     @Operation(summary = "푸쉬알림 동의 여부 조회")
     @GetMapping("/notification")
-    ResponseEntity<NotificationStatusResponse> checkNotificationStatus(
+    ResponseEntity<NotificationStatusResponse> checkNotificationPermitStatus(
             @Auth(permit = {SIGNED_UP}) Long memberId
     );
 

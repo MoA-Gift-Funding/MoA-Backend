@@ -6,7 +6,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 import io.restassured.RestAssured;
 import java.util.List;
 import java.util.UUID;
-import moa.config.TestPaymentConfig;
+import moa.config.TestInfraConfig;
 import moa.friend.domain.FriendRepository;
 import moa.global.jwt.JwtService;
 import moa.member.domain.Member;
@@ -24,7 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 
-@Import(TestPaymentConfig.class)
+@Import(TestInfraConfig.class)
 @ExtendWith(DataClearExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @DisplayNameGeneration(ReplaceUnderscores.class)
